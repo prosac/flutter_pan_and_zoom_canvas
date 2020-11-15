@@ -96,7 +96,7 @@ class WorkBenchState extends State<WorkBench> {
 
                   return Stack(
                     children: <Widget>[
-                      Padding(padding: const EdgeInsets.all(0.0), child: Container(child: _background)),
+                      _background,
                       ...items
                           .map((ItemData itemData) => Positioned(
                                 left: itemData.offset.dx * _backgroundSize.width,
