@@ -8,12 +8,8 @@ import 'item_data.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
-  WorkBench({
-    Key key,
-    this.width,
-    this.height
-  }) :
-      assert(width != null),
+  WorkBench({Key key, this.width, this.height})
+      : assert(width != null),
         assert(height != null),
         super(key: key);
 

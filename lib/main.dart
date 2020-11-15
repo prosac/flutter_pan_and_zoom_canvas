@@ -10,4 +10,3 @@ class PanAndZoom extends StatelessWidget {
     return MaterialApp(title: 'Pan and Zoom', home: WorkBench(width: 4000, height: 3000));
   }
 }
-
