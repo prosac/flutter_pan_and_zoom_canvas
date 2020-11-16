@@ -31,6 +31,7 @@ class WorkBenchState extends State<WorkBench> {
   double _constraintsAspectRatio;
 
   Background _background;
+  double _scale;
 
   void _onRemoveItem(ItemData itemData) {
     setState(() => items.remove(itemData));
@@ -40,31 +41,33 @@ class WorkBenchState extends State<WorkBench> {
     setState(() => items.add(itemData));
   }
 
-  void _initCanvas() async => setState(() {});
-
-  void _onAcceptWithDetails(DragTargetDetails details, Size size) {
+  void _onAcceptWithDetails(DragTargetDetails details, Size backgroundSize) {
     final RenderBox renderBox = _dragTargetKey.currentContext.findRenderObject();
     final Offset localOffset = renderBox.globalToLocal(details.offset);
+
     final Offset offset = Offset(
-      localOffset.dx / size.width,
-      localOffset.dy / size.height,
+      localOffset.dx / backgroundSize.width,
+      localOffset.dy / backgroundSize.height,
     );
-    _onAddItem(ItemData(offset: offset, testData: details.data));
+
+    _onAddItem(ItemData(offset: offset, width: 100, height: 100, testData: details.data));
   }
 
   @override
   void initState() {
     super.initState();
-    _initCanvas();
     _background = Background(width: widget.width, height: widget.height);
     _backgroundAspectRatio = _background.width.toDouble() / _background.height.toDouble();
-    items.add(ItemData(offset: Offset(0, 0), testData: TestData()));
+    items.add(ItemData(offset: Offset(0, 0), width: 100, height: 100, testData: TestData()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
       // the canvas and ui elements that are fixed to the viewport
+      // TODO: the item must keep the size fitting the zoom level when dragging
+      // TODO: the item must not jump under the cursor when dragging
+      // TODO: the canvas must be bigger then the viewport on start and enable panning right away
       Center(
         child: InteractiveViewer(
             transformationController: _transformationController,
@@ -81,15 +84,14 @@ class WorkBenchState extends State<WorkBench> {
                     : constraints.maxHeight,
               );
 
+              _scale = _transformationController.value.row0[0];
+
               return DragTarget(
                 key: _dragTargetKey,
                 onAcceptWithDetails: (DragTargetDetails details) {
                   _onAcceptWithDetails(details, _backgroundSize);
                 },
                 builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
-                  // final double pieceSide = math.min(_boardSize.width, _boardSize.height) * _kPieceSizeVsBoard;
-                  final double itemSize = math.min(_backgroundSize.width, _backgroundSize.height);
-
                   return Stack(
                     children: <Widget>[
                       _background,
@@ -98,9 +100,10 @@ class WorkBenchState extends State<WorkBench> {
                                 left: itemData.offset.dx * _backgroundSize.width,
                                 top: itemData.offset.dy * _backgroundSize.height,
                                 child: DraggableItem(
-                                    testData: TestData(),
-                                    width: itemSize,
-                                    height: itemSize,
+                                    testData: TestData(text: 'not dragging'),
+                                    width: itemData.width,
+                                    height: itemData.height,
+                                    scale: _scale,
                                     onDragStarted: () {
                                       _onRemoveItem(itemData);
                                     }),

@@ -18,6 +18,6 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: ExampleContent(label: 'Item', itemColor: Colors.deepPurpleAccent), width: width, height: height);
+        child: ExampleContent(label: testData.text, itemColor: Colors.deepPurpleAccent), width: width, height: height);
   }
 }

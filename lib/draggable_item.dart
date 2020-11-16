@@ -8,6 +8,7 @@ class DraggableItem extends StatelessWidget {
     Key key,
     this.width,
     this.height,
+    this.scale,
     this.isDragging = false,
     this.onDragStarted,
     this.testData,
@@ -18,6 +19,7 @@ class DraggableItem extends StatelessWidget {
 
   final double width;
   final double height;
+  final double scale;
   final TestData testData;
   final bool isDragging;
   final VoidCallback onDragStarted;
@@ -26,7 +28,7 @@ class DraggableItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Draggable(
       data: testData,
-      feedback: Item(isDragging: true, width: width, height: height, testData: testData),
+      feedback: Item(isDragging: true, width: width * scale, height: height * scale, testData: TestData(text: 'lala')),
       onDragStarted: onDragStarted,
       child: Item(
         width: width,
