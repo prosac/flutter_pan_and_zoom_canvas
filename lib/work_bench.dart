@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'background.dart';
@@ -27,7 +26,7 @@ class WorkBenchState extends State<WorkBench> {
 
   Size _backgroundSize;
   Background _background;
-  double _scale;
+  double _scale = 1.0;
 
   void _onRemoveItem(ItemData itemData) {
     setState(() => items.remove(itemData));
@@ -53,28 +52,25 @@ class WorkBenchState extends State<WorkBench> {
   void initState() {
     super.initState();
     _background = Background(width: widget.width, height: widget.height);
+    _backgroundSize = Size(4000, 3000);
     items.add(ItemData(offset: Offset(0, 0), width: 100, height: 100, testData: TestData()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
-      // the canvas and ui elements that are fixed to the viewport
-      // TODO: the item must keep the size fitting the zoom level when dragging
       // TODO: the item must not jump under the cursor when dragging
       Center(
         child: InteractiveViewer(
             transformationController: _transformationController,
-            minScale: 0.5,
+            onInteractionEnd: (details) {
+              setState(() {
+                _scale = _transformationController.value.row0[0]; // doing this in a call to setState solves the problem that the feedback item does not know the current scale
+              });
+            },
             constrained: false, // this does the trick to make the "canvas" bigger than the view port
-            // maxScale: 10,
             child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-
-                  _backgroundSize = Size(4000, 3000);
-
-                  _scale = _transformationController.value.row0[0];
-
                   return DragTarget(
                     key: _dragTargetKey,
                     onAcceptWithDetails: (DragTargetDetails details) {
@@ -90,7 +86,7 @@ class WorkBenchState extends State<WorkBench> {
                                 left: itemData.offset.dx * _backgroundSize.width,
                                 top: itemData.offset.dy * _backgroundSize.height,
                                 child: DraggableItem(
-                                    testData: TestData(text: 'not dragging'),
+                                    testData: TestData(text: _scale.toString()),
                                     width: itemData.width,
                                     height: itemData.height,
                                     scale: _scale,
@@ -109,7 +105,14 @@ class WorkBenchState extends State<WorkBench> {
       Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          child: Text( 'Some widgets\n fixed on the viewport', style: Theme.of(context).textTheme.bodyText1)
+          child: RaisedButton(
+            onPressed: () {
+              setState(() {
+                _scale = 1.0;
+              });
+            },
+            child: Text('Reset'),
+          )
         ),
       )
     ]);

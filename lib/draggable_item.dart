@@ -28,7 +28,7 @@ class DraggableItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Draggable(
       data: testData,
-      feedback: Item(isDragging: true, width: width * scale, height: height * scale, testData: TestData(text: 'lala')),
+      feedback: Item(isDragging: true, width: width * scale, height: height * scale, testData: testData),
       onDragStarted: onDragStarted,
       child: Item(
         width: width,
