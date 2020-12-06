@@ -11,6 +11,7 @@ class DraggableItem extends StatelessWidget {
     this.scale,
     this.isDragging = false,
     this.onDragStarted,
+    this.onDragEnd,
     this.testData,
   })  : assert(testData != null),
         assert(width != null),
@@ -23,6 +24,7 @@ class DraggableItem extends StatelessWidget {
   final TestData testData;
   final bool isDragging;
   final VoidCallback onDragStarted;
+  final DragEndCallback onDragEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +32,8 @@ class DraggableItem extends StatelessWidget {
       data: testData,
       feedback: Item(isDragging: true, width: width * scale, height: height * scale, testData: testData),
       onDragStarted: onDragStarted,
-      child: Item(
-        width: width,
-        height: height,
-        testData: testData,
-      ),
+      onDragEnd: onDragEnd,
+      child: Item(width: width, height: height, testData: testData ),
     );
   }
 }

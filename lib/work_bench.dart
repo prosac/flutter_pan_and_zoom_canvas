@@ -57,60 +57,62 @@ class WorkBenchState extends State<WorkBench> {
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
       // TODO: the item must not jump under the cursor when dragging
-      Center(
-        child: InteractiveViewer(
-            transformationController: _transformationController,
-            onInteractionEnd: (details) {
-              setState(() {
-                _scale = _transformationController.value.row0[0]; // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-              });
+      InteractiveViewer(
+          transformationController: _transformationController,
+          onInteractionEnd: (details) {
+            setState(() {
+              // doing this in a call to setState solves the problem that the feedback item does not know the current scale
+              _scale = _transformationController.value.row0[0];
+            });
+          },
+          constrained: false, // this does the trick to make the "canvas" bigger than the view port
+          child: DragTarget(
+            key: _dragTargetKey,
+            onAcceptWithDetails: (DragTargetDetails details) {
+              _onAcceptWithDetails(details, _backgroundSize);
             },
-            constrained: false, // this does the trick to make the "canvas" bigger than the view port
-            child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return DragTarget(
-                    key: _dragTargetKey,
-                    onAcceptWithDetails: (DragTargetDetails details) {
-                      _onAcceptWithDetails(details, _backgroundSize);
-                    },
-                    builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
-                      return Stack(
-                        children: <Widget>[
-                          _background,
-                          ...items
-                              .map((ItemData itemData) =>
-                              Positioned(
-                                left: itemData.offset.dx * _backgroundSize.width,
-                                top: itemData.offset.dy * _backgroundSize.height,
-                                child: DraggableItem(
-                                    testData: TestData(text: _scale.toString()),
-                                    width: itemData.width,
-                                    height: itemData.height,
-                                    scale: _scale,
-                                    onDragStarted: () {
-                                      _onRemoveItem(itemData);
-                                    }),
-                              ))
-                              .toList()
-                        ],
-                      );
-                    },
-                    // onWillAccept: () => true,
-                  );
-                })),
-      ),
+            builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
+              return Stack(
+                children: <Widget>[
+                  _background,
+                  ...items.map((ItemData itemData) {
+                    Offset offset =
+                        Offset(itemData.offset.dx * _backgroundSize.width, itemData.offset.dy * _backgroundSize.height);
+
+                    return Positioned(
+                      left: offset.dx,
+                      top: offset.dy,
+                      child: DraggableItem(
+                          testData: TestData(text: _scale.toString()),
+                          width: itemData.width,
+                          height: itemData.height,
+                          scale: _scale,
+                          onDragStarted: () {
+                            _onRemoveItem(itemData);
+                          },
+                          onDragEnd: (DraggableDetails details) {
+                            offset = details.offset;
+                          }),
+                    );
+                  }).toList()
+                ],
+              );
+            },
+            // onWillAccept: () => true,
+          )),
       Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          child: RaisedButton(
-            onPressed: () {
-              setState(() {
-                _scale = 1.0;
-              });
-            },
-            child: Text('Reset'),
-          )
-        ),
+            child: RaisedButton(
+          onPressed: () {
+            _transformationController.value = Matrix4.identity();
+
+            setState(() {
+              _scale = 1.0;
+            });
+          },
+          child: Text('Reset'),
+        )),
       )
     ]);
   }
