@@ -1,5 +1,5 @@
-name: pan_and_zoom
-description: A new Flutter project.
+name: flutter_pan_and_zoom
+description: An experiement to build a canvas with items on it that is panable and zoomable using flutter
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
