@@ -20,7 +20,6 @@ class WorkBench extends StatefulWidget {
 
 class WorkBenchState extends State<WorkBench> {
   final GlobalKey _dragTargetKey = GlobalKey();
-  Text info = Text('sdfsdf');
   final List<ItemData> items = <ItemData>[];
   TransformationController _transformationController = TransformationController();
 
@@ -32,10 +31,6 @@ class WorkBenchState extends State<WorkBench> {
     setState(() => items.remove(itemData));
   }
 
-  void _onAddItem(ItemData itemData) {
-    setState(() => items.add(itemData));
-  }
-
   void _onAcceptWithDetails(DragTargetDetails details, Size backgroundSize) {
     final RenderBox renderBox = _dragTargetKey.currentContext.findRenderObject();
     final Offset localOffset = renderBox.globalToLocal(details.offset);
@@ -45,7 +40,8 @@ class WorkBenchState extends State<WorkBench> {
       localOffset.dy / backgroundSize.height,
     );
 
-    _onAddItem(ItemData(offset: offset, width: 100, height: 100, testData: details.data));
+    // this is the item added after dragging
+    setState(() => items.add(ItemData(offset: offset, width: 100, height: 100, testData: details.data)));
   }
 
   @override
@@ -53,6 +49,7 @@ class WorkBenchState extends State<WorkBench> {
     super.initState();
     _background = Background(width: widget.width, height: widget.height);
     _backgroundSize = Size(4000, 3000);
+    // this is the initially added item
     items.add(ItemData(offset: Offset(0, 0), width: 100, height: 100, testData: TestData()));
   }
 
