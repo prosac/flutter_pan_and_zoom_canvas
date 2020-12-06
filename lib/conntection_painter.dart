@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// this is not used yet. just a sketch on how to draw a simple line.
+// eventually this will evolve into a class for visual connections between things
 class ConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) async {
