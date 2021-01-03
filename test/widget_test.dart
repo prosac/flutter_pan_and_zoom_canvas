@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:pan_and_zoom/work_bench.dart';
+import 'package:flutter_pan_and_zoom/work_bench.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
