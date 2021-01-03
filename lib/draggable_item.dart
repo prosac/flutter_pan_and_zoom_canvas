@@ -29,6 +29,10 @@ class DraggableItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Draggable(
+      dragAnchorStrategy: (widget, context, position) {
+        final RenderBox renderObject = context.findRenderObject() as RenderBox;
+        return renderObject.globalToLocal(position).scale(scale, scale);
+      },
       data: testData,
       feedback: Item(isDragging: true, width: width * scale, height: height * scale, testData: testData),
       onDragStarted: onDragStarted,
