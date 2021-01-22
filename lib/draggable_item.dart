@@ -1,25 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'item.dart';
+import 'example_content_2.dart';
 import 'test_data.dart';
 
 class DraggableItem extends StatelessWidget {
   DraggableItem({
     Key key,
-    this.width,
-    this.height,
     this.scale,
     this.isDragging = false,
     this.onDragStarted,
     this.onDragEnd,
     this.testData,
   })  : assert(testData != null),
-        assert(width != null),
-        assert(height != null),
         super(key: key);
 
-  final double width;
-  final double height;
   final double scale;
   final TestData testData;
   final bool isDragging;
@@ -34,10 +29,10 @@ class DraggableItem extends StatelessWidget {
         return renderObject.globalToLocal(position).scale(scale, scale);
       },
       data: testData,
-      feedback: Item(isDragging: true, width: width * scale, height: height * scale, testData: testData),
+      feedback: SizedBox(key: Key('sdfsdfsd'), width: 100 * scale, height: 100 * scale, child: ExampleContent2(label: 'bla', itemColor: Colors.deepPurple)),
       onDragStarted: onDragStarted,
       onDragEnd: onDragEnd,
-      child: Item(width: width, height: height, testData: testData ),
+      child: SizedBox(key: Key('sdfhhlosf'), width: 100, height: 100, child: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent)),
     );
   }
 }

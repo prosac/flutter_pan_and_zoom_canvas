@@ -84,8 +84,6 @@ class WorkBenchState extends State<WorkBench> {
                       top: offset.dy,
                       child: DraggableItem(
                           testData: TestData(text: _scale.toString()),
-                          width: itemData.width,
-                          height: itemData.height,
                           scale: _scale,
                           onDragStarted: () {
                             _onRemoveItem(itemData);

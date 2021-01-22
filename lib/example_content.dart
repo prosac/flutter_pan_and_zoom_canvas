@@ -8,15 +8,19 @@ class ExampleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: itemColor,
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-            color: Colors.white,
-            decoration: TextDecoration.none,
-            fontSize: 20.0,
+    return FittedBox(
+      fit: BoxFit.contain,
+      key: Key('flkjsdf'),
+      child: Container(
+        color: itemColor,
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.white,
+              decoration: TextDecoration.none,
+              fontSize: 20.0,
+            ),
           ),
         ),
       ),

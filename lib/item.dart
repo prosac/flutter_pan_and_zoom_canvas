@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'example_content.dart';
+import 'example_content_2.dart';
 import 'test_data.dart';
 
 class Item extends StatelessWidget {
@@ -18,6 +18,8 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: ExampleContent(label: testData.text, itemColor: Colors.deepPurpleAccent), width: width, height: height);
+      child: ExampleContent2(label: testData.text, itemColor: Colors.deepPurpleAccent),
+      width: width, height: height
+    );
   }
 }
