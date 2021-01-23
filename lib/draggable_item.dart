@@ -29,10 +29,10 @@ class DraggableItem extends StatelessWidget {
         return renderObject.globalToLocal(position).scale(scale, scale);
       },
       data: testData,
-      feedback: SizedBox(key: Key('sdfsdfsd'), width: 100 * scale, height: 100 * scale, child: ExampleContent2(label: 'bla', itemColor: Colors.deepPurple)),
+      feedback: SizedBox(width: 100 * scale, height: 100 * scale, child: ExampleContent2(label: 'bla', itemColor: Colors.deepPurple)),
       onDragStarted: onDragStarted,
       onDragEnd: onDragEnd,
-      child: SizedBox(key: Key('sdfhhlosf'), width: 100, height: 100, child: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent)),
+      child: SizedBox(width: 100, height: 100, child: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent)),
     );
   }
 }

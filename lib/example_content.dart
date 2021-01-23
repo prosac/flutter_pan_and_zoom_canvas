@@ -10,7 +10,6 @@ class ExampleContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return FittedBox(
       fit: BoxFit.contain,
-      key: Key('flkjsdf'),
       child: Container(
         color: itemColor,
         child: Center(
