@@ -21,6 +21,7 @@ class ExampleContent2 extends StatelessWidget {
                 child: Text('Button'),
                 onPressed: () {},
               ),
+              Padding(padding: EdgeInsets.only(bottom: 10.0)),
               RaisedButton(
                 child: Text('Button'),
                 onPressed: () {},
