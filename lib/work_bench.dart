@@ -77,21 +77,18 @@ class WorkBenchState extends State<WorkBench> {
                   _background,
                   ...items.map((ItemData itemData) {
                     Offset offset =
-                        Offset(itemData.offset.dx * _backgroundSize.width, itemData.offset.dy * _backgroundSize.height);
+                      Offset(itemData.offset.dx * _backgroundSize.width, itemData.offset.dy * _backgroundSize.height);
 
-                    return Positioned(
-                      left: offset.dx,
-                      top: offset.dy,
-                      child: DraggableItem(
-                          testData: TestData(text: _scale.toString()),
-                          scale: _scale,
-                          onDragStarted: () {
-                            _onRemoveItem(itemData);
-                          },
-                          onDragEnd: (DraggableDetails details) {
-                            offset = details.offset;
-                          }),
-                    );
+                    return DraggableItem(
+                      offset: offset,
+                      scale: _scale,
+                      testData: TestData(text: 'Testdata'),
+                      onDragStarted: () {
+                        _onRemoveItem(itemData);
+                      },
+                      onDragEnd: (DraggableDetails details) {
+                        offset = details.offset;
+                      });
                   }).toList()
                 ],
               );

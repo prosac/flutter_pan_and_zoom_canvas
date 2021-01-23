@@ -12,6 +12,7 @@ class DraggableItem extends StatelessWidget {
     this.onDragStarted,
     this.onDragEnd,
     this.testData,
+    this.offset
   })  : assert(testData != null),
         super(key: key);
 
@@ -20,19 +21,24 @@ class DraggableItem extends StatelessWidget {
   final bool isDragging;
   final VoidCallback onDragStarted;
   final DragEndCallback onDragEnd;
+  final Offset offset;
 
   @override
   Widget build(BuildContext context) {
-    return Draggable(
-      dragAnchorStrategy: (widget, context, position) {
-        final RenderBox renderObject = context.findRenderObject() as RenderBox;
-        return renderObject.globalToLocal(position).scale(scale, scale);
-      },
-      data: testData,
-      feedback: SizedBox(width: 100 * scale, height: 100 * scale, child: ExampleContent2(label: 'bla', itemColor: Colors.deepPurple)),
-      onDragStarted: onDragStarted,
-      onDragEnd: onDragEnd,
-      child: SizedBox(width: 100, height: 100, child: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent)),
+    return Positioned(
+      left: offset.dx,
+      top: offset.dy,
+        child: Draggable(
+          dragAnchorStrategy: (widget, context, position) {
+            final RenderBox renderObject = context.findRenderObject() as RenderBox;
+            return renderObject.globalToLocal(position).scale(scale, scale);
+          },
+          data: testData,
+          feedback: SizedBox(width: 100 * scale, height: 100 * scale, child: ExampleContent2(label: 'bla', itemColor: Colors.deepPurple)),
+          onDragStarted: onDragStarted,
+          onDragEnd: onDragEnd,
+          child: SizedBox(width: 100, height: 100, child: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent)),
+        )
     );
   }
 }
