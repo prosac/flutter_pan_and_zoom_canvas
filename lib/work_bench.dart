@@ -31,11 +31,10 @@ class WorkBenchState extends State<WorkBench> {
   Background _background;
   double _scale = 1.0;
 
-  void putItemInDraggingState(Item itemData) {
-    setState(() => items.remove(itemData));
+  void putItemInDraggingState(Item item) {
+    setState(() => items.remove(item));
   }
 
-  // TODO: make faktory method of Item
   Item buildItem(Offset offset) {
     return Item(offset: offset, payload: TestData(text: 'lala'), presentation: ExamplePresentation(label: 'blub', itemColor: Colors.deepPurpleAccent));
   }
