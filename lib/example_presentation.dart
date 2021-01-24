@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ExamplePresentation extends StatelessWidget {
-  final itemColor;
+  final color;
   final label;
   final double width = 300;
   final double height = 200;
 
-  const ExamplePresentation({Key key, this.label, this.itemColor}) : super(key: key);
+  const ExamplePresentation({Key key, this.label, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ExamplePresentation extends StatelessWidget {
         width: width,
         height: height,
         padding: EdgeInsets.all(10.0),
-        color: itemColor,
+        color: color,
         child: Center(
           child: Column(
             children: [

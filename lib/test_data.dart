@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
+
 class TestData {
-  TestData({this.text});
+  TestData({this.text, this.color});
 
   final String text;
-  final String somethings = 'lalal';
+  final Color color;
 }

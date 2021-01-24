@@ -25,18 +25,15 @@ class WorkBench extends StatefulWidget {
 class WorkBenchState extends State<WorkBench> {
   final GlobalKey _dragTargetKey = GlobalKey();
   final List<Item> items = <Item>[];
+  final List<Item> draggingItems = <Item>[];
   TransformationController _transformationController = TransformationController();
 
   Size _backgroundSize;
   Background _background;
   double _scale = 1.0;
 
-  void putItemInDraggingState(Item item) {
-    setState(() => items.remove(item));
-  }
-
-  Item buildItem(Offset offset) {
-    return Item(offset: offset, payload: TestData(text: 'lala'), presentation: ExamplePresentation(label: 'blub', itemColor: Colors.deepPurpleAccent));
+  Item buildItem(Offset offset, TestData payload) {
+    return Item(offset: offset, payload: payload, presentation: ExamplePresentation(label: payload.text, color: payload.color));
   }
 
   void _onAcceptWithDetails(DragTargetDetails details, Size backgroundSize) {
@@ -49,7 +46,7 @@ class WorkBenchState extends State<WorkBench> {
     );
 
     // this is the item added after dragging
-    setState(() => items.add(buildItem(offset)));
+    setState(() => items.add(buildItem(offset, details.data)));
   }
 
   @override
@@ -58,7 +55,9 @@ class WorkBenchState extends State<WorkBench> {
     _background = Background(width: widget.width, height: widget.height);
     _backgroundSize = Size(4000, 3000);
     // this is the initially added item
-    items.add(buildItem(Offset(0, 0)));
+    items.add(buildItem(Offset(0, 0), TestData(text: 'asdfsdf', color: Colors.deepPurpleAccent)));
+    items.add(buildItem(Offset(0, 0), TestData(text: '123', color: Colors.deepPurple)));
+    print(items);
   }
 
   @override
@@ -91,10 +90,14 @@ class WorkBenchState extends State<WorkBench> {
                       scale: _scale,
                       item: item,
                       onDragStarted: () {
-                        putItemInDraggingState(item);
+                        setState(() {
+                          items.remove(item);
+                          draggingItems.add(item);
+                        });
                       },
                       onDragEnd: (DraggableDetails details) {
                         offset = details.offset;
+                        draggingItems.remove(item);
                       }
                     );
                   }).toList()
@@ -109,10 +112,7 @@ class WorkBenchState extends State<WorkBench> {
             child: RaisedButton(
           onPressed: () {
             _transformationController.value = Matrix4.identity();
-
-            setState(() {
-              _scale = 1.0;
-            });
+            setState(() => _scale = 1.0);
           },
           child: Text('Reset'),
         )),
