@@ -1,17 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ExampleContent2 extends StatelessWidget {
+class ExamplePresentation extends StatelessWidget {
   final itemColor;
   final label;
+  final double width = 300;
+  final double height = 200;
 
-  const ExampleContent2({Key key, this.label, this.itemColor}) : super(key: key);
+  const ExamplePresentation({Key key, this.label, this.itemColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FittedBox(
       fit: BoxFit.contain,
       child: Container(
+        width: width,
+        height: height,
         padding: EdgeInsets.all(10.0),
         color: itemColor,
         child: Center(

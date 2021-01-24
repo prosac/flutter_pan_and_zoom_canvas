@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'background.dart';
 import 'draggable_item.dart';
-import 'example_content_2.dart';
+import 'example_presentation.dart';
 import 'item.dart';
 import 'test_data.dart';
 
@@ -37,7 +37,7 @@ class WorkBenchState extends State<WorkBench> {
 
   // TODO: make faktory method of Item
   Item buildItem(Offset offset) {
-    return Item(offset: offset, width: 100, height: 100, payload: TestData(text: 'lala'), presentation: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent));
+    return Item(offset: offset, payload: TestData(text: 'lala'), presentation: ExamplePresentation(label: 'blub', itemColor: Colors.deepPurpleAccent));
   }
 
   void _onAcceptWithDetails(DragTargetDetails details, Size backgroundSize) {
