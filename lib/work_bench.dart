@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'background.dart';
@@ -36,7 +38,13 @@ class WorkBenchState extends State<WorkBench> {
     return Item(offset: offset, payload: payload, presentation: ExamplePresentation(label: payload.text, color: payload.color));
   }
 
-  void _onAcceptWithDetails(DragTargetDetails details, Size backgroundSize) {
+  void _dematerializeItem(item) {
+    items.remove(item);
+    draggingItems.add(item);
+    print(items);
+  }
+
+  void _materializeItemAtNewOffset(DragTargetDetails details, Size backgroundSize) {
     final RenderBox renderBox = _dragTargetKey.currentContext.findRenderObject();
     final Offset localOffset = renderBox.globalToLocal(details.offset);
 
@@ -46,7 +54,13 @@ class WorkBenchState extends State<WorkBench> {
     );
 
     // this is the item added after dragging
-    setState(() => items.add(buildItem(offset, details.data)));
+    setState(() {
+      Item item = draggingItems.removeLast();
+      item.offset = offset;
+      items.add(item);
+    });
+
+    print(items);
   }
 
   @override
@@ -54,9 +68,11 @@ class WorkBenchState extends State<WorkBench> {
     super.initState();
     _background = Background(width: widget.width, height: widget.height);
     _backgroundSize = Size(4000, 3000);
-    // this is the initially added item
-    items.add(buildItem(Offset(0, 0), TestData(text: 'asdfsdf', color: Colors.deepPurpleAccent)));
-    items.add(buildItem(Offset(0, 0), TestData(text: '123', color: Colors.deepPurple)));
+    // these  are the initially added items
+    // ... next problem. only when they have the same initial offset, they are both visible on the canvas! wft?
+    // items.add(buildItem(Offset(100, 0), TestData(text: 'asdfsdf', color: Colors.deepPurpleAccent)));
+    // items.add(buildItem(Offset(100, 0), TestData(text: '123', color: Colors.deepPurple)));
+    // items.add(buildItem(Offset(100, 0), TestData(text: '123', color: Colors.deepPurple)));
     print(items);
   }
 
@@ -75,13 +91,14 @@ class WorkBenchState extends State<WorkBench> {
           child: DragTarget(
             key: _dragTargetKey,
             onAcceptWithDetails: (DragTargetDetails details) {
-              _onAcceptWithDetails(details, _backgroundSize);
+              _materializeItemAtNewOffset(details, _backgroundSize);
             },
             builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
               return Stack(
                 children: <Widget>[
                   _background,
                   ...items.map((Item item) {
+                    print("drawging ${item}");
                     Offset offset =
                       Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
 
@@ -91,13 +108,8 @@ class WorkBenchState extends State<WorkBench> {
                       item: item,
                       onDragStarted: () {
                         setState(() {
-                          items.remove(item);
-                          draggingItems.add(item);
+                          _dematerializeItem(item);
                         });
-                      },
-                      onDragEnd: (DraggableDetails details) {
-                        offset = details.offset;
-                        draggingItems.remove(item);
                       }
                     );
                   }).toList()
@@ -108,14 +120,27 @@ class WorkBenchState extends State<WorkBench> {
           )),
       Align(
         alignment: Alignment.centerLeft,
-        child: Container(
-            child: RaisedButton(
-          onPressed: () {
-            _transformationController.value = Matrix4.identity();
-            setState(() => _scale = 1.0);
-          },
-          child: Text('Reset'),
-        )),
+        child: Column(
+          children: [
+            RaisedButton(
+              onPressed: () {
+                _transformationController.value = Matrix4.identity();
+                setState(() => _scale = 1.0);
+              },
+              child: Text('Reset')
+            ),
+            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+                    items.add(buildItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
+                  });
+                },
+                child: Text('Add item')
+            ),
+          ]
+        )
       )
     ]);
   }

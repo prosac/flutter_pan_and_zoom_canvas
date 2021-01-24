@@ -13,13 +13,10 @@ class DraggableItem extends StatelessWidget {
     this.onDragEnd,
     this.item,
     this.offset,
-  })  : assert(scale != null),
-        assert(onDragStarted != null),
-        assert(onDragEnd != null),
-        assert(item != null),
-        assert(onDragEnd != null),
-        assert(offset != null),
-        super(key: key);
+  }) : assert(scale != null),
+       assert(item != null),
+       assert(offset != null),
+       super(key: key);
 
   final double scale;
   final Item item;

@@ -4,13 +4,13 @@ import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'test_data.dart';
 
 class Item {
-  const Item({
+  Item({
     this.offset,
     this.payload,
     this.presentation
   }) : assert(payload != null);
 
-  final Offset offset;
+  Offset offset;
   final TestData payload;
   final ExamplePresentation presentation;
 
