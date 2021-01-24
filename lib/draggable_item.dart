@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/item.dart';
 
-import 'example_content_2.dart';
-import 'test_data.dart';
+import 'item.dart';
 
 class DraggableItem extends StatelessWidget {
   DraggableItem({
@@ -11,13 +11,18 @@ class DraggableItem extends StatelessWidget {
     this.isDragging = false,
     this.onDragStarted,
     this.onDragEnd,
-    this.testData,
-    this.offset
-  })  : assert(testData != null),
+    this.item,
+    this.offset,
+  })  : assert(scale != null),
+        assert(onDragStarted != null),
+        assert(onDragEnd != null),
+        assert(item != null),
+        assert(onDragEnd != null),
+        assert(offset != null),
         super(key: key);
 
   final double scale;
-  final TestData testData;
+  final Item item;
   final bool isDragging;
   final VoidCallback onDragStarted;
   final DragEndCallback onDragEnd;
@@ -29,15 +34,15 @@ class DraggableItem extends StatelessWidget {
       left: offset.dx,
       top: offset.dy,
         child: Draggable(
+          data: item.payload,
           dragAnchorStrategy: (widget, context, position) {
             final RenderBox renderObject = context.findRenderObject() as RenderBox;
             return renderObject.globalToLocal(position).scale(scale, scale);
           },
-          data: testData,
-          feedback: SizedBox(width: 100 * scale, height: 100 * scale, child: ExampleContent2(label: 'bla', itemColor: Colors.deepPurple)),
+          feedback: SizedBox(width: item.width * scale, height: item.height * scale, child: item.presentation),
           onDragStarted: onDragStarted,
           onDragEnd: onDragEnd,
-          child: SizedBox(width: 100, height: 100, child: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent)),
+          child: SizedBox(width: item.width, height: item.height, child: item.presentation),
         )
     );
   }

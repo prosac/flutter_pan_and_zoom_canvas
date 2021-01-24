@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'background.dart';
 import 'draggable_item.dart';
-import 'item_data.dart';
+import 'example_content_2.dart';
+import 'item.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
-  WorkBench({Key key, this.width, this.height})
-      : assert(width != null),
-        assert(height != null),
-        super(key: key);
+  WorkBench({
+    Key key,
+    this.width,
+    this.height
+  }) : assert(width != null),
+       assert(height != null),
+       super(key: key);
 
   final double width;
   final double height;
@@ -20,15 +24,20 @@ class WorkBench extends StatefulWidget {
 
 class WorkBenchState extends State<WorkBench> {
   final GlobalKey _dragTargetKey = GlobalKey();
-  final List<ItemData> items = <ItemData>[];
+  final List<Item> items = <Item>[];
   TransformationController _transformationController = TransformationController();
 
   Size _backgroundSize;
   Background _background;
   double _scale = 1.0;
 
-  void _onRemoveItem(ItemData itemData) {
+  void putItemInDraggingState(Item itemData) {
     setState(() => items.remove(itemData));
+  }
+
+  // TODO: make faktory method of Item
+  Item buildItem(Offset offset) {
+    return Item(offset: offset, width: 100, height: 100, payload: TestData(text: 'lala'), presentation: ExampleContent2(label: 'blub', itemColor: Colors.deepPurpleAccent));
   }
 
   void _onAcceptWithDetails(DragTargetDetails details, Size backgroundSize) {
@@ -41,7 +50,7 @@ class WorkBenchState extends State<WorkBench> {
     );
 
     // this is the item added after dragging
-    setState(() => items.add(ItemData(offset: offset, width: 100, height: 100, testData: details.data)));
+    setState(() => items.add(buildItem(offset)));
   }
 
   @override
@@ -50,13 +59,12 @@ class WorkBenchState extends State<WorkBench> {
     _background = Background(width: widget.width, height: widget.height);
     _backgroundSize = Size(4000, 3000);
     // this is the initially added item
-    items.add(ItemData(offset: Offset(0, 0), width: 100, height: 100, testData: TestData()));
+    items.add(buildItem(Offset(0, 0)));
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
-      // TODO: the item must not jump under the cursor when dragging
       InteractiveViewer(
           transformationController: _transformationController,
           onInteractionEnd: (details) {
@@ -75,20 +83,21 @@ class WorkBenchState extends State<WorkBench> {
               return Stack(
                 children: <Widget>[
                   _background,
-                  ...items.map((ItemData itemData) {
+                  ...items.map((Item item) {
                     Offset offset =
-                      Offset(itemData.offset.dx * _backgroundSize.width, itemData.offset.dy * _backgroundSize.height);
+                      Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
 
                     return DraggableItem(
                       offset: offset,
                       scale: _scale,
-                      testData: TestData(text: 'Testdata'),
+                      item: item,
                       onDragStarted: () {
-                        _onRemoveItem(itemData);
+                        putItemInDraggingState(item);
                       },
                       onDragEnd: (DraggableDetails details) {
                         offset = details.offset;
-                      });
+                      }
+                    );
                   }).toList()
                 ],
               );
