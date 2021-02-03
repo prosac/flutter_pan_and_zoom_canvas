@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/example_presentation.dart';
 
 import 'test_data.dart';
 
@@ -12,7 +11,7 @@ class Item {
 
   Offset offset;
   final TestData payload;
-  final ExamplePresentation presentation;
+  final presentation;
 
   get width {
     return presentation.width;

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/some_different_thing.dart';
 
 import 'background.dart';
 import 'draggable_item.dart';
@@ -38,10 +39,12 @@ class WorkBenchState extends State<WorkBench> {
     return Item(offset: offset, payload: payload, presentation: ExamplePresentation(label: payload.text, color: payload.color));
   }
 
+  Item buildDifferentItem(Offset offset, TestData payload) {
+    return Item(offset: offset, payload: payload, presentation: SomeDifferentThing(label: payload.text, color: payload.color));
+  }
   void _dematerializeItem(item) {
     items.remove(item);
     draggingItems.add(item);
-    print(items);
   }
 
   void _materializeItemAtNewOffset(DragTargetDetails details, Size backgroundSize) {
@@ -59,8 +62,6 @@ class WorkBenchState extends State<WorkBench> {
       item.offset = offset;
       items.add(item);
     });
-
-    print(items);
   }
 
   @override
@@ -73,7 +74,6 @@ class WorkBenchState extends State<WorkBench> {
     // items.add(buildItem(Offset(100, 0), TestData(text: 'asdfsdf', color: Colors.deepPurpleAccent)));
     // items.add(buildItem(Offset(100, 0), TestData(text: '123', color: Colors.deepPurple)));
     // items.add(buildItem(Offset(100, 0), TestData(text: '123', color: Colors.deepPurple)));
-    print(items);
   }
 
   @override
@@ -98,7 +98,6 @@ class WorkBenchState extends State<WorkBench> {
                 children: <Widget>[
                   _background,
                   ...items.map((Item item) {
-                    print("drawging ${item}");
                     Offset offset =
                       Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
 
@@ -137,7 +136,17 @@ class WorkBenchState extends State<WorkBench> {
                     items.add(buildItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
                   });
                 },
-                child: Text('Add item')
+                child: Text('Add thing')
+            ),
+            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+                    items.add(buildDifferentItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
+                  });
+                },
+                child: Text('Add a differen thing')
             ),
           ]
         )
