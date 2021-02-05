@@ -13,10 +13,10 @@ class DraggableItem extends StatelessWidget {
     this.onDragEnd,
     this.item,
     this.offset,
-  }) : assert(scale != null),
-       assert(item != null),
-       assert(offset != null),
-       super(key: key);
+  })  : assert(scale != null),
+        assert(item != null),
+        assert(offset != null),
+        super(key: key);
 
   final double scale;
   final Item item;
@@ -28,8 +28,8 @@ class DraggableItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: offset.dx,
-      top: offset.dy,
+        left: offset.dx,
+        top: offset.dy,
         child: Draggable(
           data: item.payload,
           dragAnchorStrategy: (widget, context, position) {
@@ -40,7 +40,6 @@ class DraggableItem extends StatelessWidget {
           onDragStarted: onDragStarted,
           onDragEnd: onDragEnd,
           child: SizedBox(width: item.width, height: item.height, child: item.presentation),
-        )
-    );
+        ));
   }
 }

@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'test_data.dart';
 
 class Item {
-  Item({
-    this.offset,
-    this.payload,
-    this.presentation
-  }) : assert(payload != null);
+  Item({this.offset, this.payload, this.presentation}) : assert(payload != null);
 
   Offset offset;
   final TestData payload;

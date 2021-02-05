@@ -10,13 +10,10 @@ import 'item.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
-  WorkBench({
-    Key key,
-    this.width,
-    this.height
-  }) : assert(width != null),
-       assert(height != null),
-       super(key: key);
+  WorkBench({Key key, this.width, this.height})
+      : assert(width != null),
+        assert(height != null),
+        super(key: key);
 
   final double width;
   final double height;
@@ -36,12 +33,15 @@ class WorkBenchState extends State<WorkBench> {
   double _scale = 1.0;
 
   Item buildItem(Offset offset, TestData payload) {
-    return Item(offset: offset, payload: payload, presentation: ExamplePresentation(label: payload.text, color: payload.color));
+    return Item(
+        offset: offset, payload: payload, presentation: ExamplePresentation(label: payload.text, color: payload.color));
   }
 
   Item buildDifferentItem(Offset offset, TestData payload) {
-    return Item(offset: offset, payload: payload, presentation: SomeDifferentThing(label: payload.text, color: payload.color));
+    return Item(
+        offset: offset, payload: payload, presentation: SomeDifferentThing(label: payload.text, color: payload.color));
   }
+
   void _dematerializeItem(item) {
     items.remove(item);
     draggingItems.add(item);
@@ -99,18 +99,17 @@ class WorkBenchState extends State<WorkBench> {
                   _background,
                   ...items.map((Item item) {
                     Offset offset =
-                      Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
+                        Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
 
                     return DraggableItem(
-                      offset: offset,
-                      scale: _scale,
-                      item: item,
-                      onDragStarted: () {
-                        setState(() {
-                          _dematerializeItem(item);
+                        offset: offset,
+                        scale: _scale,
+                        item: item,
+                        onDragStarted: () {
+                          setState(() {
+                            _dematerializeItem(item);
+                          });
                         });
-                      }
-                    );
                   }).toList()
                 ],
               );
@@ -118,16 +117,14 @@ class WorkBenchState extends State<WorkBench> {
             // onWillAccept: () => true,
           )),
       Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          children: [
+          alignment: Alignment.centerLeft,
+          child: Column(children: [
             RaisedButton(
-              onPressed: () {
-                _transformationController.value = Matrix4.identity();
-                setState(() => _scale = 1.0);
-              },
-              child: Text('Reset')
-            ),
+                onPressed: () {
+                  _transformationController.value = Matrix4.identity();
+                  setState(() => _scale = 1.0);
+                },
+                child: Text('Reset')),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             RaisedButton(
                 onPressed: () {
@@ -136,8 +133,7 @@ class WorkBenchState extends State<WorkBench> {
                     items.add(buildItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
                   });
                 },
-                child: Text('Add thing')
-            ),
+                child: Text('Add thing')),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             RaisedButton(
                 onPressed: () {
@@ -146,11 +142,8 @@ class WorkBenchState extends State<WorkBench> {
                     items.add(buildDifferentItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
                   });
                 },
-                child: Text('Add a differen thing')
-            ),
-          ]
-        )
-      )
+                child: Text('Add a different thing')),
+          ]))
     ]);
   }
 }
