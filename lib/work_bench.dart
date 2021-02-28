@@ -69,13 +69,8 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    _background = Background(width: widget.width, height: widget.height);
+    _background = NeumorphicBackground(width: widget.width, height: widget.height);
     _backgroundSize = Size(4000, 3000);
-    // these  are the initially added items
-    // ... next problem. only when they have the same initial offset, they are both visible on the canvas! wft?
-    // items.add(buildItem(Offset(100, 0), TestData(text: 'asdfsdf', color: Colors.deepPurpleAccent)));
-    // items.add(buildItem(Offset(100, 0), TestData(text: '123', color: Colors.deepPurple)));
-    // items.add(buildItem(Offset(100, 0), TestData(text: '123', color: Colors.deepPurple)));
   }
 
   @override
@@ -123,7 +118,6 @@ class WorkBenchState extends State<WorkBench> {
                 ],
               );
             },
-            // onWillAccept: () => true,
           )),
       Align(
           alignment: Alignment.centerLeft,
