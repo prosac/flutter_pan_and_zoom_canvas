@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/conntection_painter.dart';
+import 'package:flutter_pan_and_zoom/neumorphic_background.dart';
 import 'package:flutter_pan_and_zoom/some_different_thing.dart';
 
 import 'background.dart';
@@ -97,6 +99,13 @@ class WorkBenchState extends State<WorkBench> {
               return Stack(
                 children: <Widget>[
                   _background,
+                  ...items.map((Item item) {
+                    Offset offset =
+                      Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height)
+                      + Offset(item.width / 2, item.height / 2);
+
+                    return CustomPaint(painter: ConnectionPainter(start: Offset.zero, end: offset));
+                  }),
                   ...items.map((Item item) {
                     Offset offset =
                         Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
