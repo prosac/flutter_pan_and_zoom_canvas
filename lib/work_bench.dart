@@ -44,6 +44,13 @@ class WorkBenchState extends State<WorkBench> {
         offset: offset, payload: payload, presentation: SomeDifferentThing(label: payload.text, color: payload.color));
   }
 
+  // SimpleItem buildTail(Offset offset, TestData payload) {
+  //   return SimpleItem(
+  //     offset: offset,
+  //     presentation: MindMapTail()
+  //   );
+  // }
+
   void _dematerializeItem(item) {
     items.remove(item);
     draggingItems.add(item);
