@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/presentation_container.dart';
+import 'package:provider/provider.dart';
+
+import 'node_graph_model/connections_model.dart';
 
 class ExamplePresentation extends StatelessWidget {
   final color;
@@ -22,7 +25,8 @@ class ExamplePresentation extends StatelessWidget {
         child:
             NeumorphicButton(
               onPressed: () {
-                print("onClick");
+                var connections = context.read<ConnectionsModel>();
+                print(connections.mode());
               },
               style: NeumorphicStyle(
                 shape: NeumorphicShape.flat,

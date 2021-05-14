@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/node_graph_model/connections_model.dart';
 import 'package:flutter_pan_and_zoom/conntection_painter.dart';
 import 'package:flutter_pan_and_zoom/neumorphic_background.dart';
 import 'package:flutter_pan_and_zoom/some_different_thing.dart';
+import 'package:provider/provider.dart';
 
 import 'background.dart';
 import 'draggable_item.dart';
@@ -28,6 +30,7 @@ class WorkBenchState extends State<WorkBench> {
   final GlobalKey _dragTargetKey = GlobalKey();
   final List<Item> items = <Item>[];
   final List<Item> draggingItems = <Item>[];
+  ConnectionsModel _connections;
   TransformationController _transformationController = TransformationController();
 
   Size _backgroundSize;
@@ -78,82 +81,90 @@ class WorkBenchState extends State<WorkBench> {
     super.initState();
     _background = NeumorphicBackground(width: widget.width, height: widget.height);
     _backgroundSize = Size(4000, 3000);
+    _connections = context.read<ConnectionsModel>();
+  }
+
+  CustomPaint currentDrawing() {
+    return CustomPaint(painter: ConnectionPainter(start: _connections.startOffset(), end: Offset(1000, 1000)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: <Widget>[
-      InteractiveViewer(
-          transformationController: _transformationController,
-          onInteractionEnd: (details) {
-            setState(() {
-              // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-              _scale = _transformationController.value.row0[0];
-            });
-          },
-          constrained: false, // this does the trick to make the "canvas" bigger than the view port
-          child: DragTarget(
-            key: _dragTargetKey,
-            onAcceptWithDetails: (DragTargetDetails details) {
-              _materializeItemAtNewOffset(details, _backgroundSize);
-            },
-            builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
-              return Stack(
-                children: <Widget>[
-                  _background,
-                  ...items.map((Item item) {
-                    Offset offset =
-                      Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height)
-                      + Offset(item.width / 2, item.height / 2);
+    return ChangeNotifierProvider(
+        create: (context) => ConnectionsModel(),
+        child: Stack(children: <Widget>[
+          InteractiveViewer(
+              transformationController: _transformationController,
+              onInteractionEnd: (details) {
+                setState(() {
+                  // doing this in a call to setState solves the problem that the feedback item does not know the current scale
+                  _scale = _transformationController.value.row0[0];
+                });
+              },
+              constrained: false, // this does the trick to make the "canvas" bigger than the view port
+              child: DragTarget(
+                key: _dragTargetKey,
+                onAcceptWithDetails: (DragTargetDetails details) {
+                  _materializeItemAtNewOffset(details, _backgroundSize);
+                },
+                builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
+                  return Stack(
+                    children: <Widget>[
+                      _background,
+                      currentDrawing(),
+                      ...items.map((Item item) {
+                        Offset offset =
+                            Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height) +
+                                Offset(item.width / 2, item.height / 2);
 
-                    return CustomPaint(painter: ConnectionPainter(start: Offset.zero, end: offset));
-                  }),
-                  ...items.map((Item item) {
-                    Offset offset =
-                        Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
+                        return CustomPaint(painter: ConnectionPainter(start: Offset.zero, end: offset));
+                      }),
+                      ...items.map((Item item) {
+                        Offset offset =
+                            Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
 
-                    return DraggableItem(
-                        offset: offset,
-                        scale: _scale,
-                        item: item,
-                        onDragStarted: () {
-                          setState(() {
-                            _dematerializeItem(item);
-                          });
-                        });
-                  }).toList()
-                ],
-              );
-            },
-          )),
-      Align(
-          alignment: Alignment.centerLeft,
-          child: Column(children: [
-            RaisedButton(
-                onPressed: () {
-                  _transformationController.value = Matrix4.identity();
-                  setState(() => _scale = 1.0);
+                        return DraggableItem(
+                            offset: offset,
+                            scale: _scale,
+                            item: item,
+                            onDragStarted: () {
+                              setState(() {
+                                _dematerializeItem(item);
+                              });
+                            });
+                      }).toList()
+                    ],
+                  );
                 },
-                child: Text('Reset')),
-            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-            RaisedButton(
-                onPressed: () {
-                  setState(() {
-                    Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-                    items.add(buildItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
-                  });
-                },
-                child: Text('Add thing')),
-            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-            RaisedButton(
-                onPressed: () {
-                  setState(() {
-                    Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-                    items.add(buildDifferentItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
-                  });
-                },
-                child: Text('Add a different thing')),
-          ]))
-    ]);
+              )),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Column(children: [
+                RaisedButton(
+                    onPressed: () {
+                      _transformationController.value = Matrix4.identity();
+                      setState(() => _scale = 1.0);
+                    },
+                    child: Text('Reset')),
+                Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+                        items.add(buildItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
+                      });
+                    },
+                    child: Text('Add thing')),
+                Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+                        items.add(buildDifferentItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
+                      });
+                    },
+                    child: Text('Add a different thing')),
+              ]))
+        ]));
   }
 }
