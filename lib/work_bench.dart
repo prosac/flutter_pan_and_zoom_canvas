@@ -1,23 +1,21 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/node_graph_model/connections_model.dart';
-import 'package:flutter_pan_and_zoom/conntection_painter.dart';
-import 'package:flutter_pan_and_zoom/neumorphic_background.dart';
-import 'package:flutter_pan_and_zoom/some_different_thing.dart';
 import 'package:provider/provider.dart';
 
 import 'background.dart';
+import 'conntection_painter.dart';
 import 'draggable_item.dart';
-import 'example_presentation.dart';
+import 'factories.dart';
 import 'item.dart';
+import 'model/connection.dart';
+import 'neumorphic_background.dart';
 import 'test_data.dart';
+import './model/graph_model.dart' as Model;
 
 class WorkBench extends StatefulWidget {
-  WorkBench({Key key, this.width, this.height})
-      : assert(width != null),
-        assert(height != null),
-        super(key: key);
+  WorkBench({Key? key, required this.width, required this.height})
+      : super(key: key);
 
   final double width;
   final double height;
@@ -27,40 +25,40 @@ class WorkBench extends StatefulWidget {
 }
 
 class WorkBenchState extends State<WorkBench> {
+  final TransformationController _transformationController =
+      TransformationController();
+
   final GlobalKey _dragTargetKey = GlobalKey();
   final List<Item> items = <Item>[];
   final List<Item> draggingItems = <Item>[];
-  ConnectionsModel _connections;
-  TransformationController _transformationController = TransformationController();
-
-  Size _backgroundSize;
-  Background _background;
+  late Size _backgroundSize = Size(100000, 100000);
+  late Background _background;
   double _scale = 1.0;
 
-  Item buildItem(Offset offset, TestData payload) {
-    return Item(
-        offset: offset, payload: payload, presentation: ExamplePresentation(label: payload.text, color: payload.color));
-  }
+  Model.GraphModel _nodeGraph = Model.GraphModel();
 
-  Item buildDifferentItem(Offset offset, TestData payload) {
-    return Item(
-        offset: offset, payload: payload, presentation: SomeDifferentThing(label: payload.text, color: payload.color));
-  }
-
-  // SimpleItem buildTail(Offset offset, TestData payload) {
-  //   return SimpleItem(
-  //     offset: offset,
-  //     presentation: MindMapTail()
-  //   );
-  // }
-
+  // TODO: make Items a thing that manages the whole flutter centric part of
+  // items on the workbench and put these methods there?
   void _dematerializeItem(item) {
     items.remove(item);
     draggingItems.add(item);
   }
 
-  void _materializeItemAtNewOffset(DragTargetDetails details, Size backgroundSize) {
-    final RenderBox renderBox = _dragTargetKey.currentContext.findRenderObject();
+  Iterable<CustomPaint> _drawConnections() {
+    return items.map((Item item) {
+      Offset offset = Offset(item.offset!.dx * _backgroundSize.width,
+              item.offset!.dy * _backgroundSize.height) +
+          Offset(item.width / 2, item.height / 2);
+
+      return CustomPaint(
+          painter: ConnectionPainter(start: Offset.zero, end: offset));
+    });
+  }
+
+  void _materializeItemAtNewOffset(
+      DragTargetDetails details, Size backgroundSize) {
+    final RenderBox renderBox =
+        _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
     final Offset localOffset = renderBox.globalToLocal(details.offset);
 
     final Offset offset = Offset(
@@ -69,6 +67,8 @@ class WorkBenchState extends State<WorkBench> {
     );
 
     // this is the item added after dragging
+    // TODO: when we move this, we could pass setState of the workbench to the
+    // items abstraction, so it can do the following on its own. :thinking:
     setState(() {
       Item item = draggingItems.removeLast();
       item.offset = offset;
@@ -79,21 +79,23 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    _background = NeumorphicBackground(width: widget.width, height: widget.height);
-    _backgroundSize = Size(4000, 3000);
-    _connections = context.read<ConnectionsModel>();
-  }
-
-  CustomPaint currentDrawing() {
-    return CustomPaint(painter: ConnectionPainter(start: _connections.startOffset(), end: Offset(1000, 1000)));
+    // TODO: background variants should be injecatble
+    _background =
+        NeumorphicBackground(width: widget.width, height: widget.height);
+    // _connections = context.read<ConnectionsModel>();
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => ConnectionsModel(),
+        create: (context) {
+          // return ConnectionsModel();
+        },
         child: Stack(children: <Widget>[
           InteractiveViewer(
+              maxScale: 10.0,
+              minScale: 0.01,
+              boundaryMargin:  EdgeInsets.all(double.infinity),
               transformationController: _transformationController,
               onInteractionEnd: (details) {
                 setState(() {
@@ -101,29 +103,30 @@ class WorkBenchState extends State<WorkBench> {
                   _scale = _transformationController.value.row0[0];
                 });
               },
-              constrained: false, // this does the trick to make the "canvas" bigger than the view port
+              constrained:
+                  false, // this does the trick to make the "canvas" bigger than the view port
               child: DragTarget(
                 key: _dragTargetKey,
                 onAcceptWithDetails: (DragTargetDetails details) {
                   _materializeItemAtNewOffset(details, _backgroundSize);
                 },
-                builder: (BuildContext context, List<TestData> candidateData, List rejectedData) {
+                builder: (BuildContext context, List<TestData?> candidateData,
+                    List rejectedData) {
                   return Stack(
                     children: <Widget>[
                       _background,
-                      currentDrawing(),
+                      // ... the stuff representing the ongoing user interaction of drawing a new connection
+                      // currentDrawing(),
+                      // ... the existing connections between items on the workbench. for now just a quick sketch
+                      // that draws connections from zero to every item
+                      ..._drawConnections(),
                       ...items.map((Item item) {
-                        Offset offset =
-                            Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height) +
-                                Offset(item.width / 2, item.height / 2);
-
-                        return CustomPaint(painter: ConnectionPainter(start: Offset.zero, end: offset));
-                      }),
-                      ...items.map((Item item) {
-                        Offset offset =
-                            Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height);
+                        Offset offset = Offset(
+                            item.offset!.dx * _backgroundSize.width,
+                            item.offset!.dy * _backgroundSize.height);
 
                         return DraggableItem(
+                            key: UniqueKey(),
                             offset: offset,
                             scale: _scale,
                             item: item,
@@ -131,8 +134,22 @@ class WorkBenchState extends State<WorkBench> {
                               setState(() {
                                 _dematerializeItem(item);
                               });
-                            });
-                      }).toList()
+                            },
+                            onDragUpdate: (DragUpdateDetails details) {});
+                      }).toList(),
+                      ..._nodeGraph.connections().map((Connection connection) {
+                        RenderBox box1 = connection.node1.key.currentContext
+                            .findRenderObject();
+                        Offset offset1 = box1.localToGlobal(Offset.zero);
+
+                        RenderBox box2 = connection.node1.key.currentContext
+                            .findRenderObject();
+                        Offset offset2 = box2.localToGlobal(Offset.zero);
+
+                        return CustomPaint(
+                            painter: ConnectionPainter(
+                                start: offset1, end: offset2));
+                      })
                     ],
                   );
                 },
@@ -150,8 +167,10 @@ class WorkBenchState extends State<WorkBench> {
                 RaisedButton(
                     onPressed: () {
                       setState(() {
-                        Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-                        items.add(buildItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
+                        Color randomColor = Colors.primaries[
+                            Random().nextInt(Colors.primaries.length)];
+                        items.add(buildItem(Offset.zero,
+                            TestData(text: 'added...', color: randomColor)));
                       });
                     },
                     child: Text('Add thing')),
@@ -159,8 +178,10 @@ class WorkBenchState extends State<WorkBench> {
                 RaisedButton(
                     onPressed: () {
                       setState(() {
-                        Color randomColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-                        items.add(buildDifferentItem(Offset.zero, TestData(text: 'added...', color: randomColor)));
+                        Color randomColor = Colors.primaries[
+                            Random().nextInt(Colors.primaries.length)];
+                        items.add(buildDifferentItem(Offset.zero,
+                            TestData(text: 'added...', color: randomColor)));
                       });
                     },
                     child: Text('Add a different thing')),

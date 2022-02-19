@@ -4,7 +4,7 @@ class ExampleContent extends StatelessWidget {
   final itemColor;
   final label;
 
-  const ExampleContent({Key key, this.label, this.itemColor}) : super(key: key);
+  const ExampleContent({Key? key, this.label, this.itemColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

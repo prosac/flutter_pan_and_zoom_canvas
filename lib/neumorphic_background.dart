@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/background.dart';
+import 'background.dart';
 
 class NeumorphicBackground extends StatelessWidget implements Background {
   const NeumorphicBackground({
-    Key key,
+    Key? key,
     this.width,
     this.height,
   }) : super(key: key);
 
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {

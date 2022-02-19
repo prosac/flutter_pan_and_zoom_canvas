@@ -1,7 +1,9 @@
-import 'package:flutter_pan_and_zoom/node_graph_model/node.dart';
+import 'node.dart';
 
-class Model {
-  Model();
+import 'connection.dart';
+
+class GraphModel {
+  GraphModel();
 
   List<Node> _nodes = List<Node>.empty(growable: true);
   List<Connection> _connections = List<Connection>.empty(growable: true);
@@ -13,7 +15,7 @@ class Model {
     _nodes.add(node);
   }
 
-  void addConnection(startNode, endNode) {
-    _connections.add(Connection(startNode, endNode));
+  void addConnection(node1, node2) {
+    _connections.add(Connection(node1, node2));
   }
 }

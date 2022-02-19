@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/example_presentation.dart';
 
 import 'test_data.dart';
 
 class Item {
-  Item({this.offset, this.payload, this.presentation}) : assert(payload != null);
+  var offset;
 
-  Offset offset;
+  Item({this.offset, required this.payload, required this.presentation});
+
   final TestData payload;
   final presentation;
 

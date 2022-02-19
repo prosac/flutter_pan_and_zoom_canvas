@@ -1,10 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:flutter_pan_and_zoom/presentation_container.dart';
-import 'package:provider/provider.dart';
-
-import 'node_graph_model/connections_model.dart';
+import 'presentation_container.dart';
 
 class ExamplePresentation extends StatelessWidget {
   final color;
@@ -12,7 +8,7 @@ class ExamplePresentation extends StatelessWidget {
   final double width = 300;
   final double height = 200;
 
-  const ExamplePresentation({Key key, this.label, this.color}) : super(key: key);
+  const ExamplePresentation({Key? key, this.label, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +21,8 @@ class ExamplePresentation extends StatelessWidget {
         child:
             NeumorphicButton(
               onPressed: () {
-                var connections = context.read<ConnectionsModel>();
-                print(connections.mode());
+                // var connections = context.read<ConnectionsModel>();
+                // print(connections.mode());
               },
               style: NeumorphicStyle(
                 shape: NeumorphicShape.flat,
@@ -35,7 +31,7 @@ class ExamplePresentation extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(20.0),
               child: Icon(
-                Icons.favorite_border,
+                Icons.delete,
                 color: _iconsColor(context),
               ),
               duration: Duration(milliseconds: 50),

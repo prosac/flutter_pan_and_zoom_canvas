@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/presentation_container.dart';
+import 'presentation_container.dart';
 
 // Create a Form widget.
 class SomeDifferentThing extends StatelessWidget {
@@ -8,7 +8,7 @@ class SomeDifferentThing extends StatelessWidget {
   final double width = 300;
   final double height = 200;
 
-  const SomeDifferentThing({Key key, this.label, this.color}) : super(key: key);
+  const SomeDifferentThing({Key? key, this.label, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +34,10 @@ class SomeDifferentThing extends StatelessWidget {
                 stops: [0.1, 0.5, 0.7, 0.9],
                 colors: [
                   // Colors are easy thanks to Flutter's Colors class.
-                  Colors.indigo[800],
-                  Colors.indigo[700],
-                  Colors.indigo[600],
-                  Colors.indigo[400],
+                  Colors.indigo[800]!,
+                  Colors.indigo[700]!,
+                  Colors.indigo[600]!,
+                  Colors.indigo[400]!,
                 ],
               ),
             ),
