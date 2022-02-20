@@ -11,7 +11,7 @@ import 'item.dart';
 import 'model/connection.dart';
 import 'neumorphic_background.dart';
 import 'test_data.dart';
-import './model/graph_model.dart' as Model;
+import 'model/graph_model.dart' as Model;
 
 class WorkBench extends StatefulWidget {
   WorkBench({Key? key, required this.width, required this.height})
@@ -157,14 +157,14 @@ class WorkBenchState extends State<WorkBench> {
           Align(
               alignment: Alignment.centerLeft,
               child: Column(children: [
-                RaisedButton(
+                ElevatedButton(
                     onPressed: () {
                       _transformationController.value = Matrix4.identity();
                       setState(() => _scale = 1.0);
                     },
                     child: Text('Reset')),
                 Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                RaisedButton(
+                ElevatedButton(
                     onPressed: () {
                       setState(() {
                         Color randomColor = Colors.primaries[
@@ -174,17 +174,6 @@ class WorkBenchState extends State<WorkBench> {
                       });
                     },
                     child: Text('Add thing')),
-                Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                RaisedButton(
-                    onPressed: () {
-                      setState(() {
-                        Color randomColor = Colors.primaries[
-                            Random().nextInt(Colors.primaries.length)];
-                        items.add(buildDifferentItem(Offset.zero,
-                            TestData(text: 'added...', color: randomColor)));
-                      });
-                    },
-                    child: Text('Add a different thing')),
               ]))
         ]));
   }
