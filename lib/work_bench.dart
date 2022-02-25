@@ -31,8 +31,9 @@ class WorkBenchState extends State<WorkBench> {
   final GlobalKey _dragTargetKey = GlobalKey();
   final List<Item> items = <Item>[];
   final List<Item> draggingItems = <Item>[];
-  late Size _backgroundSize = Size(100000, 100000);
   late Background _background;
+  late Size _backgroundSize = Size(_background.width, _background.height);
+  late Offset _center = Offset(_backgroundSize.width/2, _backgroundSize.height/2);
   double _scale = 1.0;
 
   Model.GraphModel _nodeGraph = Model.GraphModel();
@@ -95,7 +96,7 @@ class WorkBenchState extends State<WorkBench> {
           InteractiveViewer(
               maxScale: 10.0,
               minScale: 0.01,
-              boundaryMargin:  EdgeInsets.all(double.infinity),
+              boundaryMargin:  EdgeInsets.all(1000.0),
               transformationController: _transformationController,
               onInteractionEnd: (details) {
                 setState(() {
@@ -159,7 +160,9 @@ class WorkBenchState extends State<WorkBench> {
               child: Column(children: [
                 ElevatedButton(
                     onPressed: () {
-                      _transformationController.value = Matrix4.identity();
+                      var matrix = Matrix4.identity();
+                      matrix.translate(-_center.dx, -_center.dy);
+                      _transformationController.value = matrix;
                       setState(() => _scale = 1.0);
                     },
                     child: Text('Reset')),
