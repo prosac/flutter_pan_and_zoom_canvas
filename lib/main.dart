@@ -7,6 +7,7 @@ void main() => runApp(PanAndZoom());
 class PanAndZoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Pan and Zoom', home: WorkBench(width: 14000, height: 13000));
+    return MaterialApp(
+        title: 'Pan and Zoom', home: WorkBench(width: 4000, height: 4000));
   }
 }
