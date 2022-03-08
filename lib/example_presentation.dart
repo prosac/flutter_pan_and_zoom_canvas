@@ -17,9 +17,9 @@ class ExamplePresentation extends StatelessWidget {
         height: height,
         color: color,
         label: label,
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(offset.toString()),
             NeumorphicButton(
               onPressed: () {
                 // ... skribbles
@@ -31,13 +31,9 @@ class ExamplePresentation extends StatelessWidget {
               style: NeumorphicStyle(
                   shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.grey.shade200),
               padding: const EdgeInsets.all(20.0),
-              child: Icon(
-                Icons.delete,
-                color: _iconsColor(context),
-              ),
+              child: Icon(Icons.delete, color: _iconsColor(context)),
               duration: Duration(milliseconds: 50),
-            ),
-            // Padding(padding: EdgeInsets.only(top: 10)),
+            )
           ],
         ));
   }
