@@ -61,12 +61,7 @@ class WorkBenchState extends State<WorkBench> {
           minScale: 0.01,
           boundaryMargin: EdgeInsets.all(1000.0),
           transformationController: _transformationController,
-          onInteractionEnd: (details) {
-            setState(() {
-              // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-              _scale = _transformationController.value.row0[0];
-            });
-          },
+          onInteractionEnd: (details) => setState(() => _setScaleFromTransformationController()),
           constrained: false, // this does the trick to make the "canvas" bigger than the view port
           child: DragTarget(
             key: _dragTargetKey,
@@ -153,5 +148,10 @@ class WorkBenchState extends State<WorkBench> {
 
     //   return CustomPaint(painter: ConnectionPainter(start: offset1, end: offset2));
     // })
+  }
+
+  void _setScaleFromTransformationController() {
+    // doing this in a call to setState solves the problem that the feedback item does not know the current scale
+    _scale = _transformationController.value.row0[0];
   }
 }
