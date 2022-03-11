@@ -68,15 +68,16 @@ class WorkBenchState extends State<WorkBench> {
             });
           },
           constrained: false, // this does the trick to make the "canvas" bigger than the view port
-          child: Consumer<GraphModel>(builder: (context, model, child) {
-            return DragTarget(
-              key: _dragTargetKey,
-              onAcceptWithDetails: (DragTargetDetails details) {
-                print('onAcceptWithDetails');
-                Offset offset = _newGlobalOffset(details, _backgroundSize);
-                model.leaveDraggingItemAtNewOffset(offset);
-              },
-              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
+          child: DragTarget(
+            key: _dragTargetKey,
+            onAcceptWithDetails: (DragTargetDetails details) {
+              print('onAcceptWithDetails');
+              GraphModel model = Provider.of<GraphModel>(context, listen: false);
+              Offset offset = _newGlobalOffset(details, _backgroundSize);
+              model.leaveDraggingItemAtNewOffset(offset);
+            },
+            builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
+              return Consumer<GraphModel>(builder: (context, model, child) {
                 return Stack(children: [
                   _background,
                   ...model.nodes.map((Node node) {
@@ -89,16 +90,14 @@ class WorkBenchState extends State<WorkBench> {
                         scale: _scale,
                         node: node,
                         onDragStarted: () {
-                          // setState(() {
                           model.drag(node); // should implicitly do what setState does
-                          // });
                         },
                         onDragUpdate: (DragUpdateDetails details) {});
                   }).toList()
                 ]);
-              },
-            );
-          })),
+              });
+            },
+          )),
       Align(
           alignment: Alignment.centerLeft,
           child: Column(children: [
@@ -114,15 +113,13 @@ class WorkBenchState extends State<WorkBench> {
             Consumer<GraphModel>(builder: (context, model, child) {
               return ElevatedButton(
                   onPressed: () {
-                    model.add(buildNode(Offset.zero));
+                    model.add(buildNode(Offset.zero, TestData(text: 'added...', color: Colors.red)));
                   },
                   child: Text('Add thing'));
             }),
             Consumer<GraphModel>(builder: (context, model, child) {
-                return Text(
-                  'Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}',
-                  style: Theme.of(context).textTheme.bodySmall
-                );
+              return Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}',
+                  style: Theme.of(context).textTheme.bodySmall);
             })
           ]))
     ]);

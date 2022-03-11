@@ -12,10 +12,10 @@ Item buildItem(Offset offset, TestData payload) {
       presentation: ExamplePresentation(label: payload.text, offset: offset));
 }
 
-Node buildNode(Offset offset) {
+Node buildNode(Offset offset, TestData payload) {
   // TODO: there must be a more elegant way to build a 1 to 1 relation
   final presentation = ExamplePresentation(label: 'Foo', offset: offset);
-  final node = Node(offset: offset, presentation: presentation);
+  final node = Node(offset: offset, presentation: presentation, payload: payload);
   node.presentation.node = node;
   return node;
 }
