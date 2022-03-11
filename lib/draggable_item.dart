@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import "item.dart";
+import 'model/node.dart';
 
 /// Wrapper for an [Item] that wraps it in a [Positioned] [Draggable] to make
 /// it grabable, draggable, dropable on the workbench. It exposes the
@@ -19,12 +20,12 @@ class DraggableItem extends StatelessWidget {
     this.onDragStarted,
     this.onDragEnd,
     this.onDragUpdate,
-    required this.item,
+    required this.node,
     required this.offset,
   }) : super(key: key);
 
   final double scale;
-  final Item item;
+  final Node node;
   final bool isDragging;
   final VoidCallback? onDragStarted;
   final DragEndCallback? onDragEnd;
@@ -43,23 +44,23 @@ class DraggableItem extends StatelessWidget {
         child: Stack(
           children: [
             Draggable(
-              data: item.payload,
+              data: 'lala',
               dragAnchorStrategy: (widget, context, position) {
                 final RenderBox renderObject =
                     context.findRenderObject() as RenderBox;
                 return renderObject.globalToLocal(position).scale(scale, scale);
               },
               feedback: SizedBox(
-                  width: item.width * scale,
-                  height: item.height * scale,
-                  child: item.presentation),
+                  width: node.width * scale,
+                  height: node.height * scale,
+                  child: node.presentation),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               child: SizedBox(
-                  width: item.width,
-                  height: item.height,
-                  child: item.presentation),
+                  width: node.width,
+                  height: node.height,
+                  child: node.presentation),
             ),
             // Positioned(
             //   top: 20.0,

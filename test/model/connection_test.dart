@@ -1,8 +1,4 @@
-import 'package:flutter/cupertino.dart';
-
-import '../../lib/model/connection.dart';
-import '../../lib/model/node.dart';
-import 'package:test/test.dart';
+import 'package:flutter/widgets.dart';
 
 class SomeWidget extends StatelessWidget {
   SomeWidget({ Key? key }) : super(key: key);
@@ -14,7 +10,4 @@ class SomeWidget extends StatelessWidget {
 }
 
 void main() {
-  test('it is initialized with two nodes', () {
-    expect(Connection(Node(SomeWidget(key: UniqueKey())), Node(SomeWidget(key: UniqueKey(),))), isA<Connection>());
-  });
 }

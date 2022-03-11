@@ -1,32 +1,32 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_pan_and_zoom/factories.dart';
+import 'package:provider/provider.dart';
+import 'model/graph_model.dart';
+import 'model/node.dart';
 import 'presentation_container.dart';
 
 class ExamplePresentation extends StatelessWidget {
-  final color;
   final label;
   final double width = 300;
   final double height = 200;
   final Offset offset;
+  Node? node;
 
-  const ExamplePresentation({Key? key, this.label, this.color, required this.offset}) : super(key: key);
+  ExamplePresentation({Key? key, this.label, required this.offset}) : super(key: key);
+
+  // set node(Node node) => _node = node;
 
   @override
   Widget build(BuildContext context) {
     return PresentationContainer(
         width: width,
         height: height,
-        color: color,
         label: label,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: Consumer<GraphModel>(builder: (context, GraphModel model, child) {
+          return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             NeumorphicButton(
               onPressed: () {
-                // ... skribbles
-                // var connections = context.read<ConnectionsModel>();
-                // print(connections.mode());
-                // var items = somehowGetTheItemsList();
-                // items.add(buildItem(offset, TestData(text: 'Lala')));
+                model.remove(node);
               },
               style: NeumorphicStyle(
                   shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.grey.shade200),
@@ -34,8 +34,8 @@ class ExamplePresentation extends StatelessWidget {
               child: Icon(Icons.delete, color: _iconsColor(context)),
               duration: Duration(milliseconds: 50),
             )
-          ],
-        ));
+          ]);
+        }));
   }
 
   Color _iconsColor(BuildContext context) {

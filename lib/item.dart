@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/example_presentation.dart';
-
 import 'test_data.dart';
 
+// TODO remove in favor of Node?
 class Item {
   Offset offset;
 

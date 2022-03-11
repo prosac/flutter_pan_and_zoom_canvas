@@ -1,21 +1,51 @@
+import 'package:flutter/widgets.dart';
+
 import 'node.dart';
 
-import 'connection.dart';
+class GraphModel with ChangeNotifier {
+  /// Internal, private state of the model.
+  final List<Node> _nodes = [];
+  final List<Node> _draggingNodes = [];
 
-class GraphModel {
-  GraphModel();
+  List<Node> get nodes => _nodes;
+  List<Node> get draggingNodes => _draggingNodes;
 
-  List<Node> _nodes = List<Node>.empty(growable: true);
-  List<Connection> _connections = List<Connection>.empty(growable: true);
-
-  List<Node> nodes() => _nodes;
-  List<Connection> connections() => _connections;
-
-  void addNode(Node node) {
+  void add(Node node) {
     _nodes.add(node);
+    notifyListeners();
+    print('Adding. Nodes in list ${_nodes.length}');
   }
 
-  void addConnection(node1, node2) {
-    _connections.add(Connection(node1, node2));
+  void remove(node) {
+    _nodes.remove(node);
+    notifyListeners();
+    print('Removing. Nodes in list ${_nodes.length}');
+  }
+
+  /// Removes all items from the model.
+  void removeAll() {
+    _nodes.clear();
+    notifyListeners();
+  }
+
+  void drag(node) {
+    print('Dragging ${node.toString()}');
+    _nodes.remove(node);
+    print('Nodes ${_nodes.length}');
+    _draggingNodes.add(node);
+    print('Dragging nodes ${_draggingNodes.length}');
+    notifyListeners();
+  }
+
+  void leaveDraggingItemAtNewOffset(Offset offset) {
+    print('------');
+    Node node = _draggingNodes.removeLast();
+    print('Stopping to drag node ${node.toString()}');
+    print('Putting node ${node.toString()} to new offset');
+    node.offset = offset;
+    _nodes.add(node);
+    print('Dragging nodes ${_draggingNodes.length}');
+    print('Nodes ${_nodes.length}');
+    notifyListeners();
   }
 }
