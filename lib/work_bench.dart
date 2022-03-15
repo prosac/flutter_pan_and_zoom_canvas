@@ -75,11 +75,7 @@ class WorkBenchState extends State<WorkBench> {
             },
             builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
               return Consumer<GraphModel>(builder: (context, model, child) {
-                return Stack(children: [
-                  _background,
-                  ..._nodes(model),
-                  ..._connections(model)
-                ]);
+                return Stack(children: [_background, ..._nodes(model), ..._connections(model)]);
               });
             },
           )),
@@ -87,21 +83,24 @@ class WorkBenchState extends State<WorkBench> {
           alignment: Alignment.centerLeft,
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return Column(children: [
-              ElevatedButton(
-                  onPressed: _resetViewport,
-                  child: Text('Reset')),
+              ElevatedButton(onPressed: _resetViewport, child: Text('Reset')),
               Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                ElevatedButton(
-                    onPressed: () {
-                      Offset correctedCenter = Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
-                      model.add(buildNode(correctedCenter, TestData(text: 'added...', color: Colors.red)));
-                    },
-                    child: Text('Add thing')),
-                Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}', style: Theme.of(context).textTheme.bodySmall),
-                ...model.nodes.map((node) {
-                  return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
+              ElevatedButton(onPressed: _deleteAllTheThings, child: Text('Delete all the things')),
+              Padding(padding: EdgeInsets.only(bottom: 10.0)),
+              ElevatedButton(
+                  onPressed: () {
+                    Offset correctedCenter =
+                        Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
+                    model.add(buildNode(correctedCenter, TestData(text: 'added...', color: Colors.red)));
+                  },
+                  child: Text('Add thing')),
+              Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}',
+                  style: Theme.of(context).textTheme.bodySmall),
+              ...model.nodes.map((node) {
+                return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
               }).toList()
-            ]);}))
+            ]);
+          }))
     ]);
   }
 
@@ -146,5 +145,9 @@ class WorkBenchState extends State<WorkBench> {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
     _scale = _transformationController.value.row0[0];
     Provider.of<GraphModel>(context, listen: false).scale = _scale;
+  }
+
+  void _deleteAllTheThings() {
+    Provider.of<GraphModel>(context, listen: false).deleteAll();
   }
 }

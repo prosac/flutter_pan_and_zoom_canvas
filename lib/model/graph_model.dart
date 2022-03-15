@@ -58,4 +58,9 @@ class GraphModel with ChangeNotifier {
     print('Nodes ${_nodes.length}');
     notifyListeners();
   }
+
+  void deleteAll() {
+    _nodes.clear();
+    notifyListeners();
+  }
 }
