@@ -93,7 +93,8 @@ class WorkBenchState extends State<WorkBench> {
               Padding(padding: EdgeInsets.only(bottom: 10.0)),
                 ElevatedButton(
                     onPressed: () {
-                      model.add(buildNode(Offset.zero, TestData(text: 'added...', color: Colors.red)));
+                      Offset correctedCenter = Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
+                      model.add(buildNode(correctedCenter, TestData(text: 'added...', color: Colors.red)));
                     },
                     child: Text('Add thing')),
                 Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}', style: Theme.of(context).textTheme.bodySmall),
