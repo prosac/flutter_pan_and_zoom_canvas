@@ -12,8 +12,9 @@ class ExamplePresentation extends StatelessWidget {
   final double height = 200;
   final Offset offset;
   final Node node;
+  final GlobalKey key = GlobalKey();
 
-  ExamplePresentation({Key? key, required this.node, this.label, required this.offset}) : super(key: key);
+  ExamplePresentation({required this.node, this.label, required this.offset});
 
   // set node(Node node) => _node = node;
 

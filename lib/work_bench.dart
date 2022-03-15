@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/model/connection.dart';
+import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
 import 'package:provider/provider.dart';
 
 import 'background.dart';
 import 'draggable_item.dart';
 import 'factories.dart';
-import 'neumorphic_background.dart';
-import 'test_data.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
+import 'neumorphic_background.dart';
+import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
   WorkBench({Key? key, required this.width, required this.height}) : super(key: key);
@@ -75,7 +77,11 @@ class WorkBenchState extends State<WorkBench> {
             },
             builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
               return Consumer<GraphModel>(builder: (context, model, child) {
-                return Stack(children: [_background, ..._nodes(model), ..._connections(model)]);
+                return Stack(children: [
+                  _background,
+                  ..._connections(model),
+                  ..._nodes(model)
+                ]);
               });
             },
           )),
@@ -98,6 +104,10 @@ class WorkBenchState extends State<WorkBench> {
                   style: Theme.of(context).textTheme.bodySmall),
               ...model.nodes.map((node) {
                 return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
+              }).toList(),
+              Text('Connections: ${model.connections.length}', style: Theme.of(context).textTheme.bodySmall),
+              ...model.connections.map((connection) {
+                return Text('${connection.toString()}', style: Theme.of(context).textTheme.bodySmall);
               }).toList()
             ]);
           }))
@@ -129,16 +139,15 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   List<CustomPaint> _connections(GraphModel model) {
-    // return model.connections.map((Connection connection) {
-    //   RenderBox box1 = connection.node1.key.currentContext?.findRenderObject() as RenderBox;
-    //   Offset offset1 = box1.localToGlobal(Offset.zero);
+    return model.connections.map((Connection connection) {
+      Offset nodeOffset1 = connection.node1.presentation.offset;
+      Offset nodeOffset2 = connection.node2.presentation.offset;
 
-    //   RenderBox box2 = connection.node2.key.currentContext?.findRenderObject() as RenderBox;
-    //   Offset offset2 = box2.localToGlobal(Offset.zero);
+      Offset offset1 = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
+      Offset offset2 = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
 
-    //   return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
-    // }).toList();
-    return [];
+      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+    }).toList();
   }
 
   void _setScaleFromTransformationController() {
@@ -148,6 +157,6 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   void _deleteAllTheThings() {
-    Provider.of<GraphModel>(context, listen: false).deleteAll();
+    Provider.of<GraphModel>(context, listen: false).removeAll();
   }
 }

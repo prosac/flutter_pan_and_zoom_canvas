@@ -29,11 +29,14 @@ class GraphModel with ChangeNotifier {
 
   void remove(node) {
     _nodes.remove(node);
+    _connections.removeWhere((connection) => connection.nodesInclude(node));
     notifyListeners();
     print('Removing. Nodes in list ${_nodes.length}');
   }
 
   void removeAll() {
+    _connections.clear();
+    print('After remove: ${_connections.length}');
     _nodes.clear();
     notifyListeners();
   }
@@ -56,11 +59,6 @@ class GraphModel with ChangeNotifier {
     _nodes.add(node);
     print('Dragging nodes ${_draggingNodes.length}');
     print('Nodes ${_nodes.length}');
-    notifyListeners();
-  }
-
-  void deleteAll() {
-    _nodes.clear();
     notifyListeners();
   }
 }
