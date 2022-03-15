@@ -50,6 +50,7 @@ class WorkBenchState extends State<WorkBench> {
   void initState() {
     super.initState();
     _background = NeumorphicBackground(width: widget.width, height: widget.height);
+    _resetViewport();
   }
 
   @override
