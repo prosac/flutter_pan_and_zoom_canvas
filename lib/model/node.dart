@@ -3,18 +3,20 @@ import 'package:flutter_pan_and_zoom/test_data.dart';
 
 class Node {
   Offset offset;
-  final presentation;
+  var presentation;
   final TestData payload;
 
-  Node({required this.offset, required this.presentation, required this.payload});
+  Node({required this.offset, this.presentation, required this.payload});
 
   // TODO what was this for?
   // Widget _widget;
   // get key => _widget.key;
 
+  final GlobalKey key = GlobalKey();
+
   @override
   String toString() {
-    return 'Node ${this.hashCode}}';
+    return 'Node ${this.hashCode}} ${this.offset}';
   }
 
   get width {

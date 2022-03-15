@@ -2,8 +2,9 @@ import 'node.dart';
 
 class Connection {
   Connection(this.node1, this.node2);
-  // Connection(this.node1, this.node2) : assert(node1 != null), assert(node2 != null);
 
+  // TODO: nodes must exist! this is only because i want to solve the problem of creating
+  // node AND presentation with null constraints later
   Node node1;
   Node node2;
 }

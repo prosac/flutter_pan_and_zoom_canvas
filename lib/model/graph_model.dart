@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_pan_and_zoom/model/connection.dart';
 
 import 'node.dart';
 
@@ -6,14 +7,24 @@ class GraphModel with ChangeNotifier {
   /// Internal, private state of the model.
   final List<Node> _nodes = [];
   final List<Node> _draggingNodes = [];
+  final List<Connection> _connections = [];
+  double scale = 1.0; // TODO: should come from the outside
 
   List<Node> get nodes => _nodes;
   List<Node> get draggingNodes => _draggingNodes;
+  List<Connection> get connections => _connections;
 
   void add(Node node) {
     _nodes.add(node);
     notifyListeners();
     print('Adding. Nodes in list ${_nodes.length}');
+  }
+
+  void addFromExistingNode(Node existingNode, Node node) {
+    _nodes.add(node);
+    _connections.add(Connection(existingNode, node));
+    notifyListeners();
+    print('Adding from existing node. Nodes in list ${_nodes.length}');
   }
 
   void remove(node) {
@@ -22,7 +33,6 @@ class GraphModel with ChangeNotifier {
     print('Removing. Nodes in list ${_nodes.length}');
   }
 
-  /// Removes all items from the model.
   void removeAll() {
     _nodes.clear();
     notifyListeners();

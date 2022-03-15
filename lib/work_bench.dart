@@ -37,9 +37,8 @@ class WorkBenchState extends State<WorkBench> {
   //   });
   // }
 
-  Offset _newGlobalOffset(DragTargetDetails details, Size backgroundSize) {
-    final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
-    final Offset localOffset = renderBox.globalToLocal(details.offset);
+  Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
+    final Offset localOffset = renderBox.globalToLocal(globalOffset);
 
     return Offset(
       localOffset.dx / backgroundSize.width,
@@ -68,90 +67,82 @@ class WorkBenchState extends State<WorkBench> {
             onAcceptWithDetails: (DragTargetDetails details) {
               print('onAcceptWithDetails');
               GraphModel model = Provider.of<GraphModel>(context, listen: false);
-              Offset offset = _newGlobalOffset(details, _backgroundSize);
+              final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+              Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
               model.leaveDraggingItemAtNewOffset(offset);
+              print('Offset ${offset.dx}, ${offset.dy}');
             },
             builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
               return Consumer<GraphModel>(builder: (context, model, child) {
                 return Stack(children: [
                   _background,
-                  ...model.nodes.map((Node node) {
-                    Offset offset =
-                        Offset(node.offset.dx * _backgroundSize.width, node.offset.dy * _backgroundSize.height);
-
-                    return DraggableItem(
-                        key: UniqueKey(),
-                        offset: offset,
-                        scale: _scale,
-                        node: node,
-                        onDragStarted: () {
-                          model.drag(node); // should implicitly do what setState does
-                        },
-                        onDragUpdate: (DragUpdateDetails details) {});
-                  }).toList()
+                  ..._nodes(model),
+                  ..._connections(model)
                 ]);
               });
             },
           )),
       Align(
           alignment: Alignment.centerLeft,
-          child: Column(children: [
-            ElevatedButton(
-                onPressed: () {
-                  var matrix = Matrix4.identity();
-                  matrix.translate(-_center.dx, -_center.dy);
-                  _transformationController.value = matrix;
-                  setState(() => _scale = 1.0);
-                },
-                child: Text('Reset')),
-            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-            Consumer<GraphModel>(builder: (context, model, child) {
-              return ElevatedButton(
-                  onPressed: () {
-                    model.add(buildNode(Offset.zero, TestData(text: 'added...', color: Colors.red)));
-                  },
-                  child: Text('Add thing'));
-            }),
-            Consumer<GraphModel>(builder: (context, model, child) {
-              return Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}',
-                  style: Theme.of(context).textTheme.bodySmall);
-            })
-          ]))
+          child: Consumer<GraphModel>(builder: (context, model, child) {
+            return Column(children: [
+              ElevatedButton(
+                  onPressed: _resetViewport,
+                  child: Text('Reset')),
+              Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                ElevatedButton(
+                    onPressed: () {
+                      model.add(buildNode(Offset.zero, TestData(text: 'added...', color: Colors.red)));
+                    },
+                    child: Text('Add thing')),
+                Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}', style: Theme.of(context).textTheme.bodySmall),
+                ...model.nodes.map((node) {
+                  return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
+              }).toList()
+            ]);}))
     ]);
   }
 
-  List<DraggableItem> _nodes(model) {
+  void _resetViewport() {
+    var matrix = Matrix4.identity();
+    matrix.translate(-_center.dx, -_center.dy);
+    _transformationController.value = matrix;
+    setState(() => _scale = 1.0);
+    Provider.of<GraphModel>(context, listen: false).scale = 1.0;
+  }
+
+  List _nodes(model) {
     return model.nodes.map((Node node) {
       Offset offset = Offset(node.offset.dx * _backgroundSize.width, node.offset.dy * _backgroundSize.height);
 
-      return Consumer<GraphModel>(builder: (context, GraphModel model, child) {
-        return DraggableItem(
-            key: UniqueKey(),
-            offset: offset,
-            scale: _scale,
-            node: node,
-            onDragStarted: () {
-              model.drag(node);
-            },
-            onDragUpdate: (DragUpdateDetails details) {});
-      });
+      return DraggableItem(
+          key: UniqueKey(),
+          offset: offset,
+          scale: _scale,
+          node: node,
+          onDragStarted: () {
+            model.drag(node); // should implicitly do what setState does
+          },
+          onDragUpdate: (DragUpdateDetails details) {});
     }).toList();
   }
 
-  _connections(GraphModel model) {
-    // ..._graphModel.connections().map((Connection connection) {
-    //   RenderBox box1 = connection.node1.key.currentContext.findRenderObject();
+  List<CustomPaint> _connections(GraphModel model) {
+    // return model.connections.map((Connection connection) {
+    //   RenderBox box1 = connection.node1.key.currentContext?.findRenderObject() as RenderBox;
     //   Offset offset1 = box1.localToGlobal(Offset.zero);
 
-    //   RenderBox box2 = connection.node1.key.currentContext.findRenderObject();
+    //   RenderBox box2 = connection.node2.key.currentContext?.findRenderObject() as RenderBox;
     //   Offset offset2 = box2.localToGlobal(Offset.zero);
 
-    //   return CustomPaint(painter: ConnectionPainter(start: offset1, end: offset2));
-    // })
+    //   return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+    // }).toList();
+    return [];
   }
 
   void _setScaleFromTransformationController() {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
     _scale = _transformationController.value.row0[0];
+    Provider.of<GraphModel>(context, listen: false).scale = _scale;
   }
 }
