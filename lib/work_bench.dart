@@ -68,12 +68,10 @@ class WorkBenchState extends State<WorkBench> {
           child: DragTarget(
             key: _dragTargetKey,
             onAcceptWithDetails: (DragTargetDetails details) {
-              print('onAcceptWithDetails');
               GraphModel model = Provider.of<GraphModel>(context, listen: false);
               final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
               Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
               model.leaveDraggingItemAtNewOffset(offset);
-              print('Offset ${offset.dx}, ${offset.dy}');
             },
             builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
               return Consumer<GraphModel>(builder: (context, model, child) {

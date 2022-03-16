@@ -17,48 +17,37 @@ class GraphModel with ChangeNotifier {
   void add(Node node) {
     _nodes.add(node);
     notifyListeners();
-    print('Adding. Nodes in list ${_nodes.length}');
   }
 
   void addFromExistingNode(Node existingNode, Node node) {
     _nodes.add(node);
     _connections.add(Connection(existingNode, node));
     notifyListeners();
-    print('Adding from existing node. Nodes in list ${_nodes.length}');
   }
 
   void remove(node) {
     _nodes.remove(node);
     _connections.removeWhere((connection) => connection.nodesInclude(node));
     notifyListeners();
-    print('Removing. Nodes in list ${_nodes.length}');
   }
 
   void removeAll() {
     _connections.clear();
-    print('After remove: ${_connections.length}');
     _nodes.clear();
     notifyListeners();
   }
 
   void drag(node) {
-    print('Dragging ${node.toString()}');
     _nodes.remove(node);
-    print('Nodes ${_nodes.length}');
     _draggingNodes.add(node);
-    print('Dragging nodes ${_draggingNodes.length}');
     notifyListeners();
   }
 
   void leaveDraggingItemAtNewOffset(Offset offset) {
     print('------');
     Node node = _draggingNodes.removeLast();
-    print('Stopping to drag node ${node.toString()}');
-    print('Putting node ${node.toString()} to new offset');
     node.offset = offset;
     _nodes.add(node);
-    print('Dragging nodes ${_draggingNodes.length}');
-    print('Nodes ${_nodes.length}');
     notifyListeners();
   }
 }
