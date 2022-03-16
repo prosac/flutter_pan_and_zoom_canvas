@@ -44,7 +44,6 @@ class GraphModel with ChangeNotifier {
   }
 
   void leaveDraggingItemAtNewOffset(Offset offset) {
-    print('------');
     Node node = _draggingNodes.removeLast();
     node.offset = offset;
     _nodes.add(node);
