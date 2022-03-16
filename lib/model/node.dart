@@ -16,7 +16,7 @@ class Node {
 
   @override
   String toString() {
-    return 'Node ${this.hashCode}} ${this.offset}';
+    return '${this.offset}';
   }
 
   get width {
