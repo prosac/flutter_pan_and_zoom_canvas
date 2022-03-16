@@ -43,8 +43,8 @@ class ExamplePresentation extends StatelessWidget {
                 ),
                 NeumorphicButton(
                   onPressed: () {
-                    var scale = Provider.of<GraphModel>(context, listen: false).scale;
-                    final newNodeOffset = _newOffset(node.offset, Size(4000, 4000), scale);
+                    var newNodeOffset = _newOffset(node.offset, Size(4000, 4000));
+
                     model.addFromExistingNode(
                         node, buildNode(newNodeOffset, TestData(text: 'Fancy new node based on another one')));
                   },
@@ -64,7 +64,7 @@ class ExamplePresentation extends StatelessWidget {
     return Colors.grey.shade400;
   }
 
-  Offset _newOffset(Offset offset, Size backgroundSize, double scale) {
+  Offset _newOffset(Offset offset, Size backgroundSize) {
     var addition = Offset((width + 20) / backgroundSize.width, (height + 20) / backgroundSize.height);
 
     return offset + addition;
