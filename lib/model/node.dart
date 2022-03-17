@@ -5,18 +5,15 @@ class Node {
   Offset offset;
   var presentation;
   final TestData payload;
+  int serialNumber = 0; // a simple and readable identifier for visual debugging
 
   Node({required this.offset, this.presentation, required this.payload});
-
-  // TODO what was this for?
-  // Widget _widget;
-  // get key => _widget.key;
 
   final GlobalKey key = GlobalKey();
 
   @override
   String toString() {
-    return '${this.offset}';
+    return '${this.serialNumber}:\n${this.offset.dx}\n${this.offset.dy}';
   }
 
   get width {

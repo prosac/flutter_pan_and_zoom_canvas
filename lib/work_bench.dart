@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/factories.dart';
 import 'package:flutter_pan_and_zoom/model/connection.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
 import 'package:provider/provider.dart';
 
 import 'background.dart';
 import 'draggable_item.dart';
-import 'factories.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
 import 'neumorphic_background.dart';
@@ -30,15 +30,6 @@ class WorkBenchState extends State<WorkBench> {
   late Offset _center = Offset(_backgroundSize.width / 2, _backgroundSize.height / 2);
   double _scale = 1.0;
 
-  // Iterable<CustomPaint> _drawConnections() {
-  //   return items.map((Item item) {
-  //     Offset offset = Offset(item.offset.dx * _backgroundSize.width, item.offset.dy * _backgroundSize.height) +
-  //         Offset(item.width / 2, item.height / 2);
-
-  //     return CustomPaint(painter: ConnectionPainter(start: Offset.zero, end: offset));
-  //   });
-  // }
-
   Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
     final Offset localOffset = renderBox.globalToLocal(globalOffset);
 
@@ -57,6 +48,9 @@ class WorkBenchState extends State<WorkBench> {
 
   @override
   Widget build(BuildContext context) {
+    Offset correctedCenter =
+        Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
+
     return Stack(children: <Widget>[
       InteractiveViewer(
           maxScale: 10.0,
@@ -65,39 +59,29 @@ class WorkBenchState extends State<WorkBench> {
           transformationController: _transformationController,
           onInteractionEnd: (details) => setState(() => _setScaleFromTransformationController()),
           constrained: false, // this does the trick to make the "canvas" bigger than the view port
-          child: DragTarget(
-            key: _dragTargetKey,
-            onAcceptWithDetails: (DragTargetDetails details) {
-              GraphModel model = Provider.of<GraphModel>(context, listen: false);
-              final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
-              Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
-              model.leaveDraggingItemAtNewOffset(offset);
-            },
-            builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
-              return Consumer<GraphModel>(builder: (context, model, child) {
-                return Stack(children: [
-                  _background,
-                  ..._connections(model),
-                  ..._nodes(model)
-                ]);
-              });
-            },
-          )),
-      Align(
-          alignment: Alignment.centerLeft,
           child: Consumer<GraphModel>(builder: (context, model, child) {
-            return Column(children: [
+            return DragTarget(
+              key: _dragTargetKey,
+              onAcceptWithDetails: (DragTargetDetails details) {
+                // GraphModel model = Provider.of<GraphModel>(context, listen: false);
+                final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+                Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
+                model.leaveDraggingItemAtNewOffset(offset);
+              },
+              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
+                return Stack(children: [_background, ..._connections(model), ..._nodes(model)]);
+              },
+            );
+          })),
+      Align(
+          alignment: Alignment.topLeft,
+          child: Consumer<GraphModel>(builder: (context, model, child) {
+            return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               ElevatedButton(onPressed: _resetViewport, child: Text('Reset')),
               Padding(padding: EdgeInsets.only(bottom: 10.0)),
               ElevatedButton(onPressed: _deleteAllTheThings, child: Text('Delete all the things')),
               Padding(padding: EdgeInsets.only(bottom: 10.0)),
-              ElevatedButton(
-                  onPressed: () {
-                    Offset correctedCenter =
-                        Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
-                    model.add(buildNode(correctedCenter, TestData(text: 'added...', color: Colors.red)));
-                  },
-                  child: Text('Add thing')),
+              ElevatedButton(onPressed: () => addThing(model, correctedCenter), child: Text('Add thing')),
               Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}',
                   style: Theme.of(context).textTheme.bodySmall),
               ...model.nodes.map((node) {
@@ -132,7 +116,18 @@ class WorkBenchState extends State<WorkBench> {
           onDragStarted: () {
             model.drag(node); // should implicitly do what setState does
           },
-          onDragUpdate: (DragUpdateDetails details) {});
+          onDragCompleted: () {
+            print('onDragCompleted');
+          },
+          onDragEnd: (DraggableDetails details) {
+            print('onDragEnd');
+            print(details);
+            // TODO: why is this never called?
+          },
+          onDragUpdate: (DragUpdateDetails details) {
+            print('onDragUpdate');
+            print(details);
+          });
     }).toList();
   }
 

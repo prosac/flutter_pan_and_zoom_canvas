@@ -19,6 +19,7 @@ class DraggableItem extends StatelessWidget {
     this.onDragStarted,
     this.onDragEnd,
     this.onDragUpdate,
+    this.onDragCompleted,
     required this.node,
     required this.offset,
   }) : super(key: key);
@@ -29,6 +30,7 @@ class DraggableItem extends StatelessWidget {
   final VoidCallback? onDragStarted;
   final DragEndCallback? onDragEnd;
   final DragUpdateCallback? onDragUpdate;
+  final VoidCallback? onDragCompleted;
   final Offset offset;
 
   Offset currentOffset() {
@@ -45,38 +47,16 @@ class DraggableItem extends StatelessWidget {
             Draggable(
               data: node.payload,
               dragAnchorStrategy: (widget, context, position) {
-                final RenderBox renderObject =
-                    context.findRenderObject() as RenderBox;
+                final RenderBox renderObject = context.findRenderObject() as RenderBox;
                 return renderObject.globalToLocal(position).scale(scale, scale);
               },
-              feedback: SizedBox(
-                  width: node.width * scale,
-                  height: node.height * scale,
-                  child: node.presentation),
+              feedback: SizedBox(width: node.width * scale, height: node.height * scale, child: node.presentation),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
-              child: SizedBox(
-                  width: node.width,
-                  height: node.height,
-                  child: node.presentation),
+              onDragCompleted: onDragCompleted,
+              child: SizedBox(width: node.width, height: node.height, child: node.presentation),
             ),
-            // Positioned(
-            //   top: 20.0,
-            //   left: 20.0,
-            //   child: NeumorphicButton(
-            //     onPressed: () {
-            //       // var connections = context.read<ConnectionsModel>();
-            //       // connections.startDrawing(this);
-            //     },
-            //     style: NeumorphicStyle(
-            //         shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.red.shade300),
-            //     padding: const EdgeInsets.all(5.0),
-            //     child: Icon(
-            //       Icons.add,
-            //     ),
-            //   ),
-            // ),
           ],
         ));
   }
