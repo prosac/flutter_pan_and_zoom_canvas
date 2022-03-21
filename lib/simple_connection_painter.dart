@@ -13,8 +13,8 @@ class SimpleConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) async {
     final linePaint = Paint()
-      ..color = Colors.red[800]!
-      ..strokeWidth = 4.0
+      ..color = Colors.black26
+      ..strokeWidth = 14.0
       ..style = PaintingStyle.stroke;
 
     p1 = Offset(start!.dx, start!.dy);
