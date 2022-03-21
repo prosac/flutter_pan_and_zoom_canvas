@@ -83,9 +83,14 @@ class WorkBenchState extends State<WorkBench> {
               ElevatedButton(onPressed: _deleteAllTheThings, child: Text('Delete all the things')),
               Padding(padding: EdgeInsets.only(bottom: 10.0)),
               ElevatedButton(onPressed: () => addThing(model, correctedCenter), child: Text('Add thing')),
-              Text('Nodes: ${model.nodes.length}\nDragging: ${model.draggingNodes.length}',
+              Text('Nodes: ${model.nodes.length}',
                   style: Theme.of(context).textTheme.bodySmall),
               ...model.nodes.map((node) {
+                return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
+              }).toList(),
+              Text('Dragging nodes: ${model.draggingNodes.length}',
+                  style: Theme.of(context).textTheme.bodySmall),
+              ...model.draggingNodes.map((node) {
                 return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
               }).toList(),
               Text('Connections: ${model.connections.length}', style: Theme.of(context).textTheme.bodySmall),
