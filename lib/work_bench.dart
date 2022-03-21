@@ -141,11 +141,17 @@ class WorkBenchState extends State<WorkBench> {
 
   List<CustomPaint> _connections(GraphModel model) {
     return model.connections.map((Connection connection) {
+      Size size1 = Size(connection.node1.presentation!.width, connection.node1.presentation!.height);
+      Size size2 = Size(connection.node2.presentation!.width, connection.node1.presentation!.height);
+
       Offset nodeOffset1 = connection.node1.presentation!.offset;
       Offset nodeOffset2 = connection.node2.presentation!.offset;
 
-      Offset offset1 = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
-      Offset offset2 = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
+      Offset offset1AdaptedToBackground = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
+      Offset offset2AdaptedToBackground = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
+
+      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width/2, offset1AdaptedToBackground.dy + size1.height/2);
+      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width/2, offset2AdaptedToBackground.dy + size2.height/2);
 
       return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
     }).toList();
