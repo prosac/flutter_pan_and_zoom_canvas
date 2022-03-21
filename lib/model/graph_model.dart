@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/model/connection.dart';
 
@@ -9,6 +10,7 @@ class GraphModel with ChangeNotifier {
   final List<Node> _nodes = [];
   final List<Node> _draggingNodes = [];
   final List<Connection> _connections = [];
+  Ticker? ticker;
   double scale = 1.0; // TODO: should come from the outside
 
   List<Node> get nodes => _nodes;
@@ -48,6 +50,23 @@ class GraphModel with ChangeNotifier {
     _nodes.remove(node);
     _draggingNodes.add(node);
     notifyListeners();
+  }
+
+  void startTicker(Node node) {
+    // TODO: make all this stuff nullsave
+    RenderBox box = node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
+
+    ticker = Ticker((elapsed) {
+      Offset offset = box.localToGlobal(Offset.zero);
+      print('tick: ${offset.dx}, ${offset.dy}');
+      node.offset = offset;
+    });
+
+    ticker?.start();
+  }
+
+  void stopTicker() {
+    ticker?.stop();
   }
 
   int nextSerialNumber() {

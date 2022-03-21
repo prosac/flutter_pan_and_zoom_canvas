@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_pan_and_zoom/factories.dart';
 import 'package:flutter_pan_and_zoom/model/connection.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
@@ -115,9 +116,11 @@ class WorkBenchState extends State<WorkBench> {
           node: node,
           onDragStarted: () {
             model.drag(node); // should implicitly do what setState does
+            model.startTicker(node);
           },
           onDragCompleted: () {
             print('onDragCompleted');
+            model.stopTicker();
           },
           onDragEnd: (DraggableDetails details) {
             print('onDragEnd');
@@ -133,8 +136,8 @@ class WorkBenchState extends State<WorkBench> {
 
   List<CustomPaint> _connections(GraphModel model) {
     return model.connections.map((Connection connection) {
-      Offset nodeOffset1 = connection.node1.presentation.offset;
-      Offset nodeOffset2 = connection.node2.presentation.offset;
+      Offset nodeOffset1 = connection.node1.presentation!.offset;
+      Offset nodeOffset2 = connection.node2.presentation!.offset;
 
       Offset offset1 = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
       Offset offset2 = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
