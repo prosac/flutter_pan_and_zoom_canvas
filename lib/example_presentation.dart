@@ -20,27 +20,49 @@ class ExamplePresentation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PresentationContainer(
-        width: width,
-        height: height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              buildRemoveButton(context),
-              NeumorphicButton(
-                onPressed: onAddPressed,
-                style: NeumorphicStyle(
-                    shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.grey.shade200),
-                padding: const EdgeInsets.all(20.0),
-                child: Icon(Icons.add, color: _iconsColor(context)),
-                duration: Duration(milliseconds: 50),
-              )
-            ]),
-          ],
-        ));
+    Widget presentation;
+
+    presentation = Consumer<GraphModel>(builder: (context, model, child) {
+      if (model.scale > 0.5) {
+        return PresentationContainer(
+            width: width,
+            height: height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  buildRemoveButton(context),
+                  NeumorphicButton(
+                    onPressed: onAddPressed,
+                    style: NeumorphicStyle(
+                        shape: NeumorphicShape.flat,
+                        boxShape: NeumorphicBoxShape.circle(),
+                        color: Colors.grey.shade200),
+                    padding: const EdgeInsets.all(20.0),
+                    child: Icon(Icons.add, color: _iconsColor(context)),
+                    duration: Duration(milliseconds: 50),
+                  )
+                ]),
+              ],
+            ));
+      } else {
+        return Container(
+            width: 30,
+            height: 30,
+            child: NeumorphicButton(
+              onPressed: onAddPressed,
+              style: NeumorphicStyle(
+                  shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.grey.shade200),
+              padding: const EdgeInsets.all(20.0),
+              child: Icon(Icons.add, color: _iconsColor(context)),
+              duration: Duration(milliseconds: 50),
+            ));
+      }
+    });
+
+    return presentation;
   }
 
   NeumorphicButton buildRemoveButton(BuildContext context) {
