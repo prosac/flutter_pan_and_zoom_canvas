@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_pan_and_zoom/factories.dart';
 import 'package:flutter_pan_and_zoom/model/connection.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
