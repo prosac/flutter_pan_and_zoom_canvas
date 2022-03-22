@@ -30,14 +30,14 @@ class WorkBenchState extends State<WorkBench> {
   late Offset _center = Offset(_backgroundSize.width / 2, _backgroundSize.height / 2);
   double _scale = 1.0;
 
-  Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
-    final Offset localOffset = renderBox.globalToLocal(globalOffset);
+  // Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
+  //   final Offset localOffset = renderBox.globalToLocal(globalOffset);
 
-    return Offset(
-      localOffset.dx / backgroundSize.width,
-      localOffset.dy / backgroundSize.height,
-    );
-  }
+  //   return Offset(
+  //     localOffset.dx / backgroundSize.width,
+  //     localOffset.dy / backgroundSize.height,
+  //   );
+  // }
 
   @override
   void initState() {
@@ -48,8 +48,13 @@ class WorkBenchState extends State<WorkBench> {
 
   @override
   Widget build(BuildContext context) {
-    Offset correctedCenter =
-        Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
+    // Offset correctedCenter =
+    //     Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
+    Offset correctedCenter = _center;
+    GraphModel model = Provider.of<GraphModel>(context);
+    model.backgroundSize = _backgroundSize;
+    model.center = Offset(_backgroundSize.height/2, _backgroundSize.height/2);
+    model.scale = _scale;
 
     return Stack(children: <Widget>[
       InteractiveViewer(
@@ -65,7 +70,8 @@ class WorkBenchState extends State<WorkBench> {
               onAcceptWithDetails: (DragTargetDetails details) {
                 // GraphModel model = Provider.of<GraphModel>(context, listen: false);
                 final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
-                Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
+                // Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
+                Offset offset = renderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
               builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
@@ -111,7 +117,8 @@ class WorkBenchState extends State<WorkBench> {
 
   List _nodes(model) {
     return model.nodes.map((Node node) {
-      Offset offset = Offset(node.offset.dx * _backgroundSize.width, node.offset.dy * _backgroundSize.height);
+      // Offset offset = Offset(node.offset.dx * _backgroundSize.width, node.offset.dy * _backgroundSize.height);
+      Offset offset = node.offset;
 
       return DraggableItem(
           key: UniqueKey(),
@@ -146,8 +153,11 @@ class WorkBenchState extends State<WorkBench> {
       Offset nodeOffset1 = connection.node1.presentation!.offset;
       Offset nodeOffset2 = connection.node2.presentation!.offset;
 
-      Offset offset1AdaptedToBackground = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
-      Offset offset2AdaptedToBackground = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
+      // Offset offset1AdaptedToBackground = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
+      // Offset offset2AdaptedToBackground = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
+
+      Offset offset1AdaptedToBackground = nodeOffset1;
+      Offset offset2AdaptedToBackground = nodeOffset2;
 
       Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width/2, offset1AdaptedToBackground.dy + size1.height/2);
       Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width/2, offset2AdaptedToBackground.dy + size2.height/2);

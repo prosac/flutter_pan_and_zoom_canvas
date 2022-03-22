@@ -12,6 +12,8 @@ class GraphModel with ChangeNotifier {
   final List<Connection> _connections = [];
   Ticker? ticker;
   double scale = 1.0; // TODO: should come from the outside
+  Size? backgroundSize;
+  Offset? center;
 
   List<Node> get nodes => _nodes;
   List<Node> get draggingNodes => _draggingNodes;
@@ -57,9 +59,10 @@ class GraphModel with ChangeNotifier {
     RenderBox box = node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
 
     ticker = Ticker((elapsed) {
-      Offset offset = box.localToGlobal(Offset.zero);
+      Offset offset = box.localToGlobal(Offset(2000, 2000));
       print('tick: ${offset.dx}, ${offset.dy}');
       node.offset = offset;
+      notifyListeners();
     });
 
     ticker?.start();

@@ -9,7 +9,7 @@ class ExamplePresentation extends StatelessWidget {
   final double height = 200;
   final Node node;
   final GlobalKey key = GlobalKey();
-  final backgroundSize = Size(4000, 4000); // TODO: should come from the outside
+  // final backgroundSize = Size(4000, 4000); // TODO: should come from the outside
   final VoidCallback onAddPressed;
 
   Offset get offset {
