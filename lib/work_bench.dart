@@ -137,6 +137,7 @@ class WorkBenchState extends State<WorkBench> {
             print('onDragEnd');
             print(details);
             // TODO: why is this never called?
+            // maybe because it is always accepted by the big drag target?
           },
           onDragUpdate: (DragUpdateDetails details) {
             print('onDragUpdate');
