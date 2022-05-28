@@ -12,7 +12,8 @@ import 'neumorphic_background.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
-  WorkBench({Key? key, required this.width, required this.height}) : super(key: key);
+  WorkBench({Key? key, required this.width, required this.height})
+      : super(key: key);
 
   final double width;
   final double height;
@@ -22,12 +23,14 @@ class WorkBench extends StatefulWidget {
 }
 
 class WorkBenchState extends State<WorkBench> {
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   final GlobalKey _dragTargetKey = GlobalKey();
   late Background _background;
   late Size _backgroundSize = Size(_background.width, _background.height);
-  late Offset _center = Offset(_backgroundSize.width / 2, _backgroundSize.height / 2);
+  late Offset _center =
+      Offset(_backgroundSize.width / 2, _backgroundSize.height / 2);
   double _scale = 1.0;
 
   // Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
@@ -42,7 +45,8 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    _background = NeumorphicBackground(width: widget.width, height: widget.height);
+    _background =
+        NeumorphicBackground(width: widget.width, height: widget.height);
     _resetViewport();
   }
 
@@ -53,7 +57,8 @@ class WorkBenchState extends State<WorkBench> {
     Offset correctedCenter = _center;
     GraphModel model = Provider.of<GraphModel>(context);
     model.backgroundSize = _backgroundSize;
-    model.center = Offset(_backgroundSize.height/2, _backgroundSize.height/2);
+    model.center =
+        Offset(_backgroundSize.height / 2, _backgroundSize.height / 2);
     model.scale = _scale;
 
     return Stack(children: <Widget>[
@@ -62,47 +67,66 @@ class WorkBenchState extends State<WorkBench> {
           minScale: 0.01,
           boundaryMargin: EdgeInsets.all(1000.0),
           transformationController: _transformationController,
-          onInteractionEnd: (details) => setState(() => _setScaleFromTransformationController()),
-          constrained: false, // this does the trick to make the "canvas" bigger than the view port
+          onInteractionEnd: (details) =>
+              setState(() => _setScaleFromTransformationController()),
+          constrained:
+              false, // this does the trick to make the "canvas" bigger than the view port
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return DragTarget(
               key: _dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
                 // GraphModel model = Provider.of<GraphModel>(context, listen: false);
-                final RenderBox renderBox = _dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+                final RenderBox renderBox = _dragTargetKey.currentContext!
+                    .findRenderObject() as RenderBox;
                 // Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
                 Offset offset = renderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
-              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
-                return Stack(children: [_background, ..._connections(model), ..._nodes(model)]);
+              builder: (BuildContext context, List<TestData?> candidateData,
+                  List rejectedData) {
+                return Stack(children: [
+                  _background,
+                  ..._connections(model),
+                  ..._nodes(model)
+                ]);
               },
             );
           })),
       Align(
           alignment: Alignment.topLeft,
           child: Consumer<GraphModel>(builder: (context, model, child) {
-            return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              ElevatedButton(onPressed: _resetViewport, child: Text('Reset')),
-              Padding(padding: EdgeInsets.only(bottom: 10.0)),
-              ElevatedButton(onPressed: _deleteAllTheThings, child: Text('Delete all the things')),
-              Padding(padding: EdgeInsets.only(bottom: 10.0)),
-              ElevatedButton(onPressed: () => addThing(model, correctedCenter), child: Text('Add thing')),
-              Text('Nodes: ${model.nodes.length}',
-                  style: Theme.of(context).textTheme.bodySmall),
-              ...model.nodes.map((node) {
-                return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
-              }).toList(),
-              Text('Dragging nodes: ${model.draggingNodes.length}',
-                  style: Theme.of(context).textTheme.bodySmall),
-              ...model.draggingNodes.map((node) {
-                return Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall);
-              }).toList(),
-              Text('Connections: ${model.connections.length}', style: Theme.of(context).textTheme.bodySmall),
-              ...model.connections.map((connection) {
-                return Text('${connection.toString()}', style: Theme.of(context).textTheme.bodySmall);
-              }).toList()
-            ]);
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                      onPressed: _resetViewport, child: Text('Reset')),
+                  Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                  ElevatedButton(
+                      onPressed: _deleteAllTheThings,
+                      child: Text('Delete all the things')),
+                  Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                  ElevatedButton(
+                      onPressed: () => addThing(model, correctedCenter),
+                      child: Text('Add thing')),
+                  Text('Nodes: ${model.nodes.length}',
+                      style: Theme.of(context).textTheme.bodyText1),
+                  ...model.nodes.map((node) {
+                    return Text('${node.toString()}',
+                        style: Theme.of(context).textTheme.bodyText1);
+                  }).toList(),
+                  Text('Dragging nodes: ${model.draggingNodes.length}',
+                      style: Theme.of(context).textTheme.bodyText1),
+                  ...model.draggingNodes.map((node) {
+                    return Text('${node.toString()}',
+                        style: Theme.of(context).textTheme.bodyText1);
+                  }).toList(),
+                  Text('Connections: ${model.connections.length}',
+                      style: Theme.of(context).textTheme.bodyText1),
+                  ...model.connections.map((connection) {
+                    return Text('${connection.toString()}',
+                        style: Theme.of(context).textTheme.bodyText1);
+                  }).toList()
+                ]);
           }))
     ]);
   }
@@ -148,8 +172,10 @@ class WorkBenchState extends State<WorkBench> {
 
   List<CustomPaint> _connections(GraphModel model) {
     return model.connections.map((Connection connection) {
-      Size size1 = Size(connection.node1.presentation!.width, connection.node1.presentation!.height);
-      Size size2 = Size(connection.node2.presentation!.width, connection.node1.presentation!.height);
+      Size size1 = Size(connection.node1.presentation!.width,
+          connection.node1.presentation!.height);
+      Size size2 = Size(connection.node2.presentation!.width,
+          connection.node1.presentation!.height);
 
       Offset nodeOffset1 = connection.node1.presentation!.offset;
       Offset nodeOffset2 = connection.node2.presentation!.offset;
@@ -160,10 +186,13 @@ class WorkBenchState extends State<WorkBench> {
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
 
-      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width/2, offset1AdaptedToBackground.dy + size1.height/2);
-      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width/2, offset2AdaptedToBackground.dy + size2.height/2);
+      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
+          offset1AdaptedToBackground.dy + size1.height / 2);
+      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
+          offset2AdaptedToBackground.dy + size2.height / 2);
 
-      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      return CustomPaint(
+          painter: SimpleConnectionPainter(start: offset1, end: offset2));
     }).toList();
   }
 

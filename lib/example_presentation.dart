@@ -31,7 +31,8 @@ class ExamplePresentation extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('${node.toString()}', style: Theme.of(context).textTheme.bodySmall),
+                Text('${node.toString()}',
+                    style: Theme.of(context).textTheme.bodyText1),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   buildRemoveButton(context),
                   NeumorphicButton(
@@ -54,7 +55,9 @@ class ExamplePresentation extends StatelessWidget {
             child: NeumorphicButton(
               onPressed: onAddPressed,
               style: NeumorphicStyle(
-                  shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.grey.shade200),
+                  shape: NeumorphicShape.flat,
+                  boxShape: NeumorphicBoxShape.circle(),
+                  color: Colors.grey.shade200),
               padding: const EdgeInsets.all(20.0),
               child: Icon(Icons.add, color: _iconsColor(context)),
               duration: Duration(milliseconds: 50),
@@ -73,7 +76,9 @@ class ExamplePresentation extends StatelessWidget {
         model.remove(node);
       },
       style: NeumorphicStyle(
-          shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle(), color: Colors.grey.shade200),
+          shape: NeumorphicShape.flat,
+          boxShape: NeumorphicBoxShape.circle(),
+          color: Colors.grey.shade200),
       padding: const EdgeInsets.all(20.0),
       child: Icon(Icons.delete, color: _iconsColor(context)),
       duration: Duration(milliseconds: 50),
