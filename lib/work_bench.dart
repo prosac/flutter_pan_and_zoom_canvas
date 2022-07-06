@@ -33,6 +33,10 @@ class WorkBenchState extends State<WorkBench> {
       Offset(_backgroundSize.width / 2, _backgroundSize.height / 2);
   double _scale = 1.0;
 
+  late MediaQueryData info;
+  late double aspectRatio;
+  late Size screenSize;
+
   // Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
   //   final Offset localOffset = renderBox.globalToLocal(globalOffset);
 
@@ -44,6 +48,7 @@ class WorkBenchState extends State<WorkBench> {
 
   @override
   void initState() {
+    print('init!');
     super.initState();
     _background =
         NeumorphicBackground(width: widget.width, height: widget.height);
@@ -51,20 +56,48 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    info = MediaQuery.of(context);
+    aspectRatio = _getAspectRatioOfViewport();
+    screenSize = info.size;
+  }
+
+  double _getAspectRatioOfViewport() {
+    double width = info.size.width;
+    double height = info.size.height;
+
+    if (info.orientation == Orientation.landscape) {
+      return width / height;
+    } else {
+      return height / width;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Offset correctedCenter =
-    //     Offset(_center.dx / _backgroundSize.width, _center.dy / _backgroundSize.height);
     Offset correctedCenter = _center;
     GraphModel model = Provider.of<GraphModel>(context);
     model.backgroundSize = _backgroundSize;
-    model.center =
-        Offset(_backgroundSize.height / 2, _backgroundSize.height / 2);
+    model.center = _center;
     model.scale = _scale;
+
+    info = MediaQuery.of(context);
+    model.viewportSize = info.size;
+    model.viewPortOrientation = info.orientation;
+
+    double aspectRatio = _getAspectRatioOfViewport();
+
+    model.aspectRatio = aspectRatio;
+
+    model.interactiveViewerOffset = Offset(
+        _transformationController.value.row0[3],
+        _transformationController.value.row1[3]);
 
     return Stack(children: <Widget>[
       InteractiveViewer(
-          maxScale: 10.0,
-          minScale: 0.01,
+          maxScale: 2.0,
+          minScale: 0.5,
           boundaryMargin: EdgeInsets.all(1000.0),
           transformationController: _transformationController,
           onInteractionEnd: (details) =>
@@ -97,6 +130,7 @@ class WorkBenchState extends State<WorkBench> {
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
                       onPressed: _resetViewport, child: Text('Reset')),
@@ -108,24 +142,13 @@ class WorkBenchState extends State<WorkBench> {
                   ElevatedButton(
                       onPressed: () => addThing(model, correctedCenter),
                       child: Text('Add thing')),
-                  Text('Nodes: ${model.nodes.length}',
+                  Text('Scale: ${_scale}',
                       style: Theme.of(context).textTheme.bodyText1),
-                  ...model.nodes.map((node) {
-                    return Text('${node.toString()}',
-                        style: Theme.of(context).textTheme.bodyText1);
-                  }).toList(),
-                  Text('Dragging nodes: ${model.draggingNodes.length}',
+                  Text('Matrix: ${_transformationController.value.toString()}',
                       style: Theme.of(context).textTheme.bodyText1),
-                  ...model.draggingNodes.map((node) {
-                    return Text('${node.toString()}',
-                        style: Theme.of(context).textTheme.bodyText1);
-                  }).toList(),
-                  Text('Connections: ${model.connections.length}',
+                  Text(
+                      'Viewport Offset: ${model.interactiveViewerOffset.toString()}',
                       style: Theme.of(context).textTheme.bodyText1),
-                  ...model.connections.map((connection) {
-                    return Text('${connection.toString()}',
-                        style: Theme.of(context).textTheme.bodyText1);
-                  }).toList()
                 ]);
           }))
     ]);
@@ -199,7 +222,12 @@ class WorkBenchState extends State<WorkBench> {
   void _setScaleFromTransformationController() {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
     _scale = _transformationController.value.row0[0];
-    Provider.of<GraphModel>(context, listen: false).scale = _scale;
+    GraphModel model = Provider.of<GraphModel>(context, listen: false);
+    model.scale = _scale;
+
+    model.interactiveViewerOffset = Offset(
+        _transformationController.value.row0[3],
+        _transformationController.value.row1[3]);
   }
 
   void _deleteAllTheThings() {

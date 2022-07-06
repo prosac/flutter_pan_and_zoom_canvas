@@ -20,9 +20,13 @@ class TestBench extends StatefulWidget {
 }
 
 class TestBenchState extends State<TestBench> {
+  double scale = 1.0;
   Ticker? ticker;
-
   Offset? currentDraggingThingOffset;
+  final TransformationController transformationController =
+      TransformationController();
+
+  Offset interactiveViewerOffset = Offset.zero;
 
   Widget build(BuildContext context) {
     Positioned thing1 = buildStationary('1', 100.0, 100.0);
@@ -32,14 +36,21 @@ class TestBenchState extends State<TestBench> {
         Offset(thing1.left ?? 0, thing1.top ?? 0),
         Offset(thing2.left ?? 0, thing2.top ?? 0));
 
+    Offset interactiveViewerOffset = Offset(
+        transformationController.value.row0[3],
+        transformationController.value.row1[3]);
+
     return InteractiveViewer(
         constrained: false,
-        scaleEnabled: false,
-        // maxScale: 10.0,
-        // minScale: 0.01,
+        maxScale: 10.0,
+        minScale: 0.01,
+        // boundaryMargin: EdgeInsets.all(1000.0),
+        transformationController: transformationController,
+        onInteractionEnd: (details) =>
+            setState(() => setScaleFromTransformationController()),
         // From Stack docs: The stack sizes itself to contain all the non-positioned children
         // ... that can have something to do with my problem
-        child: createListener(Stack(key: widget.stackKey, children: [
+        child: Stack(key: widget.stackKey, children: [
           Container(
             width: widget.width,
             height: widget.height,
@@ -48,21 +59,22 @@ class TestBenchState extends State<TestBench> {
           thing1,
           thing2,
           connection
-        ])));
+        ]));
   }
 
-  Widget createListener(Widget child) {
-    return Listener(
-      child: child,
-      onPointerMove: (PointerMoveEvent event) {
-        print("x: ${event.position.dx}, y: ${event.position.dy}");
-        setState(() {
-          widget.draggableLeft = event.position.dx;
-          widget.draggableTop = event.position.dy;
-        });
-      },
-    );
-  }
+  // ... with this we could track pointer movement
+  // Widget createListener(Widget child) {
+  //   return Listener(
+  //     child: child,
+  //     onPointerMove: (PointerMoveEvent event) {
+  //       print("x: ${event.position.dx}, y: ${event.position.dy}");
+  //       setState(() {
+  //         widget.draggableLeft = event.position.dx;
+  //         widget.draggableTop = event.position.dy;
+  //       });
+  //     },
+  //   );
+  // }
 
   // a minimal thing to show
   SizedBox buildPresentation(identifier, {width: 100.0, height: 100.0}) {
@@ -91,20 +103,15 @@ class TestBenchState extends State<TestBench> {
         dragAnchorStrategy: (widget, context, offset) {
           final RenderBox renderObject =
               context.findRenderObject() as RenderBox;
-          return renderObject.globalToLocal(offset);
+          return renderObject.globalToLocal(offset).scale(scale, scale);
         },
         feedback: buildPresentation(identifier),
         child: buildPresentation(identifier),
         childWhenDragging: Container(),
-        onDragStarted: () {
-          // startTicker(widget.draggableKey);
-        },
         onDragEnd: (dragDetails) {
-          // stopTicker();
-
           setState(() {
-            widget.draggableLeft = dragDetails.offset.dx;
-            widget.draggableTop = dragDetails.offset.dy;
+            widget.draggableLeft = dragDetails.offset.dx * scale;
+            widget.draggableTop = dragDetails.offset.dy * scale;
           });
         },
       ),
@@ -129,5 +136,10 @@ class TestBenchState extends State<TestBench> {
 
   void stopTicker() {
     this.ticker?.stop();
+  }
+
+  void setScaleFromTransformationController() {
+    // doing this in a call to setState solves the problem that the feedback item does not know the current scale
+    scale = transformationController.value.row0[0];
   }
 }

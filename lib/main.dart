@@ -10,7 +10,7 @@ void main() => runApp(ChangeNotifierProvider(
 
 class PanAndZoom extends StatelessWidget {
   Widget home = WorkBench(width: 1000, height: 1000);
-  // Widget home = TestBench(width: 500, height: 500);
+  // Widget home = TestBench(width: 1000, height: 1000);
 
   @override
   Widget build(BuildContext context) {

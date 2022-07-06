@@ -11,9 +11,14 @@ class GraphModel with ChangeNotifier {
   final List<Node> _draggingNodes = [];
   final List<Connection> _connections = [];
   Ticker? ticker;
+  late Size viewportSize;
+  late Orientation viewPortOrientation;
+  late double aspectRatio;
   double scale = 1.0; // TODO: should come from the outside
   Size? backgroundSize;
   Offset? center;
+
+  Offset interactiveViewerOffset = Offset.zero;
 
   List<Node> get nodes => _nodes;
   List<Node> get draggingNodes => _draggingNodes;
@@ -56,11 +61,23 @@ class GraphModel with ChangeNotifier {
 
   void startTicker(Node node) {
     // TODO: make all this stuff nullsave
-    RenderBox box = node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
+    RenderBox box =
+        node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
 
     ticker = Ticker((elapsed) {
-      Offset offset = box.localToGlobal(Offset(2000, 2000));
-      print('tick: ${offset.dx}, ${offset.dy}');
+      double elacs = pow(scale, -1).toDouble();
+      // Offset adjustment = Offset(aspectRatio * scale, aspectRatio * scale);
+      // Offset adjustment = Offset(aspectRatio * elacs, aspectRatio * elacs);
+      // Offset adjustment = interactiveViewerOffset * scale;
+      Offset offset = box.localToGlobal(Offset.zero).scale(elacs, elacs) +
+          Offset(-interactiveViewerOffset.dx * elacs,
+              -interactiveViewerOffset.dy * elacs);
+      // .scale(aspectRatio, aspectRatio)
+      // .translate(interactiveViewerOffset.dx, interactiveViewerOffset.dy);
+      // .scale(aspectRatio, aspectRatio)
+      // .scale(scale, scale);
+      // Offset offset = box.localToGlobal(adjustment);
+      // print('tick: ${offset.dx}, ${offset.dy}');
       node.offset = offset;
       notifyListeners();
     });
