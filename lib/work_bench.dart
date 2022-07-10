@@ -32,7 +32,6 @@ class WorkBenchState extends State<WorkBench> {
   late Background background;
   late Offset center;
   late MediaQueryData mediaQueryData;
-  late Size screenSize;
 
   @override
   void initState() {
@@ -41,13 +40,6 @@ class WorkBenchState extends State<WorkBench> {
         NeumorphicBackground(width: widget.width, height: widget.height);
     center = Offset(background.width / 2, background.height / 2);
     _resetViewport();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    mediaQueryData = MediaQuery.of(context);
-    screenSize = mediaQueryData.size;
   }
 
   @override
