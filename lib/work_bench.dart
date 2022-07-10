@@ -39,7 +39,7 @@ class WorkBenchState extends State<WorkBench> {
     background =
         NeumorphicBackground(width: widget.width, height: widget.height);
     center = Offset(background.width / 2, background.height / 2);
-    _resetViewport();
+    resetViewport();
   }
 
   @override
@@ -85,7 +85,7 @@ class WorkBenchState extends State<WorkBench> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                      onPressed: _resetViewport, child: Text('Reset')),
+                      onPressed: resetViewport, child: Text('Reset')),
                   Padding(padding: EdgeInsets.only(bottom: 10.0)),
                   ElevatedButton(
                       onPressed: deleteAllTheThings,
@@ -99,7 +99,7 @@ class WorkBenchState extends State<WorkBench> {
     ]);
   }
 
-  void _resetViewport() {
+  void resetViewport() {
     var matrix = Matrix4.identity();
     matrix.translate(-center.dx, -center.dy);
     transformationController.value = matrix;
