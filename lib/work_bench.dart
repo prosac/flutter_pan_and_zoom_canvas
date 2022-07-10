@@ -27,14 +27,12 @@ class WorkBenchState extends State<WorkBench> {
       TransformationController();
 
   final GlobalKey _dragTargetKey = GlobalKey();
-  late Background background;
-  late Size backgroundSize;
-  late Offset center =
-      Offset(backgroundSize.width / 2, backgroundSize.height / 2);
   double _scale = 1.0;
 
-  late MediaQueryData info;
-  late double aspectRatio;
+  late Background background;
+  late Size backgroundSize;
+  late Offset center;
+  late MediaQueryData mediaQueryData;
   late Size screenSize;
 
   @override
@@ -43,26 +41,15 @@ class WorkBenchState extends State<WorkBench> {
     background =
         NeumorphicBackground(width: widget.width, height: widget.height);
     backgroundSize = Size(background.width, background.height);
+    center = Offset(backgroundSize.width / 2, backgroundSize.height / 2);
     _resetViewport();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    info = MediaQuery.of(context);
-    aspectRatio = _getAspectRatioOfViewport();
-    screenSize = info.size;
-  }
-
-  double _getAspectRatioOfViewport() {
-    double width = info.size.width;
-    double height = info.size.height;
-
-    if (info.orientation == Orientation.landscape) {
-      return width / height;
-    } else {
-      return height / width;
-    }
+    mediaQueryData = MediaQuery.of(context);
+    screenSize = mediaQueryData.size;
   }
 
   @override
@@ -70,13 +57,9 @@ class WorkBenchState extends State<WorkBench> {
     GraphModel model = Provider.of<GraphModel>(context);
     model.scale = _scale;
 
-    info = MediaQuery.of(context);
-    model.viewportSize = info.size;
-    model.viewPortOrientation = info.orientation;
-
-    double aspectRatio = _getAspectRatioOfViewport();
-
-    model.aspectRatio = aspectRatio;
+    mediaQueryData = MediaQuery.of(context);
+    model.viewportSize = mediaQueryData.size;
+    model.viewPortOrientation = mediaQueryData.orientation;
 
     model.interactiveViewerOffset = Offset(
         _transformationController.value.row0[3],

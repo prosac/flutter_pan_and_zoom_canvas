@@ -13,7 +13,6 @@ class GraphModel with ChangeNotifier {
   Ticker? ticker;
   late Size viewportSize;
   late Orientation viewPortOrientation;
-  late double aspectRatio;
   double scale = 1.0; // TODO: should come from the outside
 
   Offset interactiveViewerOffset = Offset.zero;
@@ -70,12 +69,6 @@ class GraphModel with ChangeNotifier {
           .scale(elacs, elacs)
           .translate(-interactiveViewerOffset.dx * elacs,
               -interactiveViewerOffset.dy * elacs);
-      // .scale(aspectRatio, aspectRatio)
-      // .translate(interactiveViewerOffset.dx, interactiveViewerOffset.dy);
-      // .scale(aspectRatio, aspectRatio)
-      // .scale(scale, scale);
-      // Offset offset = box.localToGlobal(adjustment);
-      // print('tick: ${offset.dx}, ${offset.dy}');
       node.offset = offset;
       notifyListeners();
     });
