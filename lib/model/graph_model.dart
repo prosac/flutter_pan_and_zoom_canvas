@@ -15,8 +15,6 @@ class GraphModel with ChangeNotifier {
   late Orientation viewPortOrientation;
   late double aspectRatio;
   double scale = 1.0; // TODO: should come from the outside
-  Size? backgroundSize;
-  Offset? center;
 
   Offset interactiveViewerOffset = Offset.zero;
 

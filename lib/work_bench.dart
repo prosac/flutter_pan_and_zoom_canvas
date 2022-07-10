@@ -27,10 +27,10 @@ class WorkBenchState extends State<WorkBench> {
       TransformationController();
 
   final GlobalKey _dragTargetKey = GlobalKey();
-  late Background _background;
-  late Size _backgroundSize = Size(_background.width, _background.height);
-  late Offset _center =
-      Offset(_backgroundSize.width / 2, _backgroundSize.height / 2);
+  late Background background;
+  late Size backgroundSize;
+  late Offset center =
+      Offset(backgroundSize.width / 2, backgroundSize.height / 2);
   double _scale = 1.0;
 
   late MediaQueryData info;
@@ -40,8 +40,9 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    _background =
+    background =
         NeumorphicBackground(width: widget.width, height: widget.height);
+    backgroundSize = Size(background.width, background.height);
     _resetViewport();
   }
 
@@ -66,10 +67,7 @@ class WorkBenchState extends State<WorkBench> {
 
   @override
   Widget build(BuildContext context) {
-    Offset correctedCenter = _center;
     GraphModel model = Provider.of<GraphModel>(context);
-    model.backgroundSize = _backgroundSize;
-    model.center = _center;
     model.scale = _scale;
 
     info = MediaQuery.of(context);
@@ -98,17 +96,15 @@ class WorkBenchState extends State<WorkBench> {
             return DragTarget(
               key: _dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                // GraphModel model = Provider.of<GraphModel>(context, listen: false);
                 final RenderBox renderBox = _dragTargetKey.currentContext!
                     .findRenderObject() as RenderBox;
-                // Offset offset = _newGlobalOffset(renderBox, details.offset, _backgroundSize);
                 Offset offset = renderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
               builder: (BuildContext context, List<TestData?> candidateData,
                   List rejectedData) {
                 return Stack(children: [
-                  _background,
+                  background,
                   ..._connections(model),
                   ..._nodes(model)
                 ]);
@@ -130,15 +126,8 @@ class WorkBenchState extends State<WorkBench> {
                       child: Text('Delete all the things')),
                   Padding(padding: EdgeInsets.only(bottom: 10.0)),
                   ElevatedButton(
-                      onPressed: () => addThing(model, correctedCenter),
-                      child: Text('Add thing')),
-                  Text('Scale: $_scale',
-                      style: Theme.of(context).textTheme.bodyText1),
-                  Text('Matrix: ${_transformationController.value.toString()}',
-                      style: Theme.of(context).textTheme.bodyText1),
-                  Text(
-                      'Viewport Offset: ${model.interactiveViewerOffset.toString()}',
-                      style: Theme.of(context).textTheme.bodyText1),
+                      onPressed: () => addThing(model, center),
+                      child: Text('Add thing'))
                 ]);
           }))
     ]);
@@ -146,7 +135,7 @@ class WorkBenchState extends State<WorkBench> {
 
   void _resetViewport() {
     var matrix = Matrix4.identity();
-    matrix.translate(-_center.dx, -_center.dy);
+    matrix.translate(-center.dx, -center.dy);
     _transformationController.value = matrix;
     setState(() => _scale = 1.0);
     Provider.of<GraphModel>(context, listen: false).scale = 1.0;
@@ -154,7 +143,6 @@ class WorkBenchState extends State<WorkBench> {
 
   List _nodes(model) {
     return model.nodes.map((Node node) {
-      // Offset offset = Offset(node.offset.dx * _backgroundSize.width, node.offset.dy * _backgroundSize.height);
       Offset offset = node.offset;
 
       return DraggableItem(
@@ -192,9 +180,6 @@ class WorkBenchState extends State<WorkBench> {
 
       Offset nodeOffset1 = connection.node1.presentation!.offset;
       Offset nodeOffset2 = connection.node2.presentation!.offset;
-
-      // Offset offset1AdaptedToBackground = Offset(nodeOffset1.dx * _backgroundSize.width, nodeOffset1.dy * _backgroundSize.height);
-      // Offset offset2AdaptedToBackground = Offset(nodeOffset2.dx * _backgroundSize.width, nodeOffset2.dy * _backgroundSize.height);
 
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
