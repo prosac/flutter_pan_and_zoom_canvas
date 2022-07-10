@@ -32,7 +32,7 @@ class GraphModel with ChangeNotifier {
   // void addFromExistingNode(Node existingNode, Node newNode) {
   //   newNode.serialNumber = nextSerialNumber();
   //   _nodes.add(newNode);
-  //   _connections.add(Edge(existingNode, newNode));
+  //   _connections.add(Edgj(existingNode, newNode));
   //   notifyListeners();
   // }
 
@@ -87,8 +87,6 @@ class GraphModel with ChangeNotifier {
     node.offset = offset;
     _nodes.add(node);
     notifyListeners();
-    print('dragged node ${node.serialNumber}');
-    print('${node.toString()}');
   }
 
   void offsetFromMatrix(Matrix4 matrix) {
