@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/factories.dart';
-import 'package:flutter_pan_and_zoom/model/connection.dart';
+import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
 import 'package:provider/provider.dart';
 
@@ -26,8 +26,8 @@ class WorkBenchState extends State<WorkBench> {
   final TransformationController transformationController =
       TransformationController();
 
-  final GlobalKey _dragTargetKey = GlobalKey();
-  double _scale = 1.0;
+  final GlobalKey dragTargetKey = GlobalKey();
+  double scale = 1.0;
 
   late Background background;
   late Offset center;
@@ -45,9 +45,9 @@ class WorkBenchState extends State<WorkBench> {
   @override
   Widget build(BuildContext context) {
     GraphModel model = Provider.of<GraphModel>(context);
-    model.scale = _scale;
-    mediaQueryData = MediaQuery.of(context);
+    model.scale = scale;
     model.offsetFromMatrix(transformationController.value);
+    mediaQueryData = MediaQuery.of(context);
 
     return Stack(children: <Widget>[
       InteractiveViewer(
@@ -61,11 +61,10 @@ class WorkBenchState extends State<WorkBench> {
               false, // this does the trick to make the "canvas" bigger than the view port
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return DragTarget(
-              key: _dragTargetKey,
+              key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                final RenderBox renderBox = _dragTargetKey.currentContext!
-                    .findRenderObject() as RenderBox;
-                Offset offset = renderBox.globalToLocal(details.offset);
+                Offset offset =
+                    dragTargetRenderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
               builder: (BuildContext context, List<TestData?> candidateData,
@@ -104,7 +103,7 @@ class WorkBenchState extends State<WorkBench> {
     var matrix = Matrix4.identity();
     matrix.translate(-center.dx, -center.dy);
     transformationController.value = matrix;
-    setState(() => _scale = 1.0);
+    setState(() => scale = 1.0);
     Provider.of<GraphModel>(context, listen: false).scale = 1.0;
   }
 
@@ -118,7 +117,7 @@ class WorkBenchState extends State<WorkBench> {
       return DraggableItem(
           key: UniqueKey(),
           offset: offset,
-          scale: _scale,
+          scale: scale,
           node: node,
           onDragStarted: () {
             model.drag(node); // should implicitly do what setState does
@@ -130,10 +129,13 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
+  RenderBox get dragTargetRenderBox =>
+      dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+
   List<CustomPaint> get visualConnections {
     GraphModel model = Provider.of<GraphModel>(context);
 
-    return model.connections.map((Connection connection) {
+    return model.connections.map((Edge connection) {
       Size size1 = Size(connection.node1.presentation!.width,
           connection.node1.presentation!.height);
       Size size2 = Size(connection.node2.presentation!.width,
@@ -157,9 +159,9 @@ class WorkBenchState extends State<WorkBench> {
 
   void setScaleFromTransformationController() {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-    _scale = transformationController.value.row0[0];
+    scale = transformationController.value.row0[0];
     GraphModel model = Provider.of<GraphModel>(context, listen: false);
-    model.scale = _scale;
+    model.scale = scale;
 
     model.offsetFromMatrix(transformationController.value);
   }

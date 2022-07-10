@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/model/connection.dart';
+import 'package:flutter_pan_and_zoom/model/edge.dart';
 
 import 'node.dart';
 
@@ -9,7 +9,7 @@ class GraphModel with ChangeNotifier {
   /// Internal, private state of the model.
   final List<Node> _nodes = [];
   final List<Node> _draggingNodes = [];
-  final List<Connection> _connections = [];
+  final List<Edge> _connections = [];
   Ticker? ticker;
   double scale = 1.0; // TODO: should come from the outside
 
@@ -17,7 +17,7 @@ class GraphModel with ChangeNotifier {
 
   List<Node> get nodes => _nodes;
   List<Node> get draggingNodes => _draggingNodes;
-  List<Connection> get connections => _connections;
+  List<Edge> get connections => _connections;
 
   set connections(connection) {
     _connections.add(connection);
@@ -32,13 +32,13 @@ class GraphModel with ChangeNotifier {
   // void addFromExistingNode(Node existingNode, Node newNode) {
   //   newNode.serialNumber = nextSerialNumber();
   //   _nodes.add(newNode);
-  //   _connections.add(Connection(existingNode, newNode));
+  //   _connections.add(Edge(existingNode, newNode));
   //   notifyListeners();
   // }
 
   void remove(node) {
     _nodes.remove(node);
-    _connections.removeWhere((connection) => connection.nodesInclude(node));
+    _connections.removeWhere((connection) => connection.isConnectedTo(node));
     notifyListeners();
   }
 
