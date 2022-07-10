@@ -3,48 +3,51 @@ import 'dart:math';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
+import 'package:flutter_pan_and_zoom/test_data.dart';
 
 import 'node.dart';
 
 class GraphModel with ChangeNotifier {
   /// Internal, private state of the model.
-  final List<Node> _nodes = [];
-  final List<Node> _draggingNodes = [];
-  final List<Edge> _edges = [];
+  final List<Node> nodes = [];
+  final List<Node> draggingNodes = [];
+  final List<Edge> edges = [];
   Ticker? ticker;
   double scale = 1.0; // TODO: should come from the outside
 
   Offset interactiveViewerOffset = Offset.zero;
 
-  List<Node> get draggingNodes => _draggingNodes;
-  List<Edge> get edges => _edges;
-  set edges(edge) {
-    _edges.add(edge);
+  void addEdge(edge) {
+    edges.add(edge);
   }
 
-  List<Node> get nodes => _nodes;
+  Node newNode({required Offset offset, required TestData payload}) {
+    Node node = Node(offset: offset, payload: payload);
+    add(node);
+    return node;
+  }
 
   void add(Node node) {
-    _nodes.add(node);
+    nodes.add(node);
     node.serialNumber = nextSerialNumber();
     notifyListeners();
   }
 
   void drag(node) {
-    _nodes.remove(node);
-    _draggingNodes.add(node);
+    nodes.remove(node);
+    draggingNodes.add(node);
     notifyListeners();
   }
 
   void leaveDraggingItemAtNewOffset(Offset offset) {
-    Node node = _draggingNodes.removeLast();
+    Node node = draggingNodes.removeLast();
     node.offset = offset;
-    _nodes.add(node);
+    nodes.add(node);
     notifyListeners();
   }
 
   int nextSerialNumber() {
-    return _nodes.map((node) => node.serialNumber).reduce(max) + 1;
+    return nodes.map((node) => node.serialNumber).reduce(max) + 1;
   }
 
   void offsetFromMatrix(Matrix4 matrix) {
@@ -52,35 +55,38 @@ class GraphModel with ChangeNotifier {
   }
 
   void remove(node) {
-    _nodes.remove(node);
-    _edges.removeWhere((edge) => edge.isConnectedTo(node));
+    nodes.remove(node);
+    edges.removeWhere((edge) => edge.isConnectedTo(node));
     notifyListeners();
   }
 
   void removeAll() {
-    _edges.clear();
-    _nodes.clear();
+    edges.clear();
+    nodes.clear();
     notifyListeners();
   }
 
+  RenderBox renderBoxOfNode(Node node) {
+    return node.presentation?.key.currentContext?.findRenderObject()
+        as RenderBox;
+  }
+
   void startTicker(Node node) {
-    // TODO: make all this stuff nullsave
-    RenderBox box =
-        node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
-
-    ticker = Ticker((elapsed) {
-      double elacs = pow(scale, -1).toDouble();
-
-      Offset offset = box
+    ticker = Ticker((_) {
+      node.offset = renderBoxOfNode(node)
           .localToGlobal(Offset.zero)
           .scale(elacs, elacs)
           .translate(-interactiveViewerOffset.dx * elacs,
               -interactiveViewerOffset.dy * elacs);
-      node.offset = offset;
+
       notifyListeners();
     });
 
-    ticker?.start();
+    ticker!.start();
+  }
+
+  double get elacs {
+    return pow(scale, -1).toDouble();
   }
 
   void stopTicker() {

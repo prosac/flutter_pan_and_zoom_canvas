@@ -96,20 +96,19 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   void addThingFromExisting(GraphModel model, Node node) {
-    // final Offset offset = node.offset.translate(node.width, node.height);
     final Offset offset = node.offset;
     final adaptedOffset = computeAdaptedOffset(node, offset);
 
     final newNode = Node(
         offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
-    // TODO: hot to best implement a bidirectional 1-1 relationsship
+    // TODO: how to best implement a bidirectional 1-1 relationsship
     newNode.presentation = ExamplePresentation(
         node: newNode,
         onAddPressed: () => {addThingFromExisting(model, newNode)});
 
     model.add(newNode);
-    model.edges = Edge(node, newNode);
+    model.addEdge(Edge(node, newNode));
   }
 
   @override
