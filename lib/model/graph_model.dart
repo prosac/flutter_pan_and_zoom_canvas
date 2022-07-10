@@ -66,11 +66,11 @@ class GraphModel with ChangeNotifier {
 
     ticker = Ticker((elapsed) {
       double elacs = pow(scale, -1).toDouble();
-      // Offset adjustment = Offset(aspectRatio * scale, aspectRatio * scale);
-      // Offset adjustment = Offset(aspectRatio * elacs, aspectRatio * elacs);
-      // Offset adjustment = interactiveViewerOffset * scale;
-      Offset offset = box.localToGlobal(Offset.zero).scale(elacs, elacs) +
-          Offset(-interactiveViewerOffset.dx * elacs,
+
+      Offset offset = box
+          .localToGlobal(Offset.zero)
+          .scale(elacs, elacs)
+          .translate(-interactiveViewerOffset.dx * elacs,
               -interactiveViewerOffset.dy * elacs);
       // .scale(aspectRatio, aspectRatio)
       // .translate(interactiveViewerOffset.dx, interactiveViewerOffset.dy);

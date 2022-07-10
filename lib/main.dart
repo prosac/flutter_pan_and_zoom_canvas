@@ -9,7 +9,7 @@ void main() => runApp(ChangeNotifierProvider(
     create: (context) => GraphModel(), child: PanAndZoom()));
 
 class PanAndZoom extends StatelessWidget {
-  Widget home = WorkBench(width: 1000, height: 1000);
+  Widget home = WorkBench(width: 5000, height: 4000);
   // Widget home = TestBench(width: 1000, height: 1000);
 
   @override

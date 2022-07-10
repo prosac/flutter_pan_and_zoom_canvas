@@ -37,18 +37,8 @@ class WorkBenchState extends State<WorkBench> {
   late double aspectRatio;
   late Size screenSize;
 
-  // Offset _newGlobalOffset(RenderBox renderBox, Offset globalOffset, Size backgroundSize) {
-  //   final Offset localOffset = renderBox.globalToLocal(globalOffset);
-
-  //   return Offset(
-  //     localOffset.dx / backgroundSize.width,
-  //     localOffset.dy / backgroundSize.height,
-  //   );
-  // }
-
   @override
   void initState() {
-    print('init!');
     super.initState();
     _background =
         NeumorphicBackground(width: widget.width, height: widget.height);
@@ -96,8 +86,8 @@ class WorkBenchState extends State<WorkBench> {
 
     return Stack(children: <Widget>[
       InteractiveViewer(
-          maxScale: 2.0,
-          minScale: 0.5,
+          maxScale: 10.0,
+          minScale: 0.01,
           boundaryMargin: EdgeInsets.all(1000.0),
           transformationController: _transformationController,
           onInteractionEnd: (details) =>
