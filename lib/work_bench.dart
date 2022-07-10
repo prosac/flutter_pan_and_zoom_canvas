@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/factories.dart';
+import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
 import 'package:provider/provider.dart';
@@ -168,5 +168,41 @@ class WorkBenchState extends State<WorkBench> {
 
   void deleteAllTheThings() {
     Provider.of<GraphModel>(context, listen: false).removeAll();
+  }
+
+  void addThing(model, offset) {
+    final newNode =
+        Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+
+    // TODO: hot to best implement a bidirectional 1-1 relationsship
+    newNode.presentation = ExamplePresentation(
+        node: newNode,
+        onAddPressed: () => {addThingFromExisting(model, newNode)});
+
+    model.add(newNode);
+  }
+
+  void addThingFromExisting(GraphModel model, Node node) {
+    // final Offset offset = node.offset.translate(node.width, node.height);
+    final Offset offset = node.offset;
+    final adaptedOffset = computeAdaptedOffset(node, offset);
+
+    final newNode = Node(
+        offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
+
+    // TODO: hot to best implement a bidirectional 1-1 relationsship
+    newNode.presentation = ExamplePresentation(
+        node: newNode,
+        onAddPressed: () => {addThingFromExisting(model, newNode)});
+
+    model.add(newNode);
+    model.connections = Edge(node, newNode);
+  }
+
+  Offset computeAdaptedOffset(Node node, Offset offset) {
+    var addition = Offset((node.width + 20) / background.width,
+        (node.height + 20) / background.height);
+
+    return offset + addition;
   }
 }
