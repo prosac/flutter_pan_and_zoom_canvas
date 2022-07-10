@@ -76,11 +76,8 @@ class WorkBenchState extends State<WorkBench> {
               },
               builder: (BuildContext context, List<TestData?> candidateData,
                   List rejectedData) {
-                return Stack(children: [
-                  background,
-                  ..._connections(model),
-                  ..._nodes(model)
-                ]);
+                return Stack(
+                    children: [background, ...connections, ...draggableItems]);
               },
             );
           })),
@@ -114,7 +111,10 @@ class WorkBenchState extends State<WorkBench> {
     Provider.of<GraphModel>(context, listen: false).scale = 1.0;
   }
 
-  List _nodes(model) {
+  // TODO: maybe this should be called something like GraphicalNodeRepresentation and thus graphicalNodeRepresentations
+  List get draggableItems {
+    GraphModel model = Provider.of<GraphModel>(context);
+
     return model.nodes.map((Node node) {
       Offset offset = node.offset;
 
@@ -125,7 +125,7 @@ class WorkBenchState extends State<WorkBench> {
           node: node,
           onDragStarted: () {
             model.drag(node); // should implicitly do what setState does
-            model.startTicker(node);
+            model.startTicker(node); // should be implicit!
           },
           onDragCompleted: () {
             print('onDragCompleted');
@@ -144,7 +144,9 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  List<CustomPaint> _connections(GraphModel model) {
+  List<CustomPaint> get connections {
+    GraphModel model = Provider.of<GraphModel>(context);
+
     return model.connections.map((Connection connection) {
       Size size1 = Size(connection.node1.presentation!.width,
           connection.node1.presentation!.height);
