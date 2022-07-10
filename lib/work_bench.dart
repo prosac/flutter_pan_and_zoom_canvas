@@ -23,7 +23,7 @@ class WorkBench extends StatefulWidget {
 }
 
 class WorkBenchState extends State<WorkBench> {
-  final TransformationController _transformationController =
+  final TransformationController transformationController =
       TransformationController();
 
   final GlobalKey _dragTargetKey = GlobalKey();
@@ -46,23 +46,17 @@ class WorkBenchState extends State<WorkBench> {
   Widget build(BuildContext context) {
     GraphModel model = Provider.of<GraphModel>(context);
     model.scale = _scale;
-
     mediaQueryData = MediaQuery.of(context);
-    model.viewportSize = mediaQueryData.size;
-    model.viewPortOrientation = mediaQueryData.orientation;
-
-    model.interactiveViewerOffset = Offset(
-        _transformationController.value.row0[3],
-        _transformationController.value.row1[3]);
+    model.offsetFromMatrix(transformationController.value);
 
     return Stack(children: <Widget>[
       InteractiveViewer(
           maxScale: 10.0,
           minScale: 0.01,
           boundaryMargin: EdgeInsets.all(1000.0),
-          transformationController: _transformationController,
+          transformationController: transformationController,
           onInteractionEnd: (details) =>
-              setState(() => _setScaleFromTransformationController()),
+              setState(() => setScaleFromTransformationController()),
           constrained:
               false, // this does the trick to make the "canvas" bigger than the view port
           child: Consumer<GraphModel>(builder: (context, model, child) {
@@ -76,8 +70,11 @@ class WorkBenchState extends State<WorkBench> {
               },
               builder: (BuildContext context, List<TestData?> candidateData,
                   List rejectedData) {
-                return Stack(
-                    children: [background, ...connections, ...draggableItems]);
+                return Stack(children: [
+                  background,
+                  ...visualConnections,
+                  ...draggableItems
+                ]);
               },
             );
           })),
@@ -92,7 +89,7 @@ class WorkBenchState extends State<WorkBench> {
                       onPressed: _resetViewport, child: Text('Reset')),
                   Padding(padding: EdgeInsets.only(bottom: 10.0)),
                   ElevatedButton(
-                      onPressed: _deleteAllTheThings,
+                      onPressed: deleteAllTheThings,
                       child: Text('Delete all the things')),
                   Padding(padding: EdgeInsets.only(bottom: 10.0)),
                   ElevatedButton(
@@ -106,7 +103,7 @@ class WorkBenchState extends State<WorkBench> {
   void _resetViewport() {
     var matrix = Matrix4.identity();
     matrix.translate(-center.dx, -center.dy);
-    _transformationController.value = matrix;
+    transformationController.value = matrix;
     setState(() => _scale = 1.0);
     Provider.of<GraphModel>(context, listen: false).scale = 1.0;
   }
@@ -128,23 +125,12 @@ class WorkBenchState extends State<WorkBench> {
             model.startTicker(node); // should be implicit!
           },
           onDragCompleted: () {
-            print('onDragCompleted');
             model.stopTicker();
-          },
-          onDragEnd: (DraggableDetails details) {
-            print('onDragEnd');
-            print(details);
-            // TODO: why is this never called?
-            // maybe because it is always accepted by the big drag target?
-          },
-          onDragUpdate: (DragUpdateDetails details) {
-            print('onDragUpdate');
-            print(details);
           });
     }).toList();
   }
 
-  List<CustomPaint> get connections {
+  List<CustomPaint> get visualConnections {
     GraphModel model = Provider.of<GraphModel>(context);
 
     return model.connections.map((Connection connection) {
@@ -169,18 +155,16 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  void _setScaleFromTransformationController() {
+  void setScaleFromTransformationController() {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-    _scale = _transformationController.value.row0[0];
+    _scale = transformationController.value.row0[0];
     GraphModel model = Provider.of<GraphModel>(context, listen: false);
     model.scale = _scale;
 
-    model.interactiveViewerOffset = Offset(
-        _transformationController.value.row0[3],
-        _transformationController.value.row1[3]);
+    model.offsetFromMatrix(transformationController.value);
   }
 
-  void _deleteAllTheThings() {
+  void deleteAllTheThings() {
     Provider.of<GraphModel>(context, listen: false).removeAll();
   }
 }

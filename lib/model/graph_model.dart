@@ -11,8 +11,6 @@ class GraphModel with ChangeNotifier {
   final List<Node> _draggingNodes = [];
   final List<Connection> _connections = [];
   Ticker? ticker;
-  late Size viewportSize;
-  late Orientation viewPortOrientation;
   double scale = 1.0; // TODO: should come from the outside
 
   Offset interactiveViewerOffset = Offset.zero;
@@ -91,5 +89,9 @@ class GraphModel with ChangeNotifier {
     notifyListeners();
     print('dragged node ${node.serialNumber}');
     print('${node.toString()}');
+  }
+
+  void offsetFromMatrix(Matrix4 matrix) {
+    interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
   }
 }
