@@ -132,7 +132,7 @@ class WorkBenchState extends State<WorkBench> {
                   ElevatedButton(
                       onPressed: () => addThing(model, correctedCenter),
                       child: Text('Add thing')),
-                  Text('Scale: ${_scale}',
+                  Text('Scale: $_scale',
                       style: Theme.of(context).textTheme.bodyText1),
                   Text('Matrix: ${_transformationController.value.toString()}',
                       style: Theme.of(context).textTheme.bodyText1),
