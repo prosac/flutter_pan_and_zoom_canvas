@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
@@ -15,13 +16,13 @@ class GraphModel with ChangeNotifier {
 
   Offset interactiveViewerOffset = Offset.zero;
 
-  List<Node> get nodes => _nodes;
   List<Node> get draggingNodes => _draggingNodes;
   List<Edge> get edges => _edges;
-
   set edges(edge) {
     _edges.add(edge);
   }
+
+  List<Node> get nodes => _nodes;
 
   void add(Node node) {
     _nodes.add(node);
@@ -31,10 +32,31 @@ class GraphModel with ChangeNotifier {
 
   // void addFromExistingNode(Node existingNode, Node newNode) {
   //   newNode.serialNumber = nextSerialNumber();
-  //   _nodes.add(newNode);
-  //   _connections.add(Edgj(existingNode, newNode));
+  //   nodes.add(newNode);
+  //   edged.add(Edgj(existingNode, newNode));
   //   notifyListeners();
   // }
+
+  void drag(node) {
+    _nodes.remove(node);
+    _draggingNodes.add(node);
+    notifyListeners();
+  }
+
+  void leaveDraggingItemAtNewOffset(Offset offset) {
+    Node node = _draggingNodes.removeLast();
+    node.offset = offset;
+    _nodes.add(node);
+    notifyListeners();
+  }
+
+  int nextSerialNumber() {
+    return _nodes.map((node) => node.serialNumber).reduce(max) + 1;
+  }
+
+  void offsetFromMatrix(Matrix4 matrix) {
+    interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
+  }
 
   void remove(node) {
     _nodes.remove(node);
@@ -45,12 +67,6 @@ class GraphModel with ChangeNotifier {
   void removeAll() {
     _edges.clear();
     _nodes.clear();
-    notifyListeners();
-  }
-
-  void drag(node) {
-    _nodes.remove(node);
-    _draggingNodes.add(node);
     notifyListeners();
   }
 
@@ -76,20 +92,5 @@ class GraphModel with ChangeNotifier {
 
   void stopTicker() {
     ticker?.stop();
-  }
-
-  int nextSerialNumber() {
-    return _nodes.map((node) => node.serialNumber).reduce(max) + 1;
-  }
-
-  void leaveDraggingItemAtNewOffset(Offset offset) {
-    Node node = _draggingNodes.removeLast();
-    node.offset = offset;
-    _nodes.add(node);
-    notifyListeners();
-  }
-
-  void offsetFromMatrix(Matrix4 matrix) {
-    interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
   }
 }
