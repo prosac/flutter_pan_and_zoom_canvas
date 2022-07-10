@@ -30,13 +30,6 @@ class GraphModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // void addFromExistingNode(Node existingNode, Node newNode) {
-  //   newNode.serialNumber = nextSerialNumber();
-  //   nodes.add(newNode);
-  //   edged.add(Edgj(existingNode, newNode));
-  //   notifyListeners();
-  // }
-
   void drag(node) {
     _nodes.remove(node);
     _draggingNodes.add(node);
