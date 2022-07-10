@@ -9,7 +9,7 @@ class GraphModel with ChangeNotifier {
   /// Internal, private state of the model.
   final List<Node> _nodes = [];
   final List<Node> _draggingNodes = [];
-  final List<Edge> _connections = [];
+  final List<Edge> _edges = [];
   Ticker? ticker;
   double scale = 1.0; // TODO: should come from the outside
 
@@ -17,10 +17,10 @@ class GraphModel with ChangeNotifier {
 
   List<Node> get nodes => _nodes;
   List<Node> get draggingNodes => _draggingNodes;
-  List<Edge> get connections => _connections;
+  List<Edge> get edges => _edges;
 
-  set connections(connection) {
-    _connections.add(connection);
+  set edges(edge) {
+    _edges.add(edge);
   }
 
   void add(Node node) {
@@ -38,12 +38,12 @@ class GraphModel with ChangeNotifier {
 
   void remove(node) {
     _nodes.remove(node);
-    _connections.removeWhere((connection) => connection.isConnectedTo(node));
+    _edges.removeWhere((edge) => edge.isConnectedTo(node));
     notifyListeners();
   }
 
   void removeAll() {
-    _connections.clear();
+    _edges.clear();
     _nodes.clear();
     notifyListeners();
   }

@@ -60,14 +60,14 @@ class WorkBenchState extends State<WorkBench> {
   List<CustomPaint> get visualConnections {
     GraphModel model = Provider.of<GraphModel>(context);
 
-    return model.connections.map((Edge connection) {
-      Size size1 = Size(connection.node1.presentation!.width,
-          connection.node1.presentation!.height);
-      Size size2 = Size(connection.node2.presentation!.width,
-          connection.node1.presentation!.height);
+    return model.edges.map((Edge edge) {
+      Size size1 =
+          Size(edge.node1.presentation!.width, edge.node1.presentation!.height);
+      Size size2 =
+          Size(edge.node2.presentation!.width, edge.node1.presentation!.height);
 
-      Offset nodeOffset1 = connection.node1.presentation!.offset;
-      Offset nodeOffset2 = connection.node2.presentation!.offset;
+      Offset nodeOffset1 = edge.node1.presentation!.offset;
+      Offset nodeOffset2 = edge.node2.presentation!.offset;
 
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
@@ -109,7 +109,7 @@ class WorkBenchState extends State<WorkBench> {
         onAddPressed: () => {addThingFromExisting(model, newNode)});
 
     model.add(newNode);
-    model.connections = Edge(node, newNode);
+    model.edges = Edge(node, newNode);
   }
 
   @override
