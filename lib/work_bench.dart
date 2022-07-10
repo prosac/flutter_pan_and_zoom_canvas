@@ -30,7 +30,6 @@ class WorkBenchState extends State<WorkBench> {
   double _scale = 1.0;
 
   late Background background;
-  late Size backgroundSize;
   late Offset center;
   late MediaQueryData mediaQueryData;
   late Size screenSize;
@@ -40,8 +39,7 @@ class WorkBenchState extends State<WorkBench> {
     super.initState();
     background =
         NeumorphicBackground(width: widget.width, height: widget.height);
-    backgroundSize = Size(background.width, background.height);
-    center = Offset(backgroundSize.width / 2, backgroundSize.height / 2);
+    center = Offset(background.width / 2, background.height / 2);
     _resetViewport();
   }
 
