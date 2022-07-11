@@ -9,17 +9,17 @@ class Node {
   final TestData payload;
   int serialNumber = 0; // a simple and readable identifier for visual debugging
 
-  Node({required this.offset, this.presentation, required this.payload});
-
   final GlobalKey key = GlobalKey();
 
-  @override
-  String toString() {
-    return '${this.serialNumber}:\n${this.offset.dx}\n${this.offset.dy}';
-  }
+  Node({required this.offset, this.presentation, required this.payload});
+
+  get height => (presentation != null) ? presentation?.height : 0;
 
   // TODO: if we manage the potential of having no presentation here
   // maybe we should go for a null object by default for presentation
   get width => (presentation != null) ? presentation?.width : 0;
-  get height => (presentation != null) ? presentation?.height : 0;
+  @override
+  String toString() {
+    return '${this.serialNumber}:\n${this.offset.dx}\n${this.offset.dy}';
+  }
 }
