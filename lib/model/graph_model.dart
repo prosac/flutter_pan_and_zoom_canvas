@@ -12,8 +12,8 @@ class GraphModel with ChangeNotifier {
   final List<Node> nodes = [];
   final List<Node> draggingNodes = [];
   final List<Edge> edges = [];
-  Ticker? ticker;
-  double scale = 1.0; // TODO: should come from the outside
+  Ticker ticker = Ticker((_) => {});
+  double scale = 1.0;
 
   Offset interactiveViewerOffset = Offset.zero;
 
@@ -82,7 +82,7 @@ class GraphModel with ChangeNotifier {
       notifyListeners();
     });
 
-    ticker!.start();
+    ticker.start();
   }
 
   double get elacs {
@@ -90,6 +90,6 @@ class GraphModel with ChangeNotifier {
   }
 
   void stopTicker() {
-    ticker?.stop();
+    ticker.stop();
   }
 }
