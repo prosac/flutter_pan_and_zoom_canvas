@@ -1,21 +1,18 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:provider/provider.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
 import 'presentation_container.dart';
 
-class ExamplePresentation extends StatelessWidget {
+class ExamplePresentation extends BasePresentation {
   final double width = 300;
   final double height = 200;
   final Node node;
-  final GlobalKey key = GlobalKey();
   final VoidCallback onAddPressed;
 
-  Offset get offset {
-    return node.offset;
-  }
-
-  ExamplePresentation({required this.node, required this.onAddPressed});
+  ExamplePresentation({required this.node, required this.onAddPressed})
+      : super(node: node, onAddPressed: onAddPressed);
 
   @override
   Widget build(BuildContext context) {

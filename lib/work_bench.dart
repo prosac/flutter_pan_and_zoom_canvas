@@ -90,7 +90,7 @@ class WorkBenchState extends State<WorkBench> {
     // TODO: hot to best implement a bidirectional 1-1 relationsship
     newNode.presentation = ExamplePresentation(
         node: newNode,
-        onAddPressed: () => {addThingFromExisting(model, newNode)});
+        onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
   }
