@@ -108,7 +108,7 @@ class WorkBenchState extends State<WorkBench> {
         onAddPressed: () => {addThingFromExisting(model, newNode)});
 
     model.add(newNode);
-    model.addEdge(Edge(node, newNode));
+    model.addEdge(node, newNode);
   }
 
   @override

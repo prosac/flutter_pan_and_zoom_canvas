@@ -17,20 +17,14 @@ class GraphModel with ChangeNotifier {
 
   Offset interactiveViewerOffset = Offset.zero;
 
-  void addEdge(edge) {
-    edges.add(edge);
-  }
-
-  Node newNode({required Offset offset, required TestData payload}) {
-    Node node = Node(offset: offset, payload: payload);
-    add(node);
-    return node;
-  }
-
   void add(Node node) {
     nodes.add(node);
-    node.serialNumber = nextSerialNumber();
+    node.serialNumber = _nextSerialNumber();
     notifyListeners();
+  }
+
+  void addEdge(Node node, Node newNode) {
+    edges.add(Edge(node, newNode));
   }
 
   void drag(node) {
@@ -46,8 +40,11 @@ class GraphModel with ChangeNotifier {
     notifyListeners();
   }
 
-  int nextSerialNumber() {
-    return nodes.map((node) => node.serialNumber).reduce(max) + 1;
+  // TODO: needed?
+  Node newNode({required Offset offset, required TestData payload}) {
+    Node node = Node(offset: offset, payload: payload);
+    add(node);
+    return node;
   }
 
   void offsetFromMatrix(Matrix4 matrix) {
@@ -66,14 +63,14 @@ class GraphModel with ChangeNotifier {
     notifyListeners();
   }
 
-  RenderBox renderBoxOfNode(Node node) {
-    return node.presentation?.key.currentContext?.findRenderObject()
-        as RenderBox;
-  }
-
   void startTicker(Node node) {
+    var renderBoxOfNode =
+        node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
+
+    var elacs = pow(scale, -1).toDouble();
+
     ticker = Ticker((_) {
-      node.offset = renderBoxOfNode(node)
+      node.offset = renderBoxOfNode
           .localToGlobal(Offset.zero)
           .scale(elacs, elacs)
           .translate(-interactiveViewerOffset.dx * elacs,
@@ -85,11 +82,11 @@ class GraphModel with ChangeNotifier {
     ticker.start();
   }
 
-  double get elacs {
-    return pow(scale, -1).toDouble();
-  }
-
   void stopTicker() {
     ticker.stop();
+  }
+
+  int _nextSerialNumber() {
+    return nodes.map((node) => node.serialNumber).reduce(max) + 1;
   }
 }
