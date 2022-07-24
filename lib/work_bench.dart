@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
+import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +36,7 @@ class WorkBenchState extends State<WorkBench> {
 
   List get draggableItems {
     GraphModel model = Provider.of<GraphModel>(context);
+    ViewerState viewerState = Provider.of<ViewerState>(context);
 
     return model.nodes.map((Node node) {
       Offset offset = node.offset;
@@ -46,10 +48,10 @@ class WorkBenchState extends State<WorkBench> {
           node: node,
           onDragStarted: () {
             model.drag(node); // should implicitly do what setState does
-            model.startTicker(node); // should be implicit!
+            viewerState.drag(node); // should be implicit!
           },
           onDragCompleted: () {
-            model.stopTicker();
+            viewerState.stopDragging();
           });
     }).toList();
   }
@@ -113,9 +115,9 @@ class WorkBenchState extends State<WorkBench> {
 
   @override
   Widget build(BuildContext context) {
-    GraphModel model = Provider.of<GraphModel>(context);
-    model.scale = scale;
-    model.offsetFromMatrix(transformationController.value);
+    ViewerState viewerState = Provider.of<ViewerState>(context);
+    viewerState.scale = scale;
+    viewerState.offsetFromMatrix(transformationController.value);
     mediaQueryData = MediaQuery.of(context);
 
     return Stack(children: <Widget>[
@@ -193,15 +195,15 @@ class WorkBenchState extends State<WorkBench> {
     matrix.translate(-center.dx, -center.dy);
     transformationController.value = matrix;
     setState(() => scale = 1.0);
-    Provider.of<GraphModel>(context, listen: false).scale = 1.0;
+    Provider.of<ViewerState>(context, listen: false).scale = 1.0;
   }
 
   void setScaleFromTransformationController() {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
     scale = transformationController.value.row0[0];
-    GraphModel model = Provider.of<GraphModel>(context, listen: false);
-    model.scale = scale;
+    ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
+    viewerState.scale = scale;
 
-    model.offsetFromMatrix(transformationController.value);
+    viewerState.offsetFromMatrix(transformationController.value);
   }
 }

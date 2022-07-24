@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/test_data.dart';
 
 class Node {
@@ -20,5 +23,15 @@ class Node {
   @override
   String toString() {
     return '${this.serialNumber}:\n${this.offset.dx}\n${this.offset.dy}';
+  }
+
+  factory Node.random() {
+    var offset = Offset(
+        Random().nextInt(1000).toDouble(), Random().nextInt(1000).toDouble());
+    var payload = TestData();
+    var node = Node(offset: offset, payload: payload);
+    var presentation = ExamplePresentation(node: node, onAddPressed: () {});
+    node.presentation = presentation;
+    return node;
   }
 }

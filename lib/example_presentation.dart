@@ -1,5 +1,6 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:provider/provider.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
@@ -18,8 +19,9 @@ class ExamplePresentation extends BasePresentation {
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation = Consumer<GraphModel>(builder: (context, model, child) {
-      if (model.scale > 0.5) {
+    presentation =
+        Consumer<ViewerState>(builder: (context, viewerState, child) {
+      if (viewerState.scale > 0.5) {
         return PresentationContainer(
             width: width,
             height: height,
@@ -65,11 +67,11 @@ class ExamplePresentation extends BasePresentation {
   }
 
   NeumorphicButton buildRemoveButton(BuildContext context) {
-    GraphModel model = Provider.of<GraphModel>(context, listen: false);
+    GraphModel viewerState = Provider.of<GraphModel>(context, listen: false);
 
     return NeumorphicButton(
       onPressed: () {
-        model.remove(node);
+        viewerState.remove(node);
       },
       style: NeumorphicStyle(
           shape: NeumorphicShape.flat,

@@ -13,11 +13,11 @@ void main() {
     });
 
     test('is a Node ;-)', () {
-      return {expect(node, isA<Node>())};
+      expect(node, isA<Node>());
     });
 
     test('is a Node ;-)', () {
-      return {expect(node, isA<Node>())};
+      expect(node, isA<Node>());
     });
   });
 
@@ -27,7 +27,22 @@ void main() {
     });
 
     test('is a Node ;-)', () {
-      return {expect(node, isA<Node>())};
+      expect(node, isA<Node>());
+    });
+  });
+
+  group('factories', () {
+    group('random', () {
+      setUp(() async {
+        node = Node.random();
+      });
+      test('creates a random node', () {
+        expect(node, isA<Node>());
+      });
+      test('the nodes offset is in bearable bounds', () {
+        expect(node.offset.dx, lessThanOrEqualTo(1000));
+        expect(node.offset.dy, lessThanOrEqualTo(1000));
+      });
     });
   });
 }

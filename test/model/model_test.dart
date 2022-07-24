@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'package:flutter_pan_and_zoom/model/graph_model.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
@@ -43,25 +42,6 @@ void main() {
       });
     });
 
-    group('ticker', () {
-      test('is a Ticker', () {
-        expect(model.ticker, isA<Ticker>());
-      });
-      test('initially is not ticking', () {
-        expect(model.ticker.isTicking, false);
-      });
-
-      test('initially is not active', () {
-        expect(model.ticker.isActive, false);
-      });
-    });
-
-    group('scale', () {
-      test('is 1.0 intitially', () {
-        expect(model.scale, 1.0);
-      });
-    });
-
     group('add(Node node)', () {
       test('adds nodes with incrementing serial numbers', () {
         model.add(Node(offset: Offset.zero, payload: TestData()));
@@ -91,6 +71,38 @@ void main() {
         model.addEdge(Node(offset: Offset.zero, payload: TestData()),
             Node(offset: Offset.zero, payload: TestData()));
         expect(model.edges[0], isA<Edge>());
+      });
+    });
+
+    group('drag', () {
+      late Node node1;
+      late Node node2;
+
+      setUp(() async {
+        node1 = Node.random();
+        node2 = Node.random();
+        model.add(node1);
+        model.add(node2);
+      });
+      test('moves it to the list of dragging nodes', () {
+        model.drag(node1);
+        expect(model.draggingNodes, contains(node1));
+        expect(model.nodes, contains(node2));
+      });
+    });
+
+    group('leaveDragginItemAtNewOffset', () {
+      late Node node1;
+
+      setUp(() async {
+        node1 = Node.random();
+        model.add(node1);
+      });
+      test('moves the node being dragged from dragging to normal and notifies',
+          () {
+        model.drag(node1);
+        model.leaveDraggingItemAtNewOffset(Offset(100, 100));
+        expect(node1.offset, Offset(100, 100));
       });
     });
   });
