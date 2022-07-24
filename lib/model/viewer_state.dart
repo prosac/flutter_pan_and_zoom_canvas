@@ -10,10 +10,6 @@ class ViewerState with ChangeNotifier {
   double scale = 1.0;
   Ticker ticker = Ticker((_) => {});
 
-  void offsetFromMatrix(Matrix4 matrix) {
-    interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
-  }
-
   void drag(Node node) {
     var renderBoxOfNode =
         node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
@@ -31,6 +27,10 @@ class ViewerState with ChangeNotifier {
     });
 
     ticker.start();
+  }
+
+  void offsetFromMatrix(Matrix4 matrix) {
+    interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
   }
 
   void stopDragging() {

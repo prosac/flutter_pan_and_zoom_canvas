@@ -11,8 +11,6 @@ class GraphModel with ChangeNotifier {
   final List<Node> draggingNodes = [];
   final List<Edge> edges = [];
 
-  Offset interactiveViewerOffset = Offset.zero;
-
   void add(Node node) {
     nodes.add(node);
     node.serialNumber = _nextSerialNumber();
@@ -34,10 +32,6 @@ class GraphModel with ChangeNotifier {
     node.offset = offset;
     nodes.add(node);
     notifyListeners();
-  }
-
-  void offsetFromMatrix(Matrix4 matrix) {
-    interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
   }
 
   void remove(node) {

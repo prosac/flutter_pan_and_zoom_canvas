@@ -18,12 +18,6 @@ void main() {
     test('can notifyListeners()',
         () => expect(model.notifyListeners, isA<Function>()));
 
-    group('interactiveViewerOffset', () {
-      test('is zero initially', () {
-        expect(model.interactiveViewerOffset, Offset.zero);
-      });
-    });
-
     group('nodes', () {
       test('initially is an empty list', () {
         expect(model.nodes, isA<List>());
@@ -44,9 +38,9 @@ void main() {
 
     group('add(Node node)', () {
       test('adds nodes with incrementing serial numbers', () {
-        model.add(Node(offset: Offset.zero, payload: TestData()));
+        model.add(Node.random());
         expect(model.nodes[0].serialNumber, 1);
-        model.add(Node(offset: Offset.zero, payload: TestData()));
+        model.add(Node.random());
         expect(model.nodes[1].serialNumber, 2);
       });
 
@@ -55,15 +49,6 @@ void main() {
       //   expect(model, isMethodCall);
       //   model.add(Node(offset: Offset.zero, payload: TestData()));
       // });
-    });
-
-    group('add(Node node)', () {
-      test('adds nodes with incrementing serial numbers', () {
-        model.add(Node(offset: Offset.zero, payload: TestData()));
-        expect(model.nodes[0].serialNumber, 1);
-        model.add(Node(offset: Offset.zero, payload: TestData()));
-        expect(model.nodes[1].serialNumber, 2);
-      });
     });
 
     group('addEdge(Node node, Node otherNode)', () {
@@ -103,6 +88,42 @@ void main() {
         model.drag(node1);
         model.leaveDraggingItemAtNewOffset(Offset(100, 100));
         expect(node1.offset, Offset(100, 100));
+      });
+    });
+
+    group('removing nodes', () {
+      late Node node1;
+      late Node node2;
+      late Node node3;
+
+      setUp(() async {
+        node1 = Node.random();
+        node2 = Node.random();
+        node3 = Node.random();
+        model.add(node1);
+        model.add(node2);
+        model.add(node3);
+        model.addEdge(node1, node2);
+        model.addEdge(node2, node3);
+      });
+      group('remove(Node node)', () {
+        test('removes node and connected edges', () {
+          expect(model.nodes, contains(node3));
+          expect(model.edges.length, 2);
+          model.remove(node3);
+          expect(model.nodes, isNot(contains(node3)));
+          expect(model.edges.length, 1);
+        });
+      });
+
+      group('removeAll()', () {
+        test('removes all nodes', () {
+          expect(model.nodes, contains(node3));
+          expect(model.edges.length, 2);
+          model.removeAll();
+          expect(model.nodes.length, 0);
+          expect(model.edges.length, 0);
+        });
       });
     });
   });

@@ -18,7 +18,7 @@ void main() {
     });
 
     test('is an Edge ;-)', () {
-      return {expect(edge, isA<Edge>())};
+      expect(edge, isA<Edge>());
     });
 
     test('knows two nodes', () {
