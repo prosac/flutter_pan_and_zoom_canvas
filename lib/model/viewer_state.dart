@@ -12,7 +12,7 @@ class ViewerState with ChangeNotifier {
 
   void drag(Node node) {
     var renderBoxOfNode =
-        node.presentation?.key.currentContext?.findRenderObject() as RenderBox;
+        node.presentation.key.currentContext?.findRenderObject() as RenderBox;
 
     var elacs = pow(scale, -1).toDouble();
 

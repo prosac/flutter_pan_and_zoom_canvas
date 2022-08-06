@@ -64,12 +64,12 @@ class WorkBenchState extends State<WorkBench> {
 
     return model.edges.map((Edge edge) {
       Size size1 =
-          Size(edge.node1.presentation!.width, edge.node1.presentation!.height);
+          Size(edge.node1.presentation.width, edge.node1.presentation.height);
       Size size2 =
-          Size(edge.node2.presentation!.width, edge.node1.presentation!.height);
+          Size(edge.node2.presentation.width, edge.node1.presentation.height);
 
-      Offset nodeOffset1 = edge.node1.presentation!.offset;
-      Offset nodeOffset2 = edge.node2.presentation!.offset;
+      Offset nodeOffset1 = edge.node1.presentation.offset;
+      Offset nodeOffset2 = edge.node2.presentation.offset;
 
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
