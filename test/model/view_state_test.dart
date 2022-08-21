@@ -1,12 +1,17 @@
 import 'dart:ui';
 
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/example_presentation.dart';
+import 'package:flutter_pan_and_zoom/model/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:test/test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
+@GenerateMocks([DraggingProcedure])
+import 'dragging_procedure.mocks.dart';
 
 void main() {
   late ViewerState state = ViewerState();
@@ -23,22 +28,26 @@ void main() {
     });
   });
 
-  group('ticker', () {
-    test('is a Ticker', () {
-      expect(state.ticker, isA<Ticker>());
-    });
-    test('initially is not ticking', () {
-      expect(state.ticker.isTicking, false);
-    });
+  // group('ticker', () {
+  //   test('is a Ticker', () {
+  //     expect(state.ticker, isA<Ticker>());
+  //   });
+  //   test('initially is not ticking', () {
+  //     expect(state.ticker.isTicking, false);
+  //   });
 
-    test('initially is not active', () {
-      expect(state.ticker.isActive, false);
-    });
-  });
+  //   test('initially is not active', () {
+  //     expect(state.ticker.isActive, false);
+  //   });
+  // });
 
   group('drag(Node node)', () {
     late Node node;
     late BasePresentation presentation;
+    Function notifier = () => {};
+    DraggingProcedure draggingProcedure =
+        MockDraggingProcedure(notifier: notifier);
+    late ViewerState state = ViewerState(draggingProcedure);
 
     setUp(() {
       node = Node.random();
@@ -47,11 +56,11 @@ void main() {
     });
 
     // TODO: now i sense that the node itself should not know its position, but only the presentation!
-    test('starts updating of node offset on tick', () {
+    test('starts the dragging procedure with the node', () {
       // TODO: how to force the presentation to be painted, so a renderBox can be retrieved?
-      // expect(state.ticker.isTicking, false);
-      // state.drag(node);
-      // expect(state.ticker.isTicking, true);
+      state.drag(node);
+      verify(draggingProcedure.start(node, 1.0, Offset.zero));
+      // verify(notifier());
     });
   });
 
