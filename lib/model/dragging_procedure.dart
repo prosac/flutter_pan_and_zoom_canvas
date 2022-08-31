@@ -1,22 +1,29 @@
-import 'dart:ui';
-
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_pan_and_zoom/model/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 
 class DraggingProcedure {
+  late Function notifier;
+
   late Ticker ticker;
   late final Node node;
-  late final double elacs;
+  late final double scale;
   late final Offset interactiveViewerOffset;
-  late final Function notifier;
 
-  void start(node, elacs, interactiveViewerOffset) {
+  DraggingProcedure({
+    required this.notifier,
+  });
+
+  void start(node, scale, interactiveViewerOffset) {
     ticker = Ticker((_) {
-      node.offset = node.renderBox
-          .localToGlobal(Offset.zero)
-          .scale(elacs, elacs)
-          .translate(-interactiveViewerOffset.dx * elacs,
-              -interactiveViewerOffset.dy * elacs);
+      var renderBoxOfNode =
+          node.presentation.key.currentContext?.findRenderObject() as RenderBox;
+      var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
+
+      node.offset =
+          DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
+              nodeOffset, scale, interactiveViewerOffset);
 
       notifier();
     });
