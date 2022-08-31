@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'package:flutter_pan_and_zoom/model/graph_model.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';

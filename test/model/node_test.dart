@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 import 'package:flutter_pan_and_zoom/test_data.dart';
