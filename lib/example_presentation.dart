@@ -67,11 +67,11 @@ class ExamplePresentation extends BasePresentation {
   }
 
   NeumorphicButton buildRemoveButton(BuildContext context) {
-    GraphModel viewerState = Provider.of<GraphModel>(context, listen: false);
+    GraphModel model = Provider.of<GraphModel>(context, listen: false);
 
     return NeumorphicButton(
       onPressed: () {
-        viewerState.remove(node);
+        model.remove(node);
       },
       style: NeumorphicStyle(
           shape: NeumorphicShape.flat,
