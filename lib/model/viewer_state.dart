@@ -10,6 +10,11 @@ class ViewerState with ChangeNotifier {
   double elacs = pow(1.0, -1).toDouble();
   late DraggingProcedure draggingProcedure;
 
+  ViewerState({draggingProcedure}) {
+    draggingProcedure = DraggingProcedure(notifier: notifyListeners);
+  }
+  // : draggingProcedure = DraggingProcedure(notifier: notifyListeners);
+
   void drag(Node node) {
     elacs = pow(scale, -1).toDouble();
     draggingProcedure = DraggingProcedure(notifier: notifyListeners);

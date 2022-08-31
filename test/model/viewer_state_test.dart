@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/model/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+
+@GenerateMocks([DraggingProcedure])
+import 'viewer_state_test.mocks.dart';
 
 void main() {
-  late ViewerState state = ViewerState();
+  DraggingProcedure draggingProcedure = MockDraggingProcedure();
+  late ViewerState state = ViewerState(draggingProcedure: draggingProcedure);
 
   group('interactiveViewerOffset', () {
     test('initially is zero', () {
@@ -21,20 +28,21 @@ void main() {
   });
 
   group('drag(Node node)', () {
-    late Node node;
     late MyTestWidget testApp;
 
     setUp(() {
-      node = Node.random();
-      testApp = MyTestWidget(node);
+      // node = Node.random();
+      testApp = MyTestWidget();
     });
 
     testWidgets('.drag()', (tester) async {
       await tester.pumpWidget(testApp);
+      await tester.pumpAndSettle();
       final button = find.text('Push me!');
       expect(button, findsOneWidget);
       await tester.pumpAndSettle();
-      // await tester.tap(button);
+      await tester.tap(button);
+      await tester.pumpAndSettle();
     });
   });
 
@@ -48,13 +56,11 @@ void main() {
 }
 
 class MyTestWidget extends StatelessWidget {
-  final Node node;
-  MyTestWidget(this.node) {
-    node.presentation = BasePresentation(node: node, onAddPressed: () {});
-  }
-
   @override
   Widget build(BuildContext context) {
+    Node node = Node.random();
+    node.presentation = BasePresentation(node: node, onAddPressed: () {});
+
     return MaterialApp(
         title: 'Test App',
         home: ChangeNotifierProvider<ViewerState>(
@@ -65,7 +71,11 @@ class MyTestWidget extends StatelessWidget {
                 TextButton(
                   child: Text('Push me!'),
                   onPressed: (() {
-                    Provider.of<ViewerState>(context, listen: false).drag(node);
+                    var viewerState =
+                        Provider.of<ViewerState>(context, listen: false);
+
+                    viewerState.drag(node);
+                    viewerState.stopDragging();
                     // context.watch<ViewerState>().drag(node);
                   }),
                 ),
