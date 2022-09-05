@@ -47,7 +47,7 @@ class WorkBenchState extends State<WorkBench> {
           scale: scale,
           node: node,
           onDragStarted: () {
-            model.drag(node); // should implicitly do what setState does
+            model.drag(node);
             viewerState.drag(node); // should be implicit!
           },
           onDragCompleted: () {

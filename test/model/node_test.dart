@@ -1,10 +1,22 @@
-import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
-import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 import 'package:flutter_pan_and_zoom/test_data.dart';
 import 'package:test/test.dart';
+
+class MockRenderBox extends RenderBox {}
+
+class MockPresentation extends BasePresentation {
+  final GlobalKey key = GlobalKey();
+  final double width = 50;
+  final double height = 50;
+
+  MockPresentation() : super(node: Node.random(), onAddPressed: () {});
+
+  RenderBox get renderBox => MockRenderBox();
+  Widget build(BuildContext context) => Container();
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.error}) => '';
+}
 
 void main() {
   late Node node;
@@ -28,13 +40,19 @@ void main() {
 
     setUp(() async {
       node = Node(offset: Offset.zero, payload: TestData());
-      presentation = ExamplePresentation(node: node, onAddPressed: () {});
+      presentation = MockPresentation();
       node.presentation = presentation;
     });
 
     test('delegates width and height to the presentation', () {
       expect(node.width, presentation.width);
       expect(node.height, presentation.height);
+    });
+
+    group('.renderBox', () {
+      test('returns the RenderBox of the presentation', () {
+        expect(node.renderBox, isA<RenderBox>());
+      });
     });
   });
 
