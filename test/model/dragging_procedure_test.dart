@@ -20,10 +20,14 @@ void main() {
       var testWidget = MyTestWidget(testUtils.notifier);
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
-      final startButton = find.text('Start and stop!');
+      final startButton = find.text('Start!');
+      final stopButton = find.text('Stop!');
       expect(startButton, findsOneWidget);
+      expect(stopButton, findsOneWidget);
       await tester.tap(startButton);
-      await tester.pumpAndSettle();
+      // // This is the trick to bring it alive!
+      await tester.pump(Duration(milliseconds: 10));
+      await tester.tap(stopButton);
     });
   });
 }
@@ -47,9 +51,14 @@ class MyTestWidget extends StatelessWidget {
             children: [
               node.presentation,
               TextButton(
-                child: Text('Start and stop!'),
+                child: Text('Start!'),
                 onPressed: (() {
                   draggingProcedure.start(node, 1.0, Offset.zero);
+                }),
+              ),
+              TextButton(
+                child: Text('Stop!'),
+                onPressed: (() {
                   draggingProcedure.stop();
                 }),
               )
