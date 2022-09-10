@@ -15,52 +15,35 @@ void main() {
     testWidgets('starts the dragging procedure', (tester) async {
       var testWidget = MyTestWidget(testUtils.notifier);
       await tester.pumpWidget(testWidget);
-      await tester.pumpAndSettle();
-      final startButton = find.text('Start!');
-      final stopButton = find.text('Stop!');
-      expect(startButton, findsOneWidget);
-      expect(stopButton, findsOneWidget);
-      await tester.tap(startButton);
-      // // This is the trick to bring it alive!
+      testWidget.start();
       await tester.pump(Duration(milliseconds: 10));
-      await tester.tap(stopButton);
+      testWidget.stop();
     });
   });
 }
 
 class MyTestWidget extends StatelessWidget {
   final Function notifier;
+  late final DraggingProcedure draggingProcedure;
+  late final Node node;
 
-  MyTestWidget(this.notifier);
+  MyTestWidget(this.notifier) {
+    node = Node.random();
+    node.presentation = BasePresentation(node: node, onAddPressed: () {});
+    draggingProcedure = DraggingProcedure(notifier: notifier);
+  }
+
+  void start() {
+    draggingProcedure.start(node, 1.0, Offset.zero);
+  }
+
+  void stop() {
+    draggingProcedure.stop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Node node = Node.random();
-    node.presentation = BasePresentation(node: node, onAddPressed: () {});
-    DraggingProcedure draggingProcedure = DraggingProcedure(notifier: notifier);
-
-    return MaterialApp(
-        title: 'Test App',
-        home: SizedBox(
-          width: 1000,
-          height: 1000,
-          child: Column(
-            children: [
-              node.presentation,
-              TextButton(
-                child: Text('Start!'),
-                onPressed: (() {
-                  draggingProcedure.start(node, 1.0, Offset.zero);
-                }),
-              ),
-              TextButton(
-                child: Text('Stop!'),
-                onPressed: (() {
-                  draggingProcedure.stop();
-                }),
-              )
-            ],
-          ),
-        ));
+    return node.presentation;
   }
 }
 
