@@ -1,13 +1,9 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/dragging_procedure.dart';
-import 'package:flutter_pan_and_zoom/model/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 
-// @GenerateMocks([TestUtils])
-@GenerateMocks([DraggingProcedureUtilityFunctions])
 void main() {
   late TestUtils testUtils;
 

@@ -5,7 +5,6 @@ import 'package:flutter_pan_and_zoom/model/node.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
 @GenerateMocks([DraggingProcedure])
