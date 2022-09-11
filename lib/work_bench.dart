@@ -29,8 +29,9 @@ class WorkBenchState extends State<WorkBench> {
 
   final GlobalKey dragTargetKey = GlobalKey();
   late Background background;
-  late Offset center;
   late MediaQueryData mediaQueryData;
+
+  Offset get center => Offset(background.width / 2, background.height / 2);
 
   List get draggableItems {
     GraphModel model = Provider.of<GraphModel>(context);
@@ -105,7 +106,7 @@ class WorkBenchState extends State<WorkBench> {
     // TODO: how to best implement a bidirectional 1-1 relationsship
     newNode.presentation = ExamplePresentation(
         node: newNode,
-        onAddPressed: () => {addThingFromExisting(model, newNode)});
+        onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
     model.addEdge(node, newNode);
@@ -183,7 +184,6 @@ class WorkBenchState extends State<WorkBench> {
     super.initState();
     background =
         NeumorphicBackground(width: widget.width, height: widget.height);
-    center = Offset(background.width / 2, background.height / 2);
     resetViewport();
   }
 
