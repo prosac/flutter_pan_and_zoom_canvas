@@ -6,7 +6,6 @@ import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'node.dart';
 
 class GraphModel with ChangeNotifier {
-  /// Internal, private state of the model.
   final List<Node> nodes = [];
   final List<Node> draggingNodes = [];
   final List<Edge> edges = [];
