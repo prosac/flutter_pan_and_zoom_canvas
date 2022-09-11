@@ -31,8 +31,9 @@ class ViewerState with ChangeNotifier {
     draggingProcedure.start(node, elacs, interactiveViewerOffset, onTick);
   }
 
-  void offsetFromMatrix(Matrix4 matrix) {
+  void parametersFromMatrix(Matrix4 matrix) {
     interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
+    scale = matrix.row0[0];
   }
 
   void stopDragging() {

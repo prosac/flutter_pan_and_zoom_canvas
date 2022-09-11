@@ -28,8 +28,6 @@ class WorkBenchState extends State<WorkBench> {
       TransformationController();
 
   final GlobalKey dragTargetKey = GlobalKey();
-  double scale = 1.0;
-
   late Background background;
   late Offset center;
   late MediaQueryData mediaQueryData;
@@ -44,7 +42,7 @@ class WorkBenchState extends State<WorkBench> {
       return DraggableItem(
           key: UniqueKey(),
           offset: offset,
-          scale: scale,
+          scale: viewerState.scale,
           node: node,
           onDragStarted: () {
             model.drag(node);
@@ -116,8 +114,7 @@ class WorkBenchState extends State<WorkBench> {
   @override
   Widget build(BuildContext context) {
     ViewerState viewerState = Provider.of<ViewerState>(context);
-    viewerState.scale = scale;
-    viewerState.offsetFromMatrix(transformationController.value);
+    viewerState.parametersFromMatrix(transformationController.value);
     mediaQueryData = MediaQuery.of(context);
 
     return Stack(children: <Widget>[
@@ -192,18 +189,16 @@ class WorkBenchState extends State<WorkBench> {
 
   void resetViewport() {
     var matrix = Matrix4.identity();
+    ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
     matrix.translate(-center.dx, -center.dy);
     transformationController.value = matrix;
-    setState(() => scale = 1.0);
+    setState(() => viewerState.scale = 1.0);
     Provider.of<ViewerState>(context, listen: false).scale = 1.0;
   }
 
   void setScaleFromTransformationController() {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-    scale = transformationController.value.row0[0];
     ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
-    viewerState.scale = scale;
-
-    viewerState.offsetFromMatrix(transformationController.value);
+    viewerState.parametersFromMatrix(transformationController.value);
   }
 }

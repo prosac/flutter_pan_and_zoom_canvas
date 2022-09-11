@@ -44,7 +44,7 @@ void main() {
     group('offsetFromMatrix(Matrix4 matrix)', () {
       test('set the interacriveViewerOffset from a Matrix4', () {
         var matrix = Matrix4.translationValues(123, 321, 0);
-        state.offsetFromMatrix(matrix);
+        state.parametersFromMatrix(matrix);
         expect(state.interactiveViewerOffset, Offset(123, 321));
       });
     });
