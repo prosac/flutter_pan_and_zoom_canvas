@@ -5,6 +5,7 @@ import 'package:flutter_pan_and_zoom/model/node.dart';
 
 class DraggingProcedure {
   late Function notifier;
+  late Function onTick;
 
   late Ticker ticker;
   late final Node node;
@@ -15,16 +16,9 @@ class DraggingProcedure {
     required this.notifier,
   });
 
-  void start(node, scale, interactiveViewerOffset) {
+  void start(node, scale, interactiveViewerOffset, onTick) {
     ticker = Ticker((_) {
-      var renderBoxOfNode =
-          node.presentation.key.currentContext?.findRenderObject() as RenderBox;
-      var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
-
-      node.offset =
-          DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
-              nodeOffset, scale, interactiveViewerOffset);
-
+      onTick(node, scale, interactiveViewerOffset);
       notifier();
     });
 

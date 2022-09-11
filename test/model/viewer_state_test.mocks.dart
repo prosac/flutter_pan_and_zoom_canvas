@@ -56,6 +56,14 @@ class MockDraggingProcedure extends _i1.Mock implements _i5.DraggingProcedure {
       super.noSuchMethod(Invocation.setter(#notifier, _notifier),
           returnValueForMissingStub: null);
   @override
+  Function get onTick =>
+      (super.noSuchMethod(Invocation.getter(#onTick), returnValue: () {})
+          as Function);
+  @override
+  set onTick(Function? _onTick) =>
+      super.noSuchMethod(Invocation.setter(#onTick, _onTick),
+          returnValueForMissingStub: null);
+  @override
   _i2.Ticker get ticker => (super.noSuchMethod(Invocation.getter(#ticker),
           returnValue: _FakeTicker_0(this, Invocation.getter(#ticker)))
       as _i2.Ticker);
@@ -90,9 +98,11 @@ class MockDraggingProcedure extends _i1.Mock implements _i5.DraggingProcedure {
           Invocation.setter(#interactiveViewerOffset, _interactiveViewerOffset),
           returnValueForMissingStub: null);
   @override
-  void start(dynamic node, dynamic scale, dynamic interactiveViewerOffset) =>
+  void start(dynamic node, dynamic scale, dynamic interactiveViewerOffset,
+          dynamic onTick) =>
       super.noSuchMethod(
-          Invocation.method(#start, [node, scale, interactiveViewerOffset]),
+          Invocation.method(
+              #start, [node, scale, interactiveViewerOffset, onTick]),
           returnValueForMissingStub: null);
   @override
   void stop() => super.noSuchMethod(Invocation.method(#stop, []),

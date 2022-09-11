@@ -30,18 +30,21 @@ void main() {
     late MyTestWidget testApp;
 
     setUp(() {
-      // node = Node.random();
       testApp = MyTestWidget();
     });
 
     testWidgets('.drag()', (tester) async {
       await tester.pumpWidget(testApp);
       await tester.pumpAndSettle();
-      final button = find.text('Push me!');
-      expect(button, findsOneWidget);
-      await tester.pumpAndSettle();
-      await tester.tap(button);
-      await tester.pumpAndSettle();
+      final startButton = find.text('Start!');
+      final stopButton = find.text('Stop!');
+      expect(startButton, findsOneWidget);
+      expect(stopButton, findsOneWidget);
+      await tester.pump(Duration(milliseconds: 10));
+      await tester.tap(startButton);
+      await tester.pump(Duration(milliseconds: 10));
+      await tester.tap(stopButton);
+      await tester.pump(Duration(milliseconds: 10));
     });
   });
 
@@ -68,16 +71,22 @@ class MyTestWidget extends StatelessWidget {
               return Column(children: [
                 node.presentation,
                 TextButton(
-                  child: Text('Push me!'),
+                  child: Text('Start!'),
                   onPressed: (() {
                     var viewerState =
                         Provider.of<ViewerState>(context, listen: false);
 
                     viewerState.drag(node);
-                    viewerState.stopDragging();
-                    // context.watch<ViewerState>().drag(node);
                   }),
                 ),
+                TextButton(
+                    child: Text('Stop!'),
+                    onPressed: (() {
+                      var viewerState =
+                          Provider.of<ViewerState>(context, listen: false);
+
+                      viewerState.stopDragging();
+                    })),
               ]);
             }));
   }
