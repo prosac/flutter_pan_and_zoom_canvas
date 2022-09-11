@@ -14,8 +14,8 @@ import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
   final double width;
-
   final double height;
+
   WorkBench({Key? key, required this.width, required this.height})
       : super(key: key);
 
