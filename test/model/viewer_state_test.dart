@@ -14,45 +14,39 @@ void main() {
   DraggingProcedure draggingProcedure = MockDraggingProcedure();
   late ViewerState state = ViewerState(draggingProcedure: draggingProcedure);
 
-  group('interactiveViewerOffset', () {
-    test('initially is zero', () {
-      expect(state.interactiveViewerOffset, Offset.zero);
-    });
-  });
-
-  group('scale', () {
-    test('initially is 1.0', () {
-      expect(state.scale, 1.0);
-    });
-  });
-
-  group('drag(Node node)', () {
-    late MyTestWidget testApp;
-
-    setUp(() {
-      testApp = MyTestWidget();
+  group('DraggingProcedure instance', () {
+    group('interactiveViewerOffset', () {
+      test('initially is zero', () {
+        expect(state.interactiveViewerOffset, Offset.zero);
+      });
     });
 
-    testWidgets('.drag()', (tester) async {
-      await tester.pumpWidget(testApp);
-      await tester.pumpAndSettle();
-      final startButton = find.text('Start!');
-      final stopButton = find.text('Stop!');
-      expect(startButton, findsOneWidget);
-      expect(stopButton, findsOneWidget);
-      await tester.pump(Duration(milliseconds: 10));
-      await tester.tap(startButton);
-      await tester.pump(Duration(milliseconds: 10));
-      await tester.tap(stopButton);
-      await tester.pump(Duration(milliseconds: 10));
+    group('scale', () {
+      test('initially is 1.0', () {
+        expect(state.scale, 1.0);
+      });
     });
-  });
 
-  group('offsetFromMatrix(Matrix4 matrix)', () {
-    test('set the interacriveViewerOffset from a Matrix4', () {
-      var matrix = Matrix4.translationValues(123, 321, 0);
-      state.offsetFromMatrix(matrix);
-      expect(state.interactiveViewerOffset, Offset(123, 321));
+    group('drag(Node node)', () {
+      late MyTestWidget testApp;
+
+      setUp(() => testApp = MyTestWidget());
+
+      testWidgets('.drag()', (tester) async {
+        await tester.pumpWidget(testApp);
+        await tester.tap(find.text('Start!'));
+        await tester.pump(Duration(milliseconds: 5));
+        await tester.tap(find.text('Stop!'));
+        await tester.pumpAndSettle();
+      });
+    });
+
+    group('offsetFromMatrix(Matrix4 matrix)', () {
+      test('set the interacriveViewerOffset from a Matrix4', () {
+        var matrix = Matrix4.translationValues(123, 321, 0);
+        state.offsetFromMatrix(matrix);
+        expect(state.interactiveViewerOffset, Offset(123, 321));
+      });
     });
   });
 }

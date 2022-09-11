@@ -1,6 +1,5 @@
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/model/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/model/node.dart';
 
 class DraggingProcedure {
