@@ -12,17 +12,6 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: <Color>[Colors.white24, Colors.black87],
-          stops: <double>[0.0, 1.0],
-        ),
-      ),
-    );
+    return Container(width: width, height: height, color: Colors.grey.shade300);
   }
 }

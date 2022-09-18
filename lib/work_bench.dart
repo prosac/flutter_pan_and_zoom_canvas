@@ -9,7 +9,6 @@ import 'background.dart';
 import 'draggable_item.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
-import 'neumorphic_background.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
@@ -183,7 +182,7 @@ class WorkBenchState extends State<WorkBench> {
   void initState() {
     super.initState();
     background =
-        NeumorphicBackground(width: widget.width, height: widget.height);
+        Background(width: widget.width, height: widget.height);
     resetViewport();
   }
 
