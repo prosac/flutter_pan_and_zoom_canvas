@@ -33,16 +33,8 @@ class ExamplePresentation extends BasePresentation {
                     style: Theme.of(context).textTheme.bodyText1),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   buildRemoveButton(context),
-                  NeumorphicButton(
-                    onPressed: onAddPressed,
-                    style: NeumorphicStyle(
-                        shape: NeumorphicShape.flat,
-                        boxShape: NeumorphicBoxShape.circle(),
-                        color: Colors.grey.shade200),
-                    padding: const EdgeInsets.all(20.0),
-                    child: Icon(Icons.add, color: _iconsColor(context)),
-                    duration: Duration(milliseconds: 50),
-                  )
+                  Padding(padding: EdgeInsets.only(left: 10.0)),
+                  buildAddButton(context),
                 ]),
               ],
             ));
@@ -52,18 +44,24 @@ class ExamplePresentation extends BasePresentation {
             height: 30,
             child: NeumorphicButton(
               onPressed: onAddPressed,
-              style: NeumorphicStyle(
-                  shape: NeumorphicShape.flat,
-                  boxShape: NeumorphicBoxShape.circle(),
-                  color: Colors.grey.shade200),
+              style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
               padding: const EdgeInsets.all(20.0),
-              child: Icon(Icons.add, color: _iconsColor(context)),
-              duration: Duration(milliseconds: 50),
+              child: NeumorphicIcon(Icons.add),
             ));
       }
     });
 
     return presentation;
+  }
+
+  NeumorphicButton buildAddButton(BuildContext context) {
+    return NeumorphicButton(
+      onPressed: onAddPressed,
+      style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
+      padding: const EdgeInsets.all(20.0),
+      child: NeumorphicIcon(Icons.add,
+          style: NeumorphicStyle(color: Colors.grey.shade500)),
+    );
   }
 
   NeumorphicButton buildRemoveButton(BuildContext context) {
@@ -74,11 +72,10 @@ class ExamplePresentation extends BasePresentation {
         model.remove(node);
       },
       style: NeumorphicStyle(
-          shape: NeumorphicShape.flat,
-          boxShape: NeumorphicBoxShape.circle(),
-          color: Colors.grey.shade200),
+          shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
       padding: const EdgeInsets.all(20.0),
-      child: Icon(Icons.delete, color: _iconsColor(context)),
+      child: NeumorphicIcon(Icons.delete,
+          style: NeumorphicStyle(color: Colors.grey.shade500)),
       duration: Duration(milliseconds: 50),
     );
   }
