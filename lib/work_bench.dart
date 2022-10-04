@@ -95,6 +95,16 @@ class WorkBenchState extends State<WorkBench> {
     model.add(newNode);
   }
 
+  void addContact(model, offset) {
+    final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
+
+    newNode.presentation = ConatactPresentation(
+        node: newNode,
+        onAddPressed: () => addThingFromExisting(model, newNode));
+
+    model.add(newNode);
+  }
+
   void addThingFromExisting(GraphModel model, Node node) {
     final Offset offset = node.offset;
     final adaptedOffset = computeAdaptedOffset(node, offset);
