@@ -9,6 +9,7 @@ class ViewerState with ChangeNotifier {
   Offset interactiveViewerOffset = Offset.zero;
   double scale = 1.0;
   double elacs = pow(1.0, -1).toDouble();
+  bool spaceCommandModeActive = false;
   late DraggingProcedure draggingProcedure;
 
   var onTick = (Node node, double scale, Offset interactiveViewerOffset) {
@@ -36,7 +37,15 @@ class ViewerState with ChangeNotifier {
     scale = matrix.row0[0];
   }
 
-  void stopDragging() {
-    draggingProcedure.stop();
+  void stopDragging() => draggingProcedure.stop();
+
+  void enterSpaceCommandMode() {
+    spaceCommandModeActive = true;
+    notifyListeners();
+  }
+
+  void exitSpaceCommandMode() {
+    spaceCommandModeActive = false;
+    notifyListeners();
   }
 }

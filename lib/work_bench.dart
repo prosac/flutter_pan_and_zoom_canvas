@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_pan_and_zoom/contact_presentation.dart';
 import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
@@ -127,54 +130,80 @@ class WorkBenchState extends State<WorkBench> {
     viewerState.parametersFromMatrix(transformationController.value);
     mediaQueryData = MediaQuery.of(context);
 
-    return Stack(children: <Widget>[
-      InteractiveViewer(
-          maxScale: 10.0,
-          minScale: 0.01,
-          boundaryMargin: EdgeInsets.all(1000.0),
-          transformationController: transformationController,
-          onInteractionEnd: (details) =>
-              setState(() => setScaleFromTransformationController()),
-          constrained:
-              false, // this does the trick to make the "canvas" bigger than the view port
-          child: Consumer<GraphModel>(builder: (context, model, child) {
-            return DragTarget(
-              key: dragTargetKey,
-              onAcceptWithDetails: (DragTargetDetails details) {
-                Offset offset =
-                    dragTargetRenderBox.globalToLocal(details.offset);
-                model.leaveDraggingItemAtNewOffset(offset);
-              },
-              builder: (BuildContext context, List<TestData?> candidateData,
-                  List rejectedData) {
-                return Stack(children: [
-                  background,
-                  ...visualConnections,
-                  ...draggableItems
-                ]);
-              },
-            );
-          })),
-      Align(
-          alignment: Alignment.topLeft,
-          child: Consumer<GraphModel>(builder: (context, model, child) {
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                      onPressed: resetViewport, child: Text('Reset')),
-                  Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                  ElevatedButton(
-                      onPressed: deleteAllTheThings,
-                      child: Text('Delete all the things')),
-                  Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                  ElevatedButton(
-                      onPressed: () => addThing(model, center),
-                      child: Text('Add thing'))
-                ]);
-          }))
-    ]);
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      autofocus: true,
+      onKey: (event) {
+        if (event.isKeyPressed(LogicalKeyboardKey.space))
+          viewerState.enterSpaceCommandMode();
+        if (event.isKeyPressed(LogicalKeyboardKey.escape))
+          viewerState.exitSpaceCommandMode();
+      },
+      child: NeumorphicBackground(
+        child: Overlay(
+          initialEntries: [
+            OverlayEntry(builder: (context) {
+              return Stack(children: <Widget>[
+                InteractiveViewer(
+                    maxScale: 10.0,
+                    minScale: 0.01,
+                    boundaryMargin: EdgeInsets.all(1000.0),
+                    transformationController: transformationController,
+                    onInteractionEnd: (details) =>
+                        setState(() => setScaleFromTransformationController()),
+                    constrained:
+                        false, // this does the trick to make the "canvas" bigger than the view port
+                    child:
+                        Consumer<GraphModel>(builder: (context, model, child) {
+                      return DragTarget(
+                        key: dragTargetKey,
+                        onAcceptWithDetails: (DragTargetDetails details) {
+                          Offset offset =
+                              dragTargetRenderBox.globalToLocal(details.offset);
+                          model.leaveDraggingItemAtNewOffset(offset);
+                        },
+                        builder: (BuildContext context,
+                            List<TestData?> candidateData, List rejectedData) {
+                          return Stack(children: [
+                            background,
+                            ...visualConnections,
+                            ...draggableItems
+                          ]);
+                        },
+                      );
+                    })),
+                Align(
+                    alignment: Alignment.topLeft,
+                    child:
+                        Consumer<GraphModel>(builder: (context, model, child) {
+                      return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            NeumorphicButton(
+                                onPressed: resetViewport, child: Text('Reset')),
+                            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                            NeumorphicButton(
+                                onPressed: deleteAllTheThings,
+                                child: Text('Delete all the things')),
+                            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                            NeumorphicButton(
+                                onPressed: () => addThing(model, center),
+                                child: Text('Add thing')),
+                            NeumorphicButton(
+                                onPressed: () => addContact(model, center),
+                                child: Text('Add Human'))
+                          ]);
+                    }))
+              ]);
+            }),
+            OverlayEntry(builder: (context) {
+              return spaceCommands();
+            })
+          ],
+        ),
+      ),
+    );
   }
 
   Offset computeAdaptedOffset(Node node, Offset offset) {
@@ -191,8 +220,7 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    background =
-        Background(width: widget.width, height: widget.height);
+    background = Background(width: widget.width, height: widget.height);
     resetViewport();
   }
 
@@ -209,5 +237,36 @@ class WorkBenchState extends State<WorkBench> {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
     ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
     viewerState.parametersFromMatrix(transformationController.value);
+  }
+
+  Visibility spaceCommands() {
+    ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
+
+    return Visibility(
+      visible: viewerState.spaceCommandModeActive,
+      child: GridView.count(
+        crossAxisCount: 4,
+        children: [
+          NeumorphicButton(
+            child: Text('Action'),
+          ),
+          NeumorphicButton(
+            child: Text('Action'),
+          ),
+          NeumorphicButton(
+            child: Text('Action'),
+          ),
+          NeumorphicButton(
+            child: Text('Action'),
+          ),
+          NeumorphicButton(
+            child: Text('Action'),
+          ),
+          NeumorphicButton(
+            child: Text('Action'),
+          ),
+        ],
+      ),
+    );
   }
 }
