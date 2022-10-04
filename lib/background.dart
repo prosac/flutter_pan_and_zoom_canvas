@@ -12,6 +12,6 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: width, height: height, color: Colors.grey.shade300);
+    return Container(width: width, height: height);
   }
 }

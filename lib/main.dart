@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/model/graph_model.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:flutter_pan_and_zoom/work_bench.dart';
@@ -15,6 +15,7 @@ class PanAndZoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Pan and Zoom', home: home);
+    return NeumorphicApp(
+        title: 'Pan and Zoom', themeMode: ThemeMode.system, home: home);
   }
 }
