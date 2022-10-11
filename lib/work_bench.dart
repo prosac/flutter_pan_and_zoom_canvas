@@ -143,32 +143,7 @@ class WorkBenchState extends State<WorkBench> {
         child: Overlay(
           initialEntries: [
             OverlayEntry(builder: (context) {
-              return Stack(children: <Widget>[
-                interactiveViewer(),
-                Align(
-                    alignment: Alignment.topLeft,
-                    child:
-                        Consumer<GraphModel>(builder: (context, model, child) {
-                      return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            NeumorphicButton(
-                                onPressed: resetViewport, child: Text('Reset')),
-                            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                            NeumorphicButton(
-                                onPressed: deleteAllTheThings,
-                                child: Text('Delete all the things')),
-                            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                            NeumorphicButton(
-                                onPressed: () => addThing(model, center),
-                                child: Text('Add thing')),
-                            NeumorphicButton(
-                                onPressed: () => addContact(model, center),
-                                child: Text('Add Human'))
-                          ]);
-                    }))
-              ]);
+              return Stack(children: <Widget>[interactiveViewer(), commands()]);
             }),
             OverlayEntry(builder: (context) {
               return spaceCommands();
@@ -238,6 +213,31 @@ class WorkBenchState extends State<WorkBench> {
               ]);
             },
           );
+        }));
+  }
+
+  Widget commands() {
+    return Align(
+        alignment: Alignment.topLeft,
+        child: Consumer<GraphModel>(builder: (context, model, child) {
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                NeumorphicButton(
+                    onPressed: resetViewport, child: Text('Reset')),
+                Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                NeumorphicButton(
+                    onPressed: deleteAllTheThings,
+                    child: Text('Delete all the things')),
+                Padding(padding: EdgeInsets.only(bottom: 10.0)),
+                NeumorphicButton(
+                    onPressed: () => addThing(model, center),
+                    child: Text('Add thing')),
+                NeumorphicButton(
+                    onPressed: () => addContact(model, center),
+                    child: Text('Add Human'))
+              ]);
         }));
   }
 
