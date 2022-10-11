@@ -144,34 +144,7 @@ class WorkBenchState extends State<WorkBench> {
           initialEntries: [
             OverlayEntry(builder: (context) {
               return Stack(children: <Widget>[
-                InteractiveViewer(
-                    maxScale: 10.0,
-                    minScale: 0.01,
-                    boundaryMargin: EdgeInsets.all(1000.0),
-                    transformationController: transformationController,
-                    onInteractionEnd: (details) =>
-                        setState(() => setScaleFromTransformationController()),
-                    constrained:
-                        false, // this does the trick to make the "canvas" bigger than the view port
-                    child:
-                        Consumer<GraphModel>(builder: (context, model, child) {
-                      return DragTarget(
-                        key: dragTargetKey,
-                        onAcceptWithDetails: (DragTargetDetails details) {
-                          Offset offset =
-                              dragTargetRenderBox.globalToLocal(details.offset);
-                          model.leaveDraggingItemAtNewOffset(offset);
-                        },
-                        builder: (BuildContext context,
-                            List<TestData?> candidateData, List rejectedData) {
-                          return Stack(children: [
-                            background,
-                            ...visualConnections,
-                            ...draggableItems
-                          ]);
-                        },
-                      );
-                    })),
+                interactiveViewer(),
                 Align(
                     alignment: Alignment.topLeft,
                     child:
@@ -237,6 +210,35 @@ class WorkBenchState extends State<WorkBench> {
     // doing this in a call to setState solves the problem that the feedback item does not know the current scale
     ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
     viewerState.parametersFromMatrix(transformationController.value);
+  }
+
+  InteractiveViewer interactiveViewer() {
+    return InteractiveViewer(
+        maxScale: 10.0,
+        minScale: 0.01,
+        boundaryMargin: EdgeInsets.all(1000.0),
+        transformationController: transformationController,
+        onInteractionEnd: (details) =>
+            setState(() => setScaleFromTransformationController()),
+        constrained:
+            false, // this does the trick to make the "canvas" bigger than the view port
+        child: Consumer<GraphModel>(builder: (context, model, child) {
+          return DragTarget(
+            key: dragTargetKey,
+            onAcceptWithDetails: (DragTargetDetails details) {
+              Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
+              model.leaveDraggingItemAtNewOffset(offset);
+            },
+            builder: (BuildContext context, List<TestData?> candidateData,
+                List rejectedData) {
+              return Stack(children: [
+                background,
+                ...visualConnections,
+                ...draggableItems
+              ]);
+            },
+          );
+        }));
   }
 
   Visibility spaceCommands() {
