@@ -39,15 +39,17 @@ class ExamplePresentation extends BasePresentation {
               ],
             ));
       } else {
-        return Container(
-            width: 30,
-            height: 30,
-            child: NeumorphicButton(
-              onPressed: onAddPressed,
-              style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
-              padding: const EdgeInsets.all(20.0),
-              child: NeumorphicIcon(Icons.add),
-            ));
+        return FittedBox(
+          fit: BoxFit.contain,
+          child: NeumorphicButton(
+            onPressed: onAddPressed,
+            style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
+            child: Center(
+              child: NeumorphicIcon(Icons.add,
+                  style: NeumorphicStyle(color: Colors.grey.shade500)),
+            ),
+          ),
+        );
       }
     });
 
