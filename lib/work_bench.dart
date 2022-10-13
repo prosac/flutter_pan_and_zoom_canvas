@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/contact_presentation.dart';
@@ -96,6 +97,8 @@ class WorkBenchState extends State<WorkBench> {
         onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
+    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
+        false;
   }
 
   void addContact(model, offset) {
@@ -106,6 +109,8 @@ class WorkBenchState extends State<WorkBench> {
         onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
+    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
+        false;
   }
 
   void addThingFromExisting(GraphModel model, Node node) {
@@ -133,25 +138,34 @@ class WorkBenchState extends State<WorkBench> {
     return RawKeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
-      onKey: (event) {
-        if (event.isKeyPressed(LogicalKeyboardKey.space))
-          viewerState.enterSpaceCommandMode();
-        if (event.isKeyPressed(LogicalKeyboardKey.escape))
-          viewerState.exitSpaceCommandMode();
-      },
+      onKey: (event) => handleKeyboardOnKey(context, event, viewerState),
       child: NeumorphicBackground(
-        child: Overlay(
-          initialEntries: [
-            OverlayEntry(builder: (context) {
-              return Stack(children: <Widget>[interactiveViewer(), commands()]);
-            }),
-            OverlayEntry(builder: (context) {
-              return spaceCommands();
-            })
-          ],
-        ),
+        child: Stack(children: [
+          Stack(
+            children: <Widget>[interactiveViewer()],
+          ),
+          spaceCommands()
+        ]),
       ),
     );
+  }
+
+  void handleKeyboardOnKey(
+      BuildContext context, RawKeyEvent event, ViewerState viewerState) {
+    GraphModel model = Provider.of<GraphModel>(context, listen: false);
+
+    if (event.isKeyPressed(LogicalKeyboardKey.space))
+      viewerState.enterSpaceCommandMode();
+    if (event.isKeyPressed(LogicalKeyboardKey.escape))
+      viewerState.exitSpaceCommandMode();
+    if (viewerState.spaceCommandModeActive) {
+      if (event.isKeyPressed(LogicalKeyboardKey.keyN)) addThing(model, center);
+      if (event.isKeyPressed(LogicalKeyboardKey.keyX)) deleteAllTheThings();
+      if (event.isKeyPressed(LogicalKeyboardKey.keyD)) deleteAllTheThings();
+      if (event.isKeyPressed(LogicalKeyboardKey.keyH))
+        addContact(model, center);
+      if (event.isKeyPressed(LogicalKeyboardKey.keyR)) resetViewport();
+    }
   }
 
   Offset computeAdaptedOffset(Node node, Offset offset) {
@@ -163,6 +177,8 @@ class WorkBenchState extends State<WorkBench> {
 
   void deleteAllTheThings() {
     Provider.of<GraphModel>(context, listen: false).removeAll();
+    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
+        false;
   }
 
   @override
@@ -179,6 +195,8 @@ class WorkBenchState extends State<WorkBench> {
     transformationController.value = matrix;
     setState(() => viewerState.scale = 1.0);
     Provider.of<ViewerState>(context, listen: false).scale = 1.0;
+    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
+        false;
   }
 
   void setScaleFromTransformationController() {
@@ -197,78 +215,91 @@ class WorkBenchState extends State<WorkBench> {
             setState(() => setScaleFromTransformationController()),
         constrained:
             false, // this does the trick to make the "canvas" bigger than the view port
-        child: Consumer<GraphModel>(builder: (context, model, child) {
-          return DragTarget(
-            key: dragTargetKey,
-            onAcceptWithDetails: (DragTargetDetails details) {
-              Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
-              model.leaveDraggingItemAtNewOffset(offset);
-            },
-            builder: (BuildContext context, List<TestData?> candidateData,
-                List rejectedData) {
-              return Stack(children: [
-                background,
-                ...visualConnections,
-                ...draggableItems
-              ]);
-            },
-          );
-        }));
-  }
-
-  Widget commands() {
-    return Align(
-        alignment: Alignment.topLeft,
-        child: Consumer<GraphModel>(builder: (context, model, child) {
-          return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                NeumorphicButton(
-                    onPressed: resetViewport, child: Text('Reset')),
-                Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                NeumorphicButton(
-                    onPressed: deleteAllTheThings,
-                    child: Text('Delete all the things')),
-                Padding(padding: EdgeInsets.only(bottom: 10.0)),
-                NeumorphicButton(
-                    onPressed: () => addThing(model, center),
-                    child: Text('Add thing')),
-                NeumorphicButton(
-                    onPressed: () => addContact(model, center),
-                    child: Text('Add Human'))
-              ]);
-        }));
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black45, width: 1)),
+          child: Consumer<GraphModel>(builder: (context, model, child) {
+            return DragTarget(
+              key: dragTargetKey,
+              onAcceptWithDetails: (DragTargetDetails details) {
+                Offset offset =
+                    dragTargetRenderBox.globalToLocal(details.offset);
+                model.leaveDraggingItemAtNewOffset(offset);
+              },
+              builder: (BuildContext context, List<TestData?> candidateData,
+                  List rejectedData) {
+                return Stack(children: [
+                  background,
+                  ...visualConnections,
+                  ...draggableItems
+                ]);
+              },
+            );
+          }),
+        ));
   }
 
   Visibility spaceCommands() {
     ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
+    GraphModel model = Provider.of<GraphModel>(context, listen: false);
+
+    var commands = Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: NeumorphicButton(
+              onPressed: resetViewport,
+              child: Text('r → Reset'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: NeumorphicButton(
+                onPressed: deleteAllTheThings,
+                child: Text('d → Delete all the things')),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: NeumorphicButton(
+                onPressed: () => addThing(model, center),
+                child: Text('n → Add thing')),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: NeumorphicButton(
+                onPressed: () => addContact(model, center),
+                child: Text('h → Add Human')),
+          )
+        ]);
+
+    var innerCommandPallette = Container(
+        child: Row(
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                width: 400, padding: const EdgeInsets.all(20), child: commands),
+          ],
+        )
+      ],
+    ));
 
     return Visibility(
-      visible: viewerState.spaceCommandModeActive,
-      child: GridView.count(
-        crossAxisCount: 4,
-        children: [
-          NeumorphicButton(
-            child: Text('Action'),
-          ),
-          NeumorphicButton(
-            child: Text('Action'),
-          ),
-          NeumorphicButton(
-            child: Text('Action'),
-          ),
-          NeumorphicButton(
-            child: Text('Action'),
-          ),
-          NeumorphicButton(
-            child: Text('Action'),
-          ),
-          NeumorphicButton(
-            child: Text('Action'),
-          ),
-        ],
-      ),
-    );
+        visible: viewerState.spaceCommandModeActive,
+        child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 5,
+              sigmaY: 5,
+            ),
+            child: Container(
+              width: mediaQueryData.size.width,
+              color: Colors.black.withOpacity(0.1),
+              child: Align(
+                  child: innerCommandPallette,
+                  alignment: Alignment.bottomCenter),
+            )));
   }
 }
