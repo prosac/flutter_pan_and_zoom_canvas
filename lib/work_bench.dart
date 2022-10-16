@@ -179,15 +179,18 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    resetViewport();
+    centerView();
+  }
+
+  void centerView() {
+    var matrix = Matrix4.identity();
+    matrix.translate(-center.dx, -center.dy);
+    transformationController.value = matrix;
   }
 
   void resetViewport() {
-    var matrix = Matrix4.identity();
-    var viewerState = context.read<ViewerState>();
-    matrix.translate(-center.dx, -center.dy);
-    transformationController.value = matrix;
-    viewerState.resetView();
+    centerView();
+    context.read<ViewerState>().resetView();
   }
 
   InteractiveViewer interactiveViewer() {
