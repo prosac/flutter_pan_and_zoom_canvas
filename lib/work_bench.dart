@@ -19,8 +19,7 @@ class WorkBench extends StatefulWidget {
   final double width;
   final double height;
 
-  WorkBench({Key? key, required this.width, required this.height})
-      : super(key: key);
+  WorkBench({super.key, required this.width, required this.height});
 
   @override
   WorkBenchState createState() => WorkBenchState();

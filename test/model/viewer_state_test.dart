@@ -48,6 +48,14 @@ void main() {
         expect(state.interactiveViewerOffset, Offset(123, 321));
       });
     });
+
+    group('resetScale()', () {
+      test('sets scale to 1.0', () {
+        state.scale = 123.123;
+        state.resetScale();
+        expect(state.scale, 1.0);
+      });
+    });
   });
 }
 

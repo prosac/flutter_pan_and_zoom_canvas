@@ -13,7 +13,7 @@ import 'model/node.dart';
 // What to choose? not decided...
 class DraggableItem extends StatelessWidget {
   DraggableItem({
-    Key? key,
+    super.key,
     required this.scale,
     this.isDragging = false,
     this.onDragStarted,
@@ -22,7 +22,7 @@ class DraggableItem extends StatelessWidget {
     this.onDragCompleted,
     required this.node,
     required this.offset,
-  }) : super(key: key);
+  });
 
   final double scale;
   final Node node;
@@ -47,15 +47,22 @@ class DraggableItem extends StatelessWidget {
             Draggable(
               data: node.payload,
               dragAnchorStrategy: (widget, context, offset) {
-                final RenderBox renderObject = context.findRenderObject() as RenderBox;
+                final RenderBox renderObject =
+                    context.findRenderObject() as RenderBox;
                 return renderObject.globalToLocal(offset).scale(scale, scale);
               },
-              feedback: SizedBox(width: node.width * scale, height: node.height * scale, child: node.presentation),
+              feedback: SizedBox(
+                  width: node.width * scale,
+                  height: node.height * scale,
+                  child: node.presentation),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               onDragCompleted: onDragCompleted,
-              child: SizedBox(width: node.width, height: node.height, child: node.presentation),
+              child: SizedBox(
+                  width: node.width,
+                  height: node.height,
+                  child: node.presentation),
             ),
           ],
         ));

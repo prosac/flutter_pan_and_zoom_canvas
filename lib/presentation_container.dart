@@ -8,8 +8,7 @@ class PresentationContainer extends StatelessWidget {
   final Widget? child;
 
   const PresentationContainer(
-      {Key? key, this.width, this.height, this.label, this.color, this.child})
-      : super(key: key);
+      {super.key, this.width, this.height, this.label, this.color, this.child});
 
   @override
   Widget build(BuildContext context) {
