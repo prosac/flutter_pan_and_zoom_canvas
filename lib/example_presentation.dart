@@ -81,8 +81,4 @@ class ExamplePresentation extends BasePresentation {
       duration: Duration(milliseconds: 50),
     );
   }
-
-  Color _iconsColor(BuildContext context) {
-    return Colors.grey.shade400;
-  }
 }
