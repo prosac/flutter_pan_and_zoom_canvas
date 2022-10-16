@@ -212,6 +212,8 @@ class WorkBenchState extends State<WorkBench> {
         constrained:
             false, // this does the trick to make the "canvas" bigger than the view port
         child: Container(
+          width: widget.width,
+          height: widget.height,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black45, width: 1)),
           child: Consumer<GraphModel>(builder: (context, model, child) {
