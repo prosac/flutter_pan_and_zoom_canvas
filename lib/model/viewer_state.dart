@@ -48,4 +48,9 @@ class ViewerState with ChangeNotifier {
     spaceCommandModeActive = false;
     notifyListeners();
   }
+
+  void resetScale() {
+    scale = 1.0;
+    notifyListeners();
+  }
 }
