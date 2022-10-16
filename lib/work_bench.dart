@@ -59,7 +59,7 @@ class WorkBenchState extends State<WorkBench> {
       dragTargetKey.currentContext!.findRenderObject() as RenderBox;
 
   List<CustomPaint> get visualConnections {
-    GraphModel model = Provider.of<GraphModel>(context);
+    var model = context.read<GraphModel>();
 
     return model.edges.map((Edge edge) {
       Size size1 =
