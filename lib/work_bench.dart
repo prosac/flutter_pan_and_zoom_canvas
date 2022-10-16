@@ -9,7 +9,6 @@ import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
 import 'package:provider/provider.dart';
 
-import 'background.dart';
 import 'draggable_item.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
@@ -30,10 +29,9 @@ class WorkBenchState extends State<WorkBench> {
       TransformationController();
 
   final GlobalKey dragTargetKey = GlobalKey();
-  late Background background;
   late MediaQueryData mediaQueryData;
 
-  Offset get center => Offset(background.width / 2, background.height / 2);
+  Offset get center => Offset(widget.width / 2, widget.height / 2);
 
   List get draggableItems {
     GraphModel model = Provider.of<GraphModel>(context);
@@ -168,8 +166,8 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   Offset computeAdaptedOffset(Node node, Offset offset) {
-    var addition = Offset((node.width + 20) / background.width,
-        (node.height + 20) / background.height);
+    var addition = Offset(
+        (node.width + 20) / widget.width, (node.height + 20) / widget.height);
 
     return offset + addition;
   }
@@ -183,7 +181,6 @@ class WorkBenchState extends State<WorkBench> {
   @override
   void initState() {
     super.initState();
-    background = Background(width: widget.width, height: widget.height);
     resetViewport();
   }
 
@@ -227,11 +224,8 @@ class WorkBenchState extends State<WorkBench> {
               },
               builder: (BuildContext context, List<TestData?> candidateData,
                   List rejectedData) {
-                return Stack(children: [
-                  background,
-                  ...visualConnections,
-                  ...draggableItems
-                ]);
+                return Stack(
+                    children: [...visualConnections, ...draggableItems]);
               },
             );
           }),
