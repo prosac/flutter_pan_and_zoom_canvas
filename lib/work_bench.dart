@@ -97,6 +97,7 @@ class WorkBenchState extends State<WorkBench> {
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
+  // TODO: why pass in model???
   void addContact(model, offset) {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
 
@@ -186,16 +187,7 @@ class WorkBenchState extends State<WorkBench> {
     var viewerState = context.read<ViewerState>();
     matrix.translate(-center.dx, -center.dy);
     transformationController.value = matrix;
-    setState(() => viewerState.scale = 1.0);
-    Provider.of<ViewerState>(context, listen: false).scale = 1.0;
-    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
-        false;
-  }
-
-  void setScaleFromTransformationController() {
-    // doing this in a call to setState solves the problem that the feedback item does not know the current scale
-    ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
-    viewerState.parametersFromMatrix(transformationController.value);
+    viewerState.resetView();
   }
 
   InteractiveViewer interactiveViewer() {
@@ -204,8 +196,15 @@ class WorkBenchState extends State<WorkBench> {
         minScale: 0.01,
         boundaryMargin: EdgeInsets.all(1000.0),
         transformationController: transformationController,
-        onInteractionEnd: (details) =>
-            setState(() => setScaleFromTransformationController()),
+        onInteractionEnd: (details) {
+          // TODO: why the hell this is ok for flutter when called in setState(),
+          // but not without plus an internal notifyListeners() (which calls setState())?
+          setState(() {
+            context
+                .read<ViewerState>()
+                .parametersFromMatrix(transformationController.value);
+          });
+        },
         constrained:
             false, // this does the trick to make the "canvas" bigger than the view port
         child: Container(

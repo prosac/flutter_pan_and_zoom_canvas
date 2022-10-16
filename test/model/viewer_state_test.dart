@@ -49,10 +49,10 @@ void main() {
       });
     });
 
-    group('resetScale()', () {
+    group('resetView()', () {
       test('sets scale to 1.0', () {
         state.scale = 123.123;
-        state.resetScale();
+        state.resetView();
         expect(state.scale, 1.0);
       });
     });
