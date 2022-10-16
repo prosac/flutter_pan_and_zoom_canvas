@@ -34,8 +34,8 @@ class WorkBenchState extends State<WorkBench> {
   Offset get center => Offset(widget.width / 2, widget.height / 2);
 
   List get draggableItems {
-    GraphModel model = Provider.of<GraphModel>(context);
-    ViewerState viewerState = Provider.of<ViewerState>(context);
+    var viewerState = context.watch<ViewerState>();
+    var model = context.watch<GraphModel>();
 
     return model.nodes.map((Node node) {
       Offset offset = node.offset;
@@ -94,8 +94,7 @@ class WorkBenchState extends State<WorkBench> {
         onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
-    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
-        false;
+    context.read<ViewerState>().exitSpaceCommandMode();
   }
 
   void addContact(model, offset) {
@@ -106,8 +105,7 @@ class WorkBenchState extends State<WorkBench> {
         onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
-    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
-        false;
+    context.read<ViewerState>().exitSpaceCommandMode();
   }
 
   void addThingFromExisting(GraphModel model, Node node) {
@@ -128,7 +126,7 @@ class WorkBenchState extends State<WorkBench> {
 
   @override
   Widget build(BuildContext context) {
-    ViewerState viewerState = Provider.of<ViewerState>(context);
+    var viewerState = context.read<ViewerState>();
     viewerState.parametersFromMatrix(transformationController.value);
     mediaQueryData = MediaQuery.of(context);
 
@@ -149,7 +147,7 @@ class WorkBenchState extends State<WorkBench> {
 
   void handleKeyboardOnKey(
       BuildContext context, RawKeyEvent event, ViewerState viewerState) {
-    GraphModel model = Provider.of<GraphModel>(context, listen: false);
+    var model = context.read<GraphModel>();
 
     if (event.isKeyPressed(LogicalKeyboardKey.space))
       viewerState.enterSpaceCommandMode();
@@ -173,9 +171,8 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   void deleteAllTheThings() {
-    Provider.of<GraphModel>(context, listen: false).removeAll();
-    Provider.of<ViewerState>(context, listen: false).spaceCommandModeActive =
-        false;
+    context.read<ViewerState>().exitSpaceCommandMode();
+    context.read<GraphModel>().removeAll();
   }
 
   @override
@@ -186,7 +183,7 @@ class WorkBenchState extends State<WorkBench> {
 
   void resetViewport() {
     var matrix = Matrix4.identity();
-    ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
+    var viewerState = context.read<ViewerState>();
     matrix.translate(-center.dx, -center.dy);
     transformationController.value = matrix;
     setState(() => viewerState.scale = 1.0);
@@ -235,8 +232,8 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   Visibility spaceCommands() {
-    ViewerState viewerState = Provider.of<ViewerState>(context, listen: false);
-    GraphModel model = Provider.of<GraphModel>(context, listen: false);
+    var viewerState = context.read<ViewerState>();
+    var model = context.read<GraphModel>();
 
     var commands = Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
