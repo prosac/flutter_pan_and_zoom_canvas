@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   flutter_neumorphic: ^3.2.0
   provider: ^6.0.0
+  path_provider:
 
 
   # The following adds the Cupertino Icons font to your application.
