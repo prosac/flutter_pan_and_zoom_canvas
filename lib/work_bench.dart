@@ -6,7 +6,9 @@ import 'package:flutter_pan_and_zoom/contact_presentation.dart';
 import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/plain_text_file_presentation.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
+import 'package:flutter_pan_and_zoom/utils/random.dart';
 import 'package:provider/provider.dart';
 
 import 'draggable_item.dart';
@@ -97,6 +99,19 @@ class WorkBenchState extends State<WorkBench> {
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
+  void addPlainTextFile(model, offset) {
+    final newNode =
+        Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+
+    newNode.presentation = PlainTextFilePresentation(
+        node: newNode,
+        fileName: randomString(10),
+        onAddPressed: () => addThingFromExisting(model, newNode));
+
+    model.add(newNode);
+    context.read<ViewerState>().exitSpaceCommandMode();
+  }
+
   // TODO: why pass in model???
   void addContact(model, offset) {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
@@ -140,6 +155,15 @@ class WorkBenchState extends State<WorkBench> {
           Stack(
             children: <Widget>[interactiveViewer()],
           ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FloatingActionButton.extended(
+                  onPressed: () => viewerState.enterSpaceCommandMode(),
+                  label: Text('Things')),
+            ),
+          ),
           spaceCommands()
         ]),
       ),
@@ -150,12 +174,16 @@ class WorkBenchState extends State<WorkBench> {
       BuildContext context, RawKeyEvent event, ViewerState viewerState) {
     var model = context.read<GraphModel>();
 
+    print(event);
+
     if (event.isKeyPressed(LogicalKeyboardKey.space))
       viewerState.enterSpaceCommandMode();
     if (event.isKeyPressed(LogicalKeyboardKey.escape))
       viewerState.exitSpaceCommandMode();
     if (viewerState.spaceCommandModeActive) {
       if (event.isKeyPressed(LogicalKeyboardKey.keyN)) addThing(model, center);
+      if (event.isKeyPressed(LogicalKeyboardKey.keyT))
+        addPlainTextFile(model, center);
       if (event.isKeyPressed(LogicalKeyboardKey.keyX)) deleteAllTheThings();
       if (event.isKeyPressed(LogicalKeyboardKey.keyD)) deleteAllTheThings();
       if (event.isKeyPressed(LogicalKeyboardKey.keyH))
@@ -253,6 +281,12 @@ class WorkBenchState extends State<WorkBench> {
             child: NeumorphicButton(
                 onPressed: deleteAllTheThings,
                 child: Text('d → Delete all the things')),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: NeumorphicButton(
+                onPressed: () => addPlainTextFile(model, center),
+                child: Text('n → Add plain text file')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
