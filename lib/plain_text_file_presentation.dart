@@ -12,14 +12,16 @@ class PlainTextFilePresentation extends BasePresentation {
   final double height = 500;
   final Node node;
   final VoidCallback onAddPressed;
-  String contents = '';
-  late PlainTextFile file;
+  late final PlainTextFile file;
+  final textEditingController = TextEditingController();
 
-  String fileName;
+  final String fileName;
 
-  PlainTextFilePresentation(
-      {required this.node, required this.onAddPressed, required this.fileName})
-      : super(node: node, onAddPressed: onAddPressed) {
+  PlainTextFilePresentation({
+    required this.node,
+    required this.onAddPressed,
+    required this.fileName,
+  }) : super(node: node, onAddPressed: onAddPressed) {
     this.file = PlainTextFile(fileName);
   }
 
@@ -40,37 +42,40 @@ class PlainTextFilePresentation extends BasePresentation {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Form(
-                  child: Column(
-                    children: [
-                      Text(file.absoluteStorageDirPath),
-                      Text(file.fileName),
-                      Text(file.subDir),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          hintText: 'Write something...',
-                          labelText: 'Content',
+                  child: Builder(builder: (context) {
+                    return Column(
+                      children: [
+                        Text(file.absoluteStorageDirPath),
+                        Text(file.fileName),
+                        Text(file.subDir),
+                        TextFormField(
+                          controller: textEditingController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            hintText: 'Write something...',
+                            labelText: 'Content',
+                          ),
+                          onTap: (() {
+                            // viewerState.disableSpaceCommandMode();
+                          }),
+                          onChanged: (value) =>
+                              textEditingController.text = value,
+                          maxLines: 5,
                         ),
-                        onTap: (() {
-                          // viewerState.disableSpaceCommandMode();
-                        }),
-                        onChanged: (value) => contents = value,
-                        maxLines: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: NeumorphicButton(
-                            onPressed: () {
-                              file
-                                  .write(contents)
-                                  .then((contents) => {print('written')});
-                              viewerState.enableSpaceCommandMode();
-                            },
-                            child: Text('Save')),
-                      )
-                    ],
-                  ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: NeumorphicButton(
+                              onPressed: () async {
+                                await file.write(textEditingController.text);
+
+                                viewerState.enableSpaceCommandMode();
+                              },
+                              child: Text('Save')),
+                        )
+                      ],
+                    );
+                  }),
                 ),
               ],
             ),
