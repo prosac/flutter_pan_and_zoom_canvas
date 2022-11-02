@@ -2,58 +2,42 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class PlainTextFile {
-  String fileName;
-  String subDir = 'All-The-Things-Data';
+  PlainTextFile._constructor(this.file);
 
-  PlainTextFile(this.fileName) {}
+  final File file;
+  static final String subDirName = 'All-The-Things-Data';
 
-  // TODO: try/catch somthing?
-  Future<String> get _documentsDir async {
-    final directory = await getApplicationDocumentsDirectory();
+  static Future<PlainTextFile> create(String fileName) async {
+    final appDocsDir = await getApplicationDocumentsDirectory();
+    final absoluteStoragePath = path.join(appDocsDir.path, subDirName);
+    final absoluteStorageDir =
+        await Directory(absoluteStoragePath).create(recursive: true);
+    final absoluteFilePath = path.join(absoluteStorageDir.path, fileName);
 
-    return directory.path;
+    return PlainTextFile._constructor(File(absoluteFilePath));
   }
 
-  get storageDirPath => '$_documentsDir/$subDir';
+  // Future<String> read() async {
+  //   try {
+  //     final file = await _localFile;
+  //     final contents = await file.readAsString();
 
-  get storageDirPathExists => Directory(storageDirPath).exists;
+  //     return contents;
+  //   } catch (e) {
+  //     return '';
+  //   }
+  // }
 
-  get absoluteStorageDirPath async => (await storageDir()).absolute;
-
-  Future<Directory> storageDir() async {
-    final dir = Directory(storageDirPath);
-
-    if (await dir.existsSync()) {
-      print('##### directory exists: ${await dir.absolute}');
-      return await dir;
-    } else {
-      print('##### creating directory ${dir.absolute}');
-      return await dir.create();
-    }
-  }
-
-  Future<File> get _localFile async {
-    final aaa = (await storageDir()).absolute;
-    return File('${aaa}/$fileName');
-  }
-
-  Future<String> read() async {
-    try {
-      final file = await _localFile;
-      final contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      return '';
-    }
-  }
-
-  Future<File> write(String contents) async {
-    final file = await _localFile;
-
-    print('writing ${file.absolute}');
+  Future<File> writeAsString(String contents) async {
     return file.writeAsString(contents);
+  }
+
+  Future<String> readAsString(String contents) async {
+    return file.readAsString().then((String contents) {
+      return contents;
+    });
   }
 }

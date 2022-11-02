@@ -22,7 +22,7 @@ class PlainTextFilePresentation extends BasePresentation {
     required this.onAddPressed,
     required this.fileName,
   }) : super(node: node, onAddPressed: onAddPressed) {
-    this.file = PlainTextFile(fileName);
+    this.file = await PlainTextFile.create(fileName);
   }
 
   @override
