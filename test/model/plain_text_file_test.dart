@@ -1,20 +1,9 @@
-import 'dart:io';
-
+import 'package:file/file.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_pan_and_zoom/model/plain_text_file.dart';
-import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-
-// TODO: mock actual file access
-// class MockFile extends Mock implements File {
-//   @override
-//   Future<File> writeAsBytes(List<int> bytes,
-//       {FileMode mode = FileMode.write, bool flush = false}) {
-//     // TODO: implement writeAsBytes
-//     throw UnimplementedError();
-//   }
-// }
+import 'package:test/test.dart';
 
 void main() {
   group('PlainTextFile class', () {
@@ -33,7 +22,8 @@ void main() {
       late var instance;
 
       setUp(() async {
-        instance = await PlainTextFile.create('some-file.txt');
+        instance =
+            await PlainTextFile.create('some-file.txt', fs: MemoryFileSystem());
       });
 
       test(
@@ -51,8 +41,8 @@ void main() {
       test(
           '.write(String contents) uses the .writeAsString() method of the contained File instance to write contents to it',
           () async {
-        final writtenFile = instance.writeAsString('something');
-        expect(writtenFile, isA<Future<File>>());
+        final writtenFile = await instance.writeAsString('something');
+        expect(writtenFile, isA<File>());
         final contents = await writtenFile.readAsString();
         expect(contents, equals('something'));
       });
