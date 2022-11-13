@@ -12,25 +12,17 @@ class PlainTextFilePresentation extends BasePresentation {
   final double height = 500;
   final Node node;
   final VoidCallback onAddPressed;
-  late final PlainTextFile file;
+  final PlainTextFile file;
   final textEditingController = TextEditingController();
 
-  final String fileName;
-
-  PlainTextFilePresentation({
-    required this.node,
-    required this.onAddPressed,
-    required this.fileName,
-  }) : super(node: node, onAddPressed: onAddPressed) {
-    this.file = await PlainTextFile.create(fileName);
-  }
+  PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file})
+      : super(node: node, onAddPressed: onAddPressed);
 
   @override
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation =
-        Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             child: Material(
@@ -45,9 +37,7 @@ class PlainTextFilePresentation extends BasePresentation {
                   child: Builder(builder: (context) {
                     return Column(
                       children: [
-                        Text(file.absoluteStorageDirPath),
-                        Text(file.fileName),
-                        Text(file.subDir),
+                        Text(file.path),
                         TextFormField(
                           controller: textEditingController,
                           decoration: const InputDecoration(
@@ -59,15 +49,17 @@ class PlainTextFilePresentation extends BasePresentation {
                           onTap: (() {
                             // viewerState.disableSpaceCommandMode();
                           }),
-                          onChanged: (value) =>
-                              textEditingController.text = value,
+                          onChanged: (value) => textEditingController.text = value,
                           maxLines: 5,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: NeumorphicButton(
                               onPressed: () async {
-                                await file.write(textEditingController.text);
+                                print('text:');
+                                print(textEditingController.text);
+                                // TODO: this does not work! nothing gets written into the file...
+                                await file.writeAsString(textEditingController.text);
 
                                 viewerState.enableSpaceCommandMode();
                               },

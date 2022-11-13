@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as pathLib;
 import 'package:path_provider/path_provider.dart';
 
 class PlainTextFile {
@@ -11,13 +11,13 @@ class PlainTextFile {
   final File file;
   static final String subDirName = 'All-The-Things-Data';
 
-  static Future<PlainTextFile> create(String fileName,
-      {FileSystem fs = const LocalFileSystem()}) async {
+  get path => file.path;
+
+  static Future<PlainTextFile> asyncNew(String fileName, {FileSystem fs = const LocalFileSystem()}) async {
     final appDocsDir = await getApplicationDocumentsDirectory();
-    final absoluteStoragePath = path.join(appDocsDir.path, subDirName);
-    final absoluteStorageDir =
-        await fs.directory(absoluteStoragePath).create(recursive: true);
-    final absoluteFilePath = path.join(absoluteStorageDir.path, fileName);
+    final absoluteStoragePath = pathLib.join(appDocsDir.path, subDirName);
+    final absoluteStorageDir = await fs.directory(absoluteStoragePath).create(recursive: true);
+    final absoluteFilePath = pathLib.join(absoluteStorageDir.path, fileName);
 
     return PlainTextFile._constructor(fs.file(absoluteFilePath));
   }
