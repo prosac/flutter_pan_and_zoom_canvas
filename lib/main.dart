@@ -15,7 +15,6 @@ class PanAndZoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicApp(
-        title: 'Pan and Zoom', themeMode: ThemeMode.system, home: home);
+    return NeumorphicApp(title: 'Pan and Zoom', themeMode: ThemeMode.system, home: home);
   }
 }
