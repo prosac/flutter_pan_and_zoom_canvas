@@ -15,14 +15,16 @@ class PlainTextFilePresentation extends BasePresentation {
   final PlainTextFile file;
   final textEditingController = TextEditingController();
 
-  PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file})
+  PlainTextFilePresentation(
+      {required this.node, required this.onAddPressed, required this.file})
       : super(node: node, onAddPressed: onAddPressed);
 
   @override
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation =
+        Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             child: Material(
@@ -47,9 +49,9 @@ class PlainTextFilePresentation extends BasePresentation {
                             labelText: 'Content',
                           ),
                           onTap: (() {
-                            // viewerState.disableSpaceCommandMode();
+                            viewerState.disableSpaceCommandMode();
                           }),
-                          onChanged: (value) => textEditingController.text = value,
+                          // onChanged: (value) => textEditingController.text = value,
                           maxLines: 5,
                         ),
                         Padding(
@@ -59,8 +61,10 @@ class PlainTextFilePresentation extends BasePresentation {
                                 print('text:');
                                 print(textEditingController.text);
                                 // TODO: this does not work! nothing gets written into the file...
-                                await file.writeAsString(textEditingController.text);
+                                await file
+                                    .writeAsString(textEditingController.text);
 
+                                viewerState.requestFocus();
                                 viewerState.enableSpaceCommandMode();
                               },
                               child: Text('Save')),

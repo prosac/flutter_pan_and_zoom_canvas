@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 // TODO this feels like way too much down the tree, but maybe for holding the overall state of the graph it is needed like this. Let's see later what we can optimize.
 void main() => runApp(MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => GraphModel()),
-      ChangeNotifierProvider(create: (context) => ViewerState()),
+      ChangeNotifierProvider(
+          create: (context) => ViewerState(focusNode: FocusNode())),
     ], child: PanAndZoom()));
 
 class PanAndZoom extends StatelessWidget {
@@ -15,6 +16,7 @@ class PanAndZoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicApp(title: 'Pan and Zoom', themeMode: ThemeMode.system, home: home);
+    return NeumorphicApp(
+        title: 'Pan and Zoom', themeMode: ThemeMode.system, home: home);
   }
 }

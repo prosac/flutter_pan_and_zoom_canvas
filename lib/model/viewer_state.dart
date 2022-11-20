@@ -12,6 +12,7 @@ class ViewerState with ChangeNotifier {
   bool spaceCommandModeActive = false;
   bool spaceCommandModeDisabled = false;
   late DraggingProcedure draggingProcedure;
+  FocusNode focusNode;
 
   var onTick = (Node node, double scale, Offset interactiveViewerOffset) {
     var renderBoxOfNode =
@@ -23,7 +24,7 @@ class ViewerState with ChangeNotifier {
             nodeOffset, scale, interactiveViewerOffset);
   };
 
-  ViewerState({draggingProcedure}) {
+  ViewerState({draggingProcedure, required this.focusNode}) {
     draggingProcedure = DraggingProcedure(notifier: notifyListeners);
   }
 
@@ -41,7 +42,10 @@ class ViewerState with ChangeNotifier {
   void stopDragging() => draggingProcedure.stop();
 
   void enterSpaceCommandMode() {
-    if (spaceCommandModeDisabled) return;
+    print('disbled?');
+    print(spaceCommandModeDisabled);
+    if (spaceCommandModeDisabled == true) return;
+    print('entering space command mode');
     spaceCommandModeActive = true;
     notifyListeners();
   }
@@ -53,6 +57,8 @@ class ViewerState with ChangeNotifier {
   }
 
   void enableSpaceCommandMode() {
+    print('endabled again...');
+    spaceCommandModeActive = false;
     spaceCommandModeDisabled = false;
     notifyListeners();
   }
@@ -66,5 +72,9 @@ class ViewerState with ChangeNotifier {
     scale = 1.0;
     spaceCommandModeActive = false;
     notifyListeners();
+  }
+
+  void requestFocus() {
+    focusNode.requestFocus();
   }
 }
