@@ -58,9 +58,6 @@ class PlainTextFilePresentation extends BasePresentation {
                           padding: const EdgeInsets.all(8.0),
                           child: NeumorphicButton(
                               onPressed: () async {
-                                print('text:');
-                                print(textEditingController.text);
-                                // TODO: this does not work! nothing gets written into the file...
                                 await file
                                     .writeAsString(textEditingController.text);
 

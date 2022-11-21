@@ -175,8 +175,6 @@ class WorkBenchState extends State<WorkBench> {
       BuildContext context, KeyEvent event, ViewerState viewerState) {
     var model = context.read<GraphModel>();
 
-    print(event);
-
     if (event.logicalKey == LogicalKeyboardKey.space) {
       viewerState.enterSpaceCommandMode();
       return;

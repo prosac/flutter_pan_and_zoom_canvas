@@ -42,10 +42,7 @@ class ViewerState with ChangeNotifier {
   void stopDragging() => draggingProcedure.stop();
 
   void enterSpaceCommandMode() {
-    print('disbled?');
-    print(spaceCommandModeDisabled);
     if (spaceCommandModeDisabled == true) return;
-    print('entering space command mode');
     spaceCommandModeActive = true;
     notifyListeners();
   }
@@ -57,7 +54,6 @@ class ViewerState with ChangeNotifier {
   }
 
   void enableSpaceCommandMode() {
-    print('endabled again...');
     spaceCommandModeActive = false;
     spaceCommandModeDisabled = false;
     notifyListeners();
