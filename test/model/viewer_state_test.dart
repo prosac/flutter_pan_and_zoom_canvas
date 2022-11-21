@@ -12,7 +12,8 @@ import 'viewer_state_test.mocks.dart';
 
 void main() {
   DraggingProcedure draggingProcedure = MockDraggingProcedure();
-  late ViewerState state = ViewerState(draggingProcedure: draggingProcedure);
+  late ViewerState state =
+      ViewerState(draggingProcedure: draggingProcedure, focusNode: FocusNode());
 
   group('DraggingProcedure instance', () {
     group('interactiveViewerOffset', () {
@@ -68,7 +69,7 @@ class MyTestWidget extends StatelessWidget {
     return MaterialApp(
         title: 'Test App',
         home: ChangeNotifierProvider<ViewerState>(
-            create: (_) => ViewerState(),
+            create: (_) => ViewerState(focusNode: FocusNode()),
             builder: (context, child) {
               return Column(children: [
                 node.presentation,
