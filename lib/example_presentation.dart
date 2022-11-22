@@ -1,12 +1,13 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/common_action_buttons_mixin.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:provider/provider.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
 import 'presentation_container.dart';
 
-class ExamplePresentation extends BasePresentation {
+class ExamplePresentation extends BasePresentation with CommonActionButtons {
   final double width = 300;
   final double height = 200;
   final Node node;
@@ -42,6 +43,7 @@ class ExamplePresentation extends BasePresentation {
         return FittedBox(
           fit: BoxFit.contain,
           child: NeumorphicButton(
+            padding: const EdgeInsets.all(20.0),
             onPressed: onAddPressed,
             style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
             child: Center(
@@ -54,31 +56,5 @@ class ExamplePresentation extends BasePresentation {
     });
 
     return presentation;
-  }
-
-  NeumorphicButton buildAddButton(BuildContext context) {
-    return NeumorphicButton(
-      onPressed: onAddPressed,
-      style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
-      padding: const EdgeInsets.all(20.0),
-      child: NeumorphicIcon(Icons.add,
-          style: NeumorphicStyle(color: Colors.grey.shade500)),
-    );
-  }
-
-  NeumorphicButton buildRemoveButton(BuildContext context) {
-    GraphModel model = Provider.of<GraphModel>(context, listen: false);
-
-    return NeumorphicButton(
-      onPressed: () {
-        model.remove(node);
-      },
-      style: NeumorphicStyle(
-          shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
-      padding: const EdgeInsets.all(20.0),
-      child: NeumorphicIcon(Icons.delete,
-          style: NeumorphicStyle(color: Colors.grey.shade500)),
-      duration: Duration(milliseconds: 50),
-    );
   }
 }
