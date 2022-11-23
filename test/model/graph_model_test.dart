@@ -14,8 +14,7 @@ void main() {
 
     test('is a Model ;-)', () => expect(model, isA<GraphModel>()));
 
-    test('can notifyListeners()',
-        () => expect(model.notifyListeners, isA<Function>()));
+    test('can notifyListeners()', () => expect(model.notifyListeners, isA<Function>()));
 
     group('nodes', () {
       test('initially is an empty list', () {
@@ -52,8 +51,7 @@ void main() {
 
     group('addEdge(Node node, Node otherNode)', () {
       test('adds an Edge from node to node', () {
-        model.addEdge(Node(offset: Offset.zero, payload: TestData()),
-            Node(offset: Offset.zero, payload: TestData()));
+        model.addEdge(Node(offset: Offset.zero, payload: TestData()), Node(offset: Offset.zero, payload: TestData()));
         expect(model.edges[0], isA<Edge>());
       });
     });
@@ -82,8 +80,7 @@ void main() {
         node1 = Node.random();
         model.add(node1);
       });
-      test('moves the node being dragged from dragging to normal and notifies',
-          () {
+      test('moves the node being dragged from dragging to normal and notifies', () {
         model.drag(node1);
         model.leaveDraggingItemAtNewOffset(Offset(100, 100));
         expect(node1.offset, Offset(100, 100));
@@ -122,6 +119,30 @@ void main() {
           model.removeAll();
           expect(model.nodes.length, 0);
           expect(model.edges.length, 0);
+        });
+      });
+    });
+
+    group('connecting things', () {
+      group('initiateConnecting()', () {
+        test('sets connecting to true', () {
+          var node = Node.random();
+          expect(model.connecting, equals(false));
+          model.initiateConnecting(node);
+          expect(model.connecting, equals(true));
+        });
+        test('memoizes the given node as the one to be connected', () {
+          var node = Node.random();
+          expect(model.nodeToBeConnected, isNull);
+          model.initiateConnecting(node);
+          expect(model.nodeToBeConnected, equals(node));
+        });
+        test('adds an Edge connecting the node and a dragging temp Node that makes the Edge complete', () {
+          var node = Node.random();
+          expect(model.nodeToBeConnected, isNull);
+          expect(model.draggingNodes, isNot(contains(model.tempNode)));
+          model.initiateConnecting(node);
+          expect(model.draggingNodes, contains(model.tempNode));
         });
       });
     });

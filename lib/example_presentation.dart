@@ -12,15 +12,13 @@ class ExamplePresentation extends BasePresentation {
   final Node node;
   final VoidCallback onAddPressed;
 
-  ExamplePresentation({required this.node, required this.onAddPressed})
-      : super(node: node, onAddPressed: onAddPressed);
+  ExamplePresentation({required this.node, required this.onAddPressed}) : super(node: node, onAddPressed: onAddPressed);
 
   @override
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation =
-        Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             width: width,
@@ -29,12 +27,13 @@ class ExamplePresentation extends BasePresentation {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('${node.toString()}',
-                    style: Theme.of(context).textTheme.bodyText1),
+                Text('${node.toString()}', style: Theme.of(context).textTheme.bodyText1),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   buildRemoveButton(context),
                   Padding(padding: EdgeInsets.only(left: 10.0)),
                   buildAddButton(context),
+                  Padding(padding: EdgeInsets.only(left: 10.0)),
+                  buildConnectButton(context)
                 ]),
               ],
             ));
@@ -45,8 +44,7 @@ class ExamplePresentation extends BasePresentation {
             onPressed: onAddPressed,
             style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
             child: Center(
-              child: NeumorphicIcon(Icons.add,
-                  style: NeumorphicStyle(color: Colors.grey.shade500)),
+              child: NeumorphicIcon(Icons.add, style: NeumorphicStyle(color: Colors.grey.shade500)),
             ),
           ),
         );
@@ -56,13 +54,25 @@ class ExamplePresentation extends BasePresentation {
     return presentation;
   }
 
+  NeumorphicButton buildConnectButton(BuildContext context) {
+    return NeumorphicButton(
+      onPressed: () {
+        GraphModel model = Provider.of<GraphModel>(context, listen: false);
+        var presentation = context.widget as BasePresentation;
+        model.initiateConnecting(presentation.node);
+      },
+      style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
+      padding: const EdgeInsets.all(20.0),
+      child: NeumorphicIcon(Icons.add, style: NeumorphicStyle(color: Colors.grey.shade500)),
+    );
+  }
+
   NeumorphicButton buildAddButton(BuildContext context) {
     return NeumorphicButton(
       onPressed: onAddPressed,
       style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
       padding: const EdgeInsets.all(20.0),
-      child: NeumorphicIcon(Icons.add,
-          style: NeumorphicStyle(color: Colors.grey.shade500)),
+      child: NeumorphicIcon(Icons.add, style: NeumorphicStyle(color: Colors.grey.shade500)),
     );
   }
 
@@ -73,11 +83,9 @@ class ExamplePresentation extends BasePresentation {
       onPressed: () {
         model.remove(node);
       },
-      style: NeumorphicStyle(
-          shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
+      style: NeumorphicStyle(shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
       padding: const EdgeInsets.all(20.0),
-      child: NeumorphicIcon(Icons.delete,
-          style: NeumorphicStyle(color: Colors.grey.shade500)),
+      child: NeumorphicIcon(Icons.delete, style: NeumorphicStyle(color: Colors.grey.shade500)),
       duration: Duration(milliseconds: 50),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
+import 'package:flutter_pan_and_zoom/test_data.dart';
 
 import 'node.dart';
 
@@ -9,6 +10,9 @@ class GraphModel with ChangeNotifier {
   final List<Node> nodes = [];
   final List<Node> draggingNodes = [];
   final List<Edge> edges = [];
+  bool connecting = false;
+  Node? nodeToBeConnected; // TODO: use Maybe/Option or default object?
+  Node tempNode = Node(offset: Offset.zero, payload: TestData());
 
   void add(Node node) {
     nodes.add(node);
@@ -47,5 +51,12 @@ class GraphModel with ChangeNotifier {
 
   int _nextSerialNumber() {
     return nodes.map((node) => node.serialNumber).reduce(max) + 1;
+  }
+
+  void initiateConnecting(Node node) {
+    connecting = true;
+    nodeToBeConnected = node;
+    draggingNodes.add(tempNode);
+    addEdge(node, tempNode);
   }
 }
