@@ -22,16 +22,14 @@ class BasePresentation extends AbstractPresentation {
   final double height = 50;
   final GlobalKey key = GlobalKey();
   final Node node;
-  final VoidCallback onAddPressed;
 
-  BasePresentation({required this.node, required this.onAddPressed});
+  BasePresentation({required this.node});
 
   Offset get offset {
     return node.offset;
   }
 
-  RenderBox get renderBox =>
-      key.currentContext?.findRenderObject() as RenderBox;
+  RenderBox get renderBox => key.currentContext?.findRenderObject() as RenderBox;
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/model/simple_action.dart';
 import 'package:flutter_pan_and_zoom/test_data.dart';
 
 class Node {
@@ -8,8 +9,9 @@ class Node {
   late BasePresentation presentation;
   final TestData payload;
   int serialNumber = 0; // a simple and readable identifier for visual debugging
+  late List<SimpleAction> actions;
 
-  Node({required this.offset, required this.payload});
+  Node({required this.offset, required this.payload, this.actions = const []});
 
   get height => presentation.height;
 

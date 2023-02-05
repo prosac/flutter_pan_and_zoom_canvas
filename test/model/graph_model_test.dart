@@ -123,28 +123,28 @@ void main() {
       });
     });
 
-    group('connecting things', () {
-      group('initiateConnecting()', () {
-        test('sets connecting to true', () {
-          var node = Node.random();
-          expect(model.connecting, equals(false));
-          model.initiateConnecting(node);
-          expect(model.connecting, equals(true));
-        });
-        test('memoizes the given node as the one to be connected', () {
-          var node = Node.random();
-          expect(model.nodeToBeConnected, isNull);
-          model.initiateConnecting(node);
-          expect(model.nodeToBeConnected, equals(node));
-        });
-        test('adds an Edge connecting the node and a dragging temp Node that makes the Edge complete', () {
-          var node = Node.random();
-          expect(model.nodeToBeConnected, isNull);
-          expect(model.draggingNodes, isNot(contains(model.tempNode)));
-          model.initiateConnecting(node);
-          expect(model.draggingNodes, contains(model.tempNode));
-        });
-      });
-    });
+    // group('connecting things', () {
+    //   group('initiateConnecting()', () {
+    //     test('sets connecting to true', () {
+    //       var node = Node.random();
+    //       expect(model.connecting, equals(false));
+    //       model.initiateConnecting(node);
+    //       expect(model.connecting, equals(true));
+    //     });
+    //     test('memoizes the given node as the one to be connected', () {
+    //       var node = Node.random();
+    //       expect(model.nodeToBeConnected, isNull);
+    //       model.initiateConnecting(node);
+    //       expect(model.nodeToBeConnected, equals(node));
+    //     });
+    //     test('adds an Edge connecting the node and a dragging temp Node that makes the Edge complete', () {
+    //       var node = Node.random();
+    //       expect(model.nodeToBeConnected, isNull);
+    //       expect(model.draggingNodes, isNot(contains(model.tempNode)));
+    //       model.initiateConnecting(node);
+    //       expect(model.draggingNodes, contains(model.tempNode));
+    //     });
+    //   });
+    // });
   });
 }

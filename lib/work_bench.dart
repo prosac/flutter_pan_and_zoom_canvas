@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'draggable_item.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
+import 'model/simple_action.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
@@ -82,10 +83,13 @@ class WorkBenchState extends State<WorkBench> {
   void addThing(model, offset) {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
 
+    newNode.actions = [
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(model, newNode)),
+      SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
+    ];
+
     // TODO: hot to best implement a bidirectional 1-1 relationsship
-    newNode.presentation = ExamplePresentation(
-        node: newNode,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+    newNode.presentation = ExamplePresentation(node: newNode);
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
@@ -95,9 +99,8 @@ class WorkBenchState extends State<WorkBench> {
   void addContact(model, offset) {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
 
-    newNode.presentation = ConatactPresentation(
-        node: newNode,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+    newNode.presentation =
+        ConatactPresentation(node: newNode, onAddPressed: () => addThingFromExisting(model, newNode));
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
@@ -109,10 +112,13 @@ class WorkBenchState extends State<WorkBench> {
 
     final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
+    newNode.actions = [
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(model, newNode)),
+      SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
+    ];
+
     // TODO: how to best implement a bidirectional 1-1 relationsship
-    newNode.presentation = ExamplePresentation(
-        node: newNode,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+    newNode.presentation = ExamplePresentation(node: newNode);
 
     model.add(newNode);
     model.addEdge(node, newNode);

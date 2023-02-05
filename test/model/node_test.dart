@@ -11,7 +11,7 @@ class MockPresentation extends BasePresentation {
   final double width = 50;
   final double height = 50;
 
-  MockPresentation() : super(node: Node.random(), onAddPressed: () {});
+  MockPresentation() : super(node: Node.random());
 
   RenderBox get renderBox => MockRenderBox();
   Widget build(BuildContext context) => Container();
@@ -32,6 +32,9 @@ void main() {
 
     test('toString() includes the serial nr and offset', () {
       expect(node.toString(), '0:\n0.0\n0.0');
+    });
+    test('actions', () {
+      expect(node.actions, isA<List<VoidCallback>>);
     });
   });
 
