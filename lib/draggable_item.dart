@@ -47,22 +47,16 @@ class DraggableItem extends StatelessWidget {
             Draggable(
               data: node.payload,
               dragAnchorStrategy: (widget, context, offset) {
-                final RenderBox renderObject =
-                    context.findRenderObject() as RenderBox;
+                final RenderBox renderObject = context.findRenderObject() as RenderBox;
                 return renderObject.globalToLocal(offset).scale(scale, scale);
               },
               feedback: SizedBox(
-                  width: node.width * scale,
-                  height: node.height * scale,
-                  child: node.presentation),
+                  key: GlobalKey(), width: node.width * scale, height: node.height * scale, child: node.presentation),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               onDragCompleted: onDragCompleted,
-              child: SizedBox(
-                  width: node.width,
-                  height: node.height,
-                  child: node.presentation),
+              child: SizedBox(key: GlobalKey(), width: node.width, height: node.height, child: node.presentation),
             ),
           ],
         ));

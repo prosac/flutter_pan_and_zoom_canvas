@@ -25,8 +25,7 @@ class WorkBench extends StatefulWidget {
 }
 
 class WorkBenchState extends State<WorkBench> {
-  final TransformationController transformationController =
-      TransformationController();
+  final TransformationController transformationController = TransformationController();
 
   final GlobalKey dragTargetKey = GlobalKey();
   late MediaQueryData mediaQueryData;
@@ -55,17 +54,14 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  RenderBox get dragTargetRenderBox =>
-      dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+  RenderBox get dragTargetRenderBox => dragTargetKey.currentContext!.findRenderObject() as RenderBox;
 
   List<CustomPaint> get visualConnections {
     var model = context.read<GraphModel>();
 
     return model.edges.map((Edge edge) {
-      Size size1 =
-          Size(edge.node1.presentation.width, edge.node1.presentation.height);
-      Size size2 =
-          Size(edge.node2.presentation.width, edge.node1.presentation.height);
+      Size size1 = Size(edge.node1.presentation.width, edge.node1.presentation.height);
+      Size size2 = Size(edge.node2.presentation.width, edge.node1.presentation.height);
 
       Offset nodeOffset1 = edge.node1.presentation.offset;
       Offset nodeOffset2 = edge.node2.presentation.offset;
@@ -73,20 +69,18 @@ class WorkBenchState extends State<WorkBench> {
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
 
-      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
-          offset1AdaptedToBackground.dy + size1.height / 2);
-      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
-          offset2AdaptedToBackground.dy + size2.height / 2);
+      Offset offset1 =
+          Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
+      Offset offset2 =
+          Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
-      return CustomPaint(
-          painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
     }).toList();
   }
 
   // TODO: maybe this should be called something like GraphicalNodeRepresentation and thus graphicalNodeRepresentations
   void addThing(model, offset) {
-    final newNode =
-        Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+    final newNode = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
 
     // TODO: hot to best implement a bidirectional 1-1 relationsship
     newNode.presentation = ExamplePresentation(
@@ -113,8 +107,7 @@ class WorkBenchState extends State<WorkBench> {
     final Offset offset = node.offset;
     final adaptedOffset = computeAdaptedOffset(node, offset);
 
-    final newNode = Node(
-        offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
+    final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
     // TODO: how to best implement a bidirectional 1-1 relationsship
     newNode.presentation = ExamplePresentation(
@@ -146,27 +139,22 @@ class WorkBenchState extends State<WorkBench> {
     );
   }
 
-  void handleKeyboardOnKey(
-      BuildContext context, RawKeyEvent event, ViewerState viewerState) {
+  void handleKeyboardOnKey(BuildContext context, RawKeyEvent event, ViewerState viewerState) {
     var model = context.read<GraphModel>();
 
-    if (event.isKeyPressed(LogicalKeyboardKey.space))
-      viewerState.enterSpaceCommandMode();
-    if (event.isKeyPressed(LogicalKeyboardKey.escape))
-      viewerState.exitSpaceCommandMode();
+    if (event.isKeyPressed(LogicalKeyboardKey.space)) viewerState.enterSpaceCommandMode();
+    if (event.isKeyPressed(LogicalKeyboardKey.escape)) viewerState.exitSpaceCommandMode();
     if (viewerState.spaceCommandModeActive) {
       if (event.isKeyPressed(LogicalKeyboardKey.keyN)) addThing(model, center);
       if (event.isKeyPressed(LogicalKeyboardKey.keyX)) deleteAllTheThings();
       if (event.isKeyPressed(LogicalKeyboardKey.keyD)) deleteAllTheThings();
-      if (event.isKeyPressed(LogicalKeyboardKey.keyH))
-        addContact(model, center);
+      if (event.isKeyPressed(LogicalKeyboardKey.keyH)) addContact(model, center);
       if (event.isKeyPressed(LogicalKeyboardKey.keyR)) resetViewport();
     }
   }
 
   Offset computeAdaptedOffset(Node node, Offset offset) {
-    var addition = Offset(
-        (node.width + 20) / widget.width, (node.height + 20) / widget.height);
+    var addition = Offset((node.width + 20) / widget.width, (node.height + 20) / widget.height);
 
     return offset + addition;
   }
@@ -203,30 +191,23 @@ class WorkBenchState extends State<WorkBench> {
           // TODO: why the hell this is ok for flutter when called in setState(),
           // but not without plus an internal notifyListeners() (which calls setState())?
           setState(() {
-            context
-                .read<ViewerState>()
-                .parametersFromMatrix(transformationController.value);
+            context.read<ViewerState>().parametersFromMatrix(transformationController.value);
           });
         },
-        constrained:
-            false, // this does the trick to make the "canvas" bigger than the view port
+        constrained: false, // this does the trick to make the "canvas" bigger than the view port
         child: Container(
           width: widget.width,
           height: widget.height,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black45, width: 1)),
+          decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1)),
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                Offset offset =
-                    dragTargetRenderBox.globalToLocal(details.offset);
+                Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
-              builder: (BuildContext context, List<TestData?> candidateData,
-                  List rejectedData) {
-                return Stack(
-                    children: [...visualConnections, ...draggableItems]);
+              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
+                return Stack(children: [...visualConnections, ...draggableItems]);
               },
             );
           }),
@@ -250,21 +231,15 @@ class WorkBenchState extends State<WorkBench> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: deleteAllTheThings,
-                child: Text('d → Delete all the things')),
+            child: NeumorphicButton(onPressed: deleteAllTheThings, child: Text('d → Delete all the things')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: () => addThing(model, center),
-                child: Text('n → Add thing')),
+            child: NeumorphicButton(onPressed: () => addThing(model, center), child: Text('n → Add thing')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: () => addContact(model, center),
-                child: Text('h → Add Human')),
+            child: NeumorphicButton(onPressed: () => addContact(model, center), child: Text('h → Add Human')),
           )
         ]);
 
@@ -274,8 +249,7 @@ class WorkBenchState extends State<WorkBench> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-                width: 400, padding: const EdgeInsets.all(20), child: commands),
+            Container(width: 400, padding: const EdgeInsets.all(20), child: commands),
           ],
         )
       ],
@@ -291,9 +265,7 @@ class WorkBenchState extends State<WorkBench> {
             child: Container(
               width: mediaQueryData.size.width,
               color: Colors.black.withOpacity(0.1),
-              child: Align(
-                  child: innerCommandPallette,
-                  alignment: Alignment.bottomCenter),
+              child: Align(child: innerCommandPallette, alignment: Alignment.bottomCenter),
             )));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/test_data.dart';
 import 'package:provider/provider.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
@@ -58,8 +59,13 @@ class ExamplePresentation extends BasePresentation {
     return NeumorphicButton(
       onPressed: () {
         GraphModel model = Provider.of<GraphModel>(context, listen: false);
-        var presentation = context.widget as BasePresentation;
-        model.initiateConnecting(presentation.node);
+        var tempNode = Node(offset: Offset(500, 500), payload: TestData());
+        // TODO: introduce presentation that communicates that we are in the process of connecting
+        var tempNodePresentation =
+            ExamplePresentation(node: tempNode, onAddPressed: () => {}); // TODO: get rid of this injected callback...
+
+        tempNode.presentation = tempNodePresentation;
+        model.initiateConnecting(this.node, tempNode);
       },
       style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
       padding: const EdgeInsets.all(20.0),
