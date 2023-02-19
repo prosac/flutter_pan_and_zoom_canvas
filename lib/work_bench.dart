@@ -84,7 +84,7 @@ class WorkBenchState extends State<WorkBench> {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
 
     newNode.actions = [
-      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(model, newNode)),
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(newNode)),
       SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
     ];
 
@@ -99,21 +99,21 @@ class WorkBenchState extends State<WorkBench> {
   void addContact(model, offset) {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
 
-    newNode.presentation =
-        ConatactPresentation(node: newNode, onAddPressed: () => addThingFromExisting(model, newNode));
+    newNode.presentation = ConatactPresentation(node: newNode, onAddPressed: () => addThingFromExisting(newNode));
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
-  void addThingFromExisting(GraphModel model, Node node) {
+  void addThingFromExisting(Node node) {
     final Offset offset = node.offset;
     final adaptedOffset = computeAdaptedOffset(node, offset);
+    final model = context.read<GraphModel>();
 
     final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
     newNode.actions = [
-      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(model, newNode)),
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(newNode)),
       SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
     ];
 
