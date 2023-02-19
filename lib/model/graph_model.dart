@@ -9,7 +9,7 @@ class GraphModel with ChangeNotifier {
   final List<Node> nodes = [];
   final List<Node> draggingNodes = [];
   final List<Edge> edges = [];
-  Node? connectingFrom;
+  Node? nodeToConnect;
 
   void add(Node node) {
     nodes.add(node);
@@ -19,6 +19,14 @@ class GraphModel with ChangeNotifier {
 
   void addEdge(Node node, Node newNode) {
     edges.add(Edge(node, newNode));
+  }
+
+  void addEdgeTo(Node otherNode) {
+    final edge = Edge(nodeToConnect!, otherNode);
+    if (edges.contains(edge)) return;
+    edges.add(edge);
+    nodeToConnect = null;
+    notifyListeners();
   }
 
   void drag(node) {
@@ -51,7 +59,7 @@ class GraphModel with ChangeNotifier {
   }
 
   void initiateConnecting(Node fromNode) {
-    connectingFrom = fromNode;
+    nodeToConnect = fromNode;
     notifyListeners();
   }
 }

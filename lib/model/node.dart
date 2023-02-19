@@ -25,6 +25,14 @@ class Node {
     return '${this.serialNumber}:\n${this.offset.dx}\n${this.offset.dy}';
   }
 
+  @override
+  bool operator ==(Object other) {
+    if (other is Node) {
+      return serialNumber == other.serialNumber;
+    }
+    return false;
+  }
+
   factory Node.random() {
     // var offset = Offset(
     //     Random().nextInt(1000).toDouble(), Random().nextInt(1000).toDouble());

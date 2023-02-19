@@ -80,18 +80,21 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   // TODO: maybe this should be called something like GraphicalNodeRepresentation and thus graphicalNodeRepresentations
-  void addThing(model, offset) {
-    final newNode = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+  void addThing(offset) {
+    final node = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+    final model = context.read<GraphModel>();
 
-    newNode.actions = [
-      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(newNode)),
-      SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
+    node.actions = [
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
+      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
+      SimpleAction(icon: Icons.delete, callback: () => model.remove(node))
     ];
 
     // TODO: hot to best implement a bidirectional 1-1 relationsship
-    newNode.presentation = ExamplePresentation(node: newNode);
+    node.presentation = ExamplePresentation(node: node);
 
-    model.add(newNode);
+    model.add(node);
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
@@ -114,6 +117,8 @@ class WorkBenchState extends State<WorkBench> {
 
     newNode.actions = [
       SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(newNode)),
+      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
       SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
     ];
 
@@ -151,7 +156,7 @@ class WorkBenchState extends State<WorkBench> {
     if (event.isKeyPressed(LogicalKeyboardKey.space)) viewerState.enterSpaceCommandMode();
     if (event.isKeyPressed(LogicalKeyboardKey.escape)) viewerState.exitSpaceCommandMode();
     if (viewerState.spaceCommandModeActive) {
-      if (event.isKeyPressed(LogicalKeyboardKey.keyN)) addThing(model, center);
+      if (event.isKeyPressed(LogicalKeyboardKey.keyN)) addThing(center);
       if (event.isKeyPressed(LogicalKeyboardKey.keyX)) deleteAllTheThings();
       if (event.isKeyPressed(LogicalKeyboardKey.keyD)) deleteAllTheThings();
       if (event.isKeyPressed(LogicalKeyboardKey.keyH)) addContact(model, center);
@@ -241,7 +246,7 @@ class WorkBenchState extends State<WorkBench> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(onPressed: () => addThing(model, center), child: Text('n → Add thing')),
+            child: NeumorphicButton(onPressed: () => addThing(center), child: Text('n → Add thing')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -273,5 +278,15 @@ class WorkBenchState extends State<WorkBench> {
               color: Colors.black.withOpacity(0.1),
               child: Align(child: innerCommandPallette, alignment: Alignment.bottomCenter),
             )));
+  }
+
+  void initiateConnecting({required Node fromNode}) {
+    final model = context.read<GraphModel>();
+    model.nodeToConnect = fromNode;
+  }
+
+  void connect({required Node otherNode}) {
+    final model = context.read<GraphModel>();
+    model.addEdgeTo(otherNode);
   }
 }
