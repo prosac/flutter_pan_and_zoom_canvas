@@ -57,8 +57,6 @@ class ExamplePresentation extends BasePresentation {
         onPressed: () {
           action.call();
         },
-        // style: NeumorphicStyle(shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
-        // padding: const EdgeInsets.all(20.0),
         child: Icon(action.icon, color: Theme.of(context).cardColor),
       ),
     );
