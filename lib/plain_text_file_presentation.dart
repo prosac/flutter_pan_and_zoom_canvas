@@ -17,7 +17,7 @@ class PlainTextFilePresentation extends BasePresentation {
 
   PlainTextFilePresentation(
       {required this.node, required this.onAddPressed, required this.file})
-      : super(node: node, onAddPressed: onAddPressed);
+      : super(node: node);
 
   @override
   Widget build(BuildContext context) {

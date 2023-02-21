@@ -116,7 +116,7 @@ class WorkBenchState extends State<WorkBench> {
     newNode.presentation = PlainTextFilePresentation(
         node: newNode,
         file: file,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+        onAddPressed: () => addThingFromExisting(newNode));
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
@@ -204,7 +204,7 @@ class WorkBenchState extends State<WorkBench> {
 
     if (viewerState.spaceCommandModeActive) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        addThing(model, center);
+        addThing(center);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyT) {
