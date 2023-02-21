@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/plain_text_file.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
@@ -15,16 +15,13 @@ class PlainTextFilePresentation extends BasePresentation {
   final PlainTextFile file;
   final textEditingController = TextEditingController();
 
-  PlainTextFilePresentation(
-      {required this.node, required this.onAddPressed, required this.file})
-      : super(node: node);
+  PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file}) : super(node: node);
 
   @override
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation =
-        Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             child: Material(
@@ -56,10 +53,9 @@ class PlainTextFilePresentation extends BasePresentation {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: NeumorphicButton(
+                          child: ElevatedButton(
                               onPressed: () async {
-                                await file
-                                    .writeAsString(textEditingController.text);
+                                await file.writeAsString(textEditingController.text);
 
                                 viewerState.requestFocus();
                                 viewerState.enableSpaceCommandMode();

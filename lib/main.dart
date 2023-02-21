@@ -1,4 +1,5 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/color_theme.dart';
 import 'package:flutter_pan_and_zoom/model/graph_model.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:flutter_pan_and_zoom/work_bench.dart';
@@ -7,8 +8,7 @@ import 'package:provider/provider.dart';
 // TODO this feels like way too much down the tree, but maybe for holding the overall state of the graph it is needed like this. Let's see later what we can optimize.
 void main() => runApp(MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => GraphModel()),
-      ChangeNotifierProvider(
-          create: (context) => ViewerState(focusNode: FocusNode())),
+      ChangeNotifierProvider(create: (context) => ViewerState(focusNode: FocusNode())),
     ], child: PanAndZoom()));
 
 class PanAndZoom extends StatelessWidget {
@@ -16,7 +16,11 @@ class PanAndZoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicApp(
-        title: 'Pan and Zoom', themeMode: ThemeMode.system, home: home);
+    return MaterialApp(
+      title: 'Pan and Zoom',
+      themeMode: ThemeMode.system,
+      home: home,
+      theme: myTheme,
+    );
   }
 }

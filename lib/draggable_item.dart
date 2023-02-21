@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'model/node.dart';
 
 /// Wrapper for an [Item] that wraps it in a [Positioned] [Draggable] to make

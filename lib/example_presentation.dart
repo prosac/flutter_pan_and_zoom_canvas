@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
 import 'package:provider/provider.dart';
@@ -33,11 +33,10 @@ class ExamplePresentation extends BasePresentation {
       } else {
         return FittedBox(
           fit: BoxFit.contain,
-          child: NeumorphicButton(
+          child: ElevatedButton(
             onPressed: node.actions[0], // For now simplyuse the first action as the one being accessible on minimal LOD
-            style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
             child: Center(
-              child: NeumorphicIcon(Icons.add, style: NeumorphicStyle(color: Colors.grey.shade500)),
+              child: Icon(Icons.add, color: Colors.grey.shade500),
             ),
           ),
         );
@@ -47,19 +46,21 @@ class ExamplePresentation extends BasePresentation {
     return presentation;
   }
 
-  List<NeumorphicButton> actionButtons(BuildContext context) {
+  List<Padding> actionButtons(BuildContext context) {
     return node.actions.map((action) => buildButton(context, action)).toList();
   }
 
-  NeumorphicButton buildButton(BuildContext context, SimpleAction action) {
-    return NeumorphicButton(
-      onPressed: () {
-        action.call();
-      },
-      style: NeumorphicStyle(shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
-      padding: const EdgeInsets.all(20.0),
-      child: NeumorphicIcon(action.icon, style: NeumorphicStyle(color: Colors.grey.shade500)),
-      duration: Duration(milliseconds: 50),
+  Padding buildButton(BuildContext context, SimpleAction action) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: ElevatedButton(
+        onPressed: () {
+          action.call();
+        },
+        // style: NeumorphicStyle(shape: NeumorphicShape.flat, boxShape: NeumorphicBoxShape.circle()),
+        // padding: const EdgeInsets.all(20.0),
+        child: Icon(action.icon, color: Theme.of(context).cardColor),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_pan_and_zoom/contact_presentation.dart';
 import 'package:flutter_pan_and_zoom/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
@@ -57,17 +57,14 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  RenderBox get dragTargetRenderBox =>
-      dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+  RenderBox get dragTargetRenderBox => dragTargetKey.currentContext!.findRenderObject() as RenderBox;
 
   List<CustomPaint> get visualConnections {
     var model = context.read<GraphModel>();
 
     return model.edges.map((Edge edge) {
-      Size size1 =
-          Size(edge.node1.presentation.width, edge.node1.presentation.height);
-      Size size2 =
-          Size(edge.node2.presentation.width, edge.node1.presentation.height);
+      Size size1 = Size(edge.node1.presentation.width, edge.node1.presentation.height);
+      Size size2 = Size(edge.node2.presentation.width, edge.node1.presentation.height);
 
       Offset nodeOffset1 = edge.node1.presentation.offset;
       Offset nodeOffset2 = edge.node2.presentation.offset;
@@ -75,27 +72,23 @@ class WorkBenchState extends State<WorkBench> {
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
 
-      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
-          offset1AdaptedToBackground.dy + size1.height / 2);
-      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
-          offset2AdaptedToBackground.dy + size2.height / 2);
+      Offset offset1 =
+          Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
+      Offset offset2 =
+          Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
-      return CustomPaint(
-          painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
     }).toList();
   }
 
   // TODO: maybe this should be called something like GraphicalNodeRepresentation and thus graphicalNodeRepresentations
   void addThing(offset) {
-    final node =
-        Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+    final node = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
     final model = context.read<GraphModel>();
 
     node.actions = [
       SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
-      SimpleAction(
-          icon: Icons.local_drink,
-          callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
       SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
       SimpleAction(icon: Icons.delete, callback: () => model.remove(node))
     ];
@@ -108,15 +101,12 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   void addPlainTextFile(model, offset) async {
-    final newNode =
-        Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+    final newNode = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
 
     PlainTextFile file = await PlainTextFile.asyncNew(randomString(10));
 
-    newNode.presentation = PlainTextFilePresentation(
-        node: newNode,
-        file: file,
-        onAddPressed: () => addThingFromExisting(newNode));
+    newNode.presentation =
+        PlainTextFilePresentation(node: newNode, file: file, onAddPressed: () => addThingFromExisting(newNode));
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
@@ -126,8 +116,7 @@ class WorkBenchState extends State<WorkBench> {
   void addContact(model, offset) {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
 
-    newNode.presentation = ConatactPresentation(
-        node: newNode, onAddPressed: () => addThingFromExisting(newNode));
+    newNode.presentation = ConatactPresentation(node: newNode, onAddPressed: () => addThingFromExisting(newNode));
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
@@ -138,15 +127,11 @@ class WorkBenchState extends State<WorkBench> {
     final adaptedOffset = computeAdaptedOffset(node, offset);
     final model = context.read<GraphModel>();
 
-    final newNode = Node(
-        offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
+    final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
     newNode.actions = [
-      SimpleAction(
-          icon: Icons.add, callback: () => addThingFromExisting(newNode)),
-      SimpleAction(
-          icon: Icons.local_drink,
-          callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(newNode)),
+      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
       SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
       SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
     ];
@@ -168,7 +153,7 @@ class WorkBenchState extends State<WorkBench> {
       focusNode: viewerState.focusNode,
       autofocus: true,
       onKeyEvent: (event) => handleKeyboardOnKey(context, event, viewerState),
-      child: NeumorphicBackground(
+      child: Container(
         child: Stack(children: [
           Stack(
             children: <Widget>[interactiveViewer()],
@@ -178,8 +163,7 @@ class WorkBenchState extends State<WorkBench> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: FloatingActionButton.extended(
-                  onPressed: () => viewerState.enterSpaceCommandMode(),
-                  label: Text('Things')),
+                  onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
             ),
           ),
           spaceCommands()
@@ -188,8 +172,7 @@ class WorkBenchState extends State<WorkBench> {
     );
   }
 
-  void handleKeyboardOnKey(
-      BuildContext context, KeyEvent event, ViewerState viewerState) {
+  void handleKeyboardOnKey(BuildContext context, KeyEvent event, ViewerState viewerState) {
     var model = context.read<GraphModel>();
 
     if (event.logicalKey == LogicalKeyboardKey.space) {
@@ -231,8 +214,7 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   Offset computeAdaptedOffset(Node node, Offset offset) {
-    var addition = Offset(
-        (node.width + 20) / widget.width, (node.height + 20) / widget.height);
+    var addition = Offset((node.width + 20) / widget.width, (node.height + 20) / widget.height);
 
     return offset + addition;
   }
@@ -269,30 +251,23 @@ class WorkBenchState extends State<WorkBench> {
           // TODO: why the hell this is ok for flutter when called in setState(),
           // but not without plus an internal notifyListeners() (which calls setState())?
           setState(() {
-            context
-                .read<ViewerState>()
-                .parametersFromMatrix(transformationController.value);
+            context.read<ViewerState>().parametersFromMatrix(transformationController.value);
           });
         },
-        constrained:
-            false, // this does the trick to make the "canvas" bigger than the view port
+        constrained: false, // this does the trick to make the "canvas" bigger than the view port
         child: Container(
           width: widget.width,
           height: widget.height,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black45, width: 1)),
+          decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1)),
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                Offset offset =
-                    dragTargetRenderBox.globalToLocal(details.offset);
+                Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
-              builder: (BuildContext context, List<TestData?> candidateData,
-                  List rejectedData) {
-                return Stack(
-                    children: [...visualConnections, ...draggableItems]);
+              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
+                return Stack(children: [...visualConnections, ...draggableItems]);
               },
             );
           }),
@@ -309,34 +284,27 @@ class WorkBenchState extends State<WorkBench> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
+            child: ElevatedButton(
               onPressed: resetViewport,
               child: Text('r → Reset'),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: deleteAllTheThings,
-                child: Text('d → Delete all the things')),
+            child: ElevatedButton(onPressed: deleteAllTheThings, child: Text('d → Delete all the things')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: () => addPlainTextFile(model, center),
-                child: Text('n → Add plain text file')),
+            child: ElevatedButton(
+                onPressed: () => addPlainTextFile(model, center), child: Text('n → Add plain text file')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: () => addThing(center),
-                child: Text('n → Add thing')),
+            child: ElevatedButton(onPressed: () => addThing(center), child: Text('n → Add thing')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: NeumorphicButton(
-                onPressed: () => addContact(model, center),
-                child: Text('h → Add Human')),
+            child: ElevatedButton(onPressed: () => addContact(model, center), child: Text('h → Add Human')),
           )
         ]);
 
@@ -346,8 +314,7 @@ class WorkBenchState extends State<WorkBench> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-                width: 400, padding: const EdgeInsets.all(20), child: commands),
+            Container(width: 400, padding: const EdgeInsets.all(20), child: commands),
           ],
         )
       ],
@@ -363,9 +330,7 @@ class WorkBenchState extends State<WorkBench> {
             child: Container(
               width: mediaQueryData.size.width,
               color: Colors.black.withOpacity(0.1),
-              child: Align(
-                  child: innerCommandPallette,
-                  alignment: Alignment.bottomCenter),
+              child: Align(child: innerCommandPallette, alignment: Alignment.bottomCenter),
             )));
   }
 
