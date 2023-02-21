@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'draggable_item.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
+import 'model/simple_action.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
@@ -85,16 +86,24 @@ class WorkBenchState extends State<WorkBench> {
   }
 
   // TODO: maybe this should be called something like GraphicalNodeRepresentation and thus graphicalNodeRepresentations
-  void addThing(model, offset) {
-    final newNode =
+  void addThing(offset) {
+    final node =
         Node(offset: offset, payload: TestData(text: 'Some other Payload'));
+    final model = context.read<GraphModel>();
+
+    node.actions = [
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
+      SimpleAction(
+          icon: Icons.local_drink,
+          callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
+      SimpleAction(icon: Icons.delete, callback: () => model.remove(node))
+    ];
 
     // TODO: hot to best implement a bidirectional 1-1 relationsship
-    newNode.presentation = ExamplePresentation(
-        node: newNode,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+    node.presentation = ExamplePresentation(node: node);
 
-    model.add(newNode);
+    model.add(node);
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
@@ -118,24 +127,32 @@ class WorkBenchState extends State<WorkBench> {
     final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
 
     newNode.presentation = ConatactPresentation(
-        node: newNode,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+        node: newNode, onAddPressed: () => addThingFromExisting(newNode));
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
-  void addThingFromExisting(GraphModel model, Node node) {
+  void addThingFromExisting(Node node) {
     final Offset offset = node.offset;
     final adaptedOffset = computeAdaptedOffset(node, offset);
+    final model = context.read<GraphModel>();
 
     final newNode = Node(
         offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
+    newNode.actions = [
+      SimpleAction(
+          icon: Icons.add, callback: () => addThingFromExisting(newNode)),
+      SimpleAction(
+          icon: Icons.local_drink,
+          callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
+      SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
+    ];
+
     // TODO: how to best implement a bidirectional 1-1 relationsship
-    newNode.presentation = ExamplePresentation(
-        node: newNode,
-        onAddPressed: () => addThingFromExisting(model, newNode));
+    newNode.presentation = ExamplePresentation(node: newNode);
 
     model.add(newNode);
     model.addEdge(node, newNode);
@@ -312,7 +329,7 @@ class WorkBenchState extends State<WorkBench> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: NeumorphicButton(
-                onPressed: () => addThing(model, center),
+                onPressed: () => addThing(center),
                 child: Text('n → Add thing')),
           ),
           Padding(
@@ -350,5 +367,15 @@ class WorkBenchState extends State<WorkBench> {
                   child: innerCommandPallette,
                   alignment: Alignment.bottomCenter),
             )));
+  }
+
+  void initiateConnecting({required Node fromNode}) {
+    final model = context.read<GraphModel>();
+    model.nodeToConnect = fromNode;
+  }
+
+  void connect({required Node otherNode}) {
+    final model = context.read<GraphModel>();
+    model.addEdgeTo(otherNode);
   }
 }

@@ -12,9 +12,7 @@ void main() {
   notifier() => notifierCalled = true;
 
   group('.start() and .stop()', () {
-    testWidgets(
-        'starts the dragging procedure, calls onTick callback and notifier',
-        (tester) async {
+    testWidgets('starts the dragging procedure, calls onTick callback and notifier', (tester) async {
       expect(onTickCalled, false);
       expect(notifierCalled, false);
       var testWidget = MyTestWidget(notifier, onTick);
@@ -36,7 +34,7 @@ class MyTestWidget extends StatelessWidget {
 
   MyTestWidget(this.notifier, this.onTick) {
     node = Node.random();
-    node.presentation = BasePresentation(node: node, onAddPressed: () {});
+    node.presentation = BasePresentation(node: node);
     draggingProcedure = DraggingProcedure(notifier: notifier);
   }
 

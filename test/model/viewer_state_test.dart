@@ -64,7 +64,7 @@ class MyTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Node node = Node.random();
-    node.presentation = BasePresentation(node: node, onAddPressed: () {});
+    node.presentation = BasePresentation(node: node);
 
     return MaterialApp(
         title: 'Test App',
@@ -76,8 +76,7 @@ class MyTestWidget extends StatelessWidget {
                 TextButton(
                   child: Text('Start!'),
                   onPressed: (() {
-                    var viewerState =
-                        Provider.of<ViewerState>(context, listen: false);
+                    var viewerState = Provider.of<ViewerState>(context, listen: false);
 
                     viewerState.drag(node);
                   }),
@@ -85,8 +84,7 @@ class MyTestWidget extends StatelessWidget {
                 TextButton(
                     child: Text('Stop!'),
                     onPressed: (() {
-                      var viewerState =
-                          Provider.of<ViewerState>(context, listen: false);
+                      var viewerState = Provider.of<ViewerState>(context, listen: false);
 
                       viewerState.stopDragging();
                     })),

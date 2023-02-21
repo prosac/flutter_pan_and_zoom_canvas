@@ -13,15 +13,13 @@ class ImagePresentation extends BasePresentation {
   final Node node;
   final VoidCallback onAddPressed;
 
-  ImagePresentation({required this.node, required this.onAddPressed})
-      : super(node: node, onAddPressed: onAddPressed);
+  ImagePresentation({required this.node, required this.onAddPressed}) : super(node: node);
 
   @override
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation =
-        Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             child: Column(
@@ -79,15 +77,11 @@ class ImagePresentation extends BasePresentation {
   }
 
   FileImage imageFile() {
-    return FileImage(
-        File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'));
+    return FileImage(File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'));
   }
 
   Image image() {
-    return Image.file(
-        File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'),
-        width: width,
-        height: height,
-        fit: BoxFit.fitWidth);
+    return Image.file(File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'),
+        width: width, height: height, fit: BoxFit.fitWidth);
   }
 }

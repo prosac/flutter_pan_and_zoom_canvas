@@ -9,4 +9,12 @@ class Edge {
   bool isConnectedTo(node) {
     return (node == node1 || node == node2);
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Edge) {
+      return node1 == other.node1 && node2 == other.node2;
+    }
+    return false;
+  }
 }
