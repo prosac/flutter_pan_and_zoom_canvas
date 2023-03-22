@@ -6,8 +6,16 @@ class PresentationContainer extends StatelessWidget {
   final double? width;
   final double? height;
   final Widget? child;
+  final BorderRadius borderRadius;
 
-  const PresentationContainer({super.key, this.width, this.height, this.label, this.color, this.child});
+  const PresentationContainer(
+      {super.key,
+      this.width,
+      this.height,
+      this.label,
+      this.color,
+      this.child,
+      this.borderRadius = const BorderRadius.all(Radius.circular(10))});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +30,7 @@ class PresentationContainer extends StatelessWidget {
             color: Theme.of(context).colorScheme.background,
             shape: BoxShape.rectangle,
             border: Border.all(color: Theme.of(context).primaryColor),
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+            borderRadius: borderRadius),
       ),
     );
   }
