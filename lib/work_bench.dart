@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:file/file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pan_and_zoom/contact_presentation.dart';
@@ -16,6 +18,7 @@ import 'draggable_item.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
 import 'model/simple_action.dart';
+import 'model/storage_directory.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
@@ -120,6 +123,25 @@ class WorkBenchState extends State<WorkBench> {
 
     model.add(newNode);
     context.read<ViewerState>().exitSpaceCommandMode();
+  }
+
+  void loadFiles(model, offset) async {
+    var files = await StorageDirectory().files();
+
+    files.forEach((entity) async {
+      if (entity is File) {
+        PlainTextFile file = await PlainTextFile.asyncFromFile((entity as File));
+
+        var offset = Offset(Random().nextInt(1000).toDouble(), Random().nextInt(1000).toDouble());
+        final newNode = Node(offset: offset, payload: TestData(text: 'Some file loaded from storage dir'));
+        newNode.presentation =
+            PlainTextFilePresentation(node: newNode, file: file, onAddPressed: () => addThingFromExisting(newNode));
+
+        model.add(newNode);
+      }
+
+      context.read<ViewerState>().exitSpaceCommandMode();
+    });
   }
 
   void addThingFromExisting(Node node) {
@@ -305,6 +327,10 @@ class WorkBenchState extends State<WorkBench> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(onPressed: () => addContact(model, center), child: Text('h → Add Human')),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(onPressed: () => loadFiles(model, center), child: Text('l → Load all the files')),
           )
         ]);
 
