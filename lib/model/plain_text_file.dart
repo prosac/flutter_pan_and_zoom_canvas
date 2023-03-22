@@ -22,6 +22,10 @@ class PlainTextFile {
     return PlainTextFile._constructor(fs.file(absoluteFilePath));
   }
 
+  static Future<PlainTextFile> asyncFromFile(File file, {FileSystem fs = const LocalFileSystem()}) async {
+    return PlainTextFile._constructor(file);
+  }
+
   // Future<String> read() async {
   //   try {
   //     final file = await _localFile;
