@@ -38,7 +38,7 @@ class PlainTextFilePresentation extends BasePresentation {
                       child: Builder(builder: (context) {
                         return Column(
                           children: [
-                            Text(file.path),
+                            Text(file.title()),
                             TextFormField(
                               controller: textEditingController,
                               decoration: const InputDecoration(

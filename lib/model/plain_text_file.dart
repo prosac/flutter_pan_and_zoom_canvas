@@ -4,6 +4,7 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:path/path.dart' as pathLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:org_parser/org_parser.dart' as org;
 
 class PlainTextFile {
   PlainTextFile._constructor(this.file);
@@ -12,6 +13,23 @@ class PlainTextFile {
   static final String subDirName = 'All-The-Things-Data';
 
   get path => file.path;
+
+  String title() {
+    final doc = org.OrgDocument.parse(file.readAsStringSync());
+    String value = '';
+
+    doc.children[0].visit<org.OrgMeta>((thing) {
+      if (thing.keyword.contains('title')) {
+        value = thing.trailing.trim();
+        return false;
+      } else {
+        value = thing.trailing.trim();
+        return true;
+      }
+    });
+
+    return value;
+  }
 
   static Future<PlainTextFile> asyncNew(String fileName, {FileSystem fs = const LocalFileSystem()}) async {
     final appDocsDir = await getApplicationDocumentsDirectory();
