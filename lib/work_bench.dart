@@ -125,7 +125,7 @@ class WorkBenchState extends State<WorkBench> {
     context.read<ViewerState>().exitSpaceCommandMode();
   }
 
-  void loadFiles(model, offset) async {
+  void loadFiles(model) async {
     var files = await StorageDirectory().files();
 
     files.forEach((entity) async {
@@ -232,6 +232,11 @@ class WorkBenchState extends State<WorkBench> {
         resetViewport();
         return;
       }
+
+      if (event.logicalKey == LogicalKeyboardKey.keyL) {
+        loadFiles(model);
+        return;
+      }
     }
   }
 
@@ -330,7 +335,7 @@ class WorkBenchState extends State<WorkBench> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => loadFiles(model, center), child: Text('l → Load all the files')),
+            child: ElevatedButton(onPressed: () => loadFiles(model), child: Text('l → Load all the files')),
           )
         ]);
 
