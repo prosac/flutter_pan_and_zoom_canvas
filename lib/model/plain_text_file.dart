@@ -23,7 +23,7 @@ class PlainTextFile {
         value = thing.trailing.trim();
         return false;
       } else {
-        value = thing.trailing.trim();
+        value = file.basename;
         return true;
       }
     });

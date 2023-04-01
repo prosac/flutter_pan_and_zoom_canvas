@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/model/plain_text_file.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
+import 'package:org_flutter/org_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'model/node.dart';
@@ -14,8 +15,24 @@ class PlainTextFilePresentation extends BasePresentation {
   final VoidCallback onAddPressed;
   final PlainTextFile file;
   final textEditingController = TextEditingController();
+  late OrgDocument orgDoc;
 
-  PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file}) : super(node: node);
+  PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file}) : super(node: node) {
+    if (file.file.existsSync()) {
+      textEditingController.text = file.file.readAsStringSync();
+      this.orgDoc = OrgDocument.parse(this.file.file.readAsStringSync());
+    } else {
+      this.orgDoc = OrgDocument.parse('* Nothing');
+    }
+  }
+
+  OrgController org({String rawString = 'Empty...'}) {
+    return OrgController(
+        root: orgDoc,
+        child: OrgRootWidget(
+          child: OrgDocumentWidget(orgDoc),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,30 +56,35 @@ class PlainTextFilePresentation extends BasePresentation {
                         return Column(
                           children: [
                             Text(file.title()),
-                            TextFormField(
-                              controller: textEditingController,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.all(10),
-                                border: OutlineInputBorder(),
-                                filled: true,
-                                labelText: 'Notes',
-                              ),
-                              onTap: (() {
-                                viewerState.disableSpaceCommandMode();
-                              }),
-                              maxLines: 5,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                  onPressed: () async {
-                                    await file.writeAsString(textEditingController.text);
-
-                                    viewerState.requestFocus();
-                                    viewerState.enableSpaceCommandMode();
-                                  },
-                                  child: Text('Save')),
+                            // TextFormField(
+                            //   controller: textEditingController,
+                            //   decoration: const InputDecoration(
+                            //     contentPadding: EdgeInsets.all(10),
+                            //     border: OutlineInputBorder(),
+                            //     filled: true,
+                            //     labelText: 'Notes',
+                            //   ),
+                            //   onTap: (() {
+                            //     viewerState.disableSpaceCommandMode();
+                            //   }),
+                            //   maxLines: 5,
+                            // ),
+                            SizedBox(
+                              child: org(rawString: textEditingController.text),
+                              width: width - 10,
+                              height: height - 10,
                             )
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: ElevatedButton(
+                            //       onPressed: () async {
+                            //         await file.writeAsString(textEditingController.text);
+
+                            //         viewerState.requestFocus();
+                            //         viewerState.enableSpaceCommandMode();
+                            //       },
+                            //       child: Text('Save')),
+                            // )
                           ],
                         );
                       }),

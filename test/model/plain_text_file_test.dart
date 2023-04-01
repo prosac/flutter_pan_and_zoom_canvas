@@ -20,15 +20,15 @@ void main() {
     });
 
     test('awaiting resolved to an actual instance', () async {
-      var instance = await PlainTextFile.asyncNew('some-file.txt');
-      expect(instance, isA<PlainTextFile>());
+      var plain_text_file = await PlainTextFile.asyncNew('some-file.txt');
+      expect(plain_text_file, isA<PlainTextFile>());
     });
 
     group('PlainTextFile instance', () {
-      late var instance;
+      late var plain_text_file;
 
       setUp(() async {
-        instance = await PlainTextFile.asyncNew('some-file.txt', fs: MemoryFileSystem());
+        plain_text_file = await PlainTextFile.asyncNew('some-file.txt', fs: MemoryFileSystem());
       });
 
       test('''.file is a file with the full path including the os specific docs dir,
@@ -37,17 +37,27 @@ void main() {
 
         var expectedAbsolutePath = path.join(appDocsDir.path, 'All-The-Things-Data', 'some-file.txt');
 
-        expect(instance.file, isA<File>());
-        expect(instance.file.path, equals(expectedAbsolutePath));
+        expect(plain_text_file.file, isA<File>());
+        expect(plain_text_file.file.path, equals(expectedAbsolutePath));
       });
 
       test(
-          '.write(String contents) uses the .writeAsString() method of the contained File instance to write contents to it',
+          '.write(String contents) uses the .writeAsString() method of the contained File plain_text_file to write contents to it',
           () async {
-        final writtenFile = await instance.writeAsString('something');
+        final writtenFile = await plain_text_file.writeAsString('something');
         expect(writtenFile, isA<File>());
         final contents = await writtenFile.readAsString();
         expect(contents, equals('something'));
+      });
+
+      group('title', () {
+        test('it reads the title from an org attribute', () async {
+          final writtenFile = await plain_text_file.writeAsString('''#+title: The Title
+                                                           More content
+            ''');
+
+          print(plain_text_file.title);
+        });
       });
     });
   });

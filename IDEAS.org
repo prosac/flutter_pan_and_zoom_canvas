@@ -1,0 +1,8 @@
+* Intro
+
+Some ideas and inspirations.
+
+** Use diagram editor as inspiration how to better do what i want
+https://pub.dev/packages/diagram_editor
+** use flutter_code_editor for org editing
+https://pub.dev/packages/flutter_code_editor
