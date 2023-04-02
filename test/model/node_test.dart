@@ -34,7 +34,7 @@ void main() {
       expect(node.toString(), '0:\n0.0\n0.0');
     });
     test('actions', () {
-      expect(node.actions, isA<List<VoidCallback>>);
+      expect(node.actions, isA<List>());
     });
   });
 
