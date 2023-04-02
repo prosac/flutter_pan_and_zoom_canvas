@@ -1,11 +1,18 @@
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_pan_and_zoom/model/plain_text_file.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:test/test.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+
+import 'fake_path_provider_platform.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() async {
+    PathProviderPlatform.instance = FakePathProviderPlatform();
+  });
   group('PlainTextFile class', () {
     test('''is has an async static method .asyncNew() that returns a Future of
          an instance intitialized with a local storage path''', () async {
