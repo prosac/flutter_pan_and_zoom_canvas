@@ -130,7 +130,7 @@ class WorkBenchState extends State<WorkBench> {
 
     files.forEach((entity) async {
       if (entity is File) {
-        PlainTextFile file = await PlainTextFile.asyncFromFile((entity as File));
+        PlainTextFile file = await PlainTextFile.asyncFromFile((entity));
 
         var offset = Offset(Random().nextInt(1000).toDouble(), Random().nextInt(1000).toDouble());
         final newNode = Node(offset: offset, payload: TestData(text: 'Some file loaded from storage dir'));
