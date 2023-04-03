@@ -13,19 +13,23 @@ class ViewerState with ChangeNotifier {
   bool spaceCommandModeDisabled = false;
   late DraggingProcedure draggingProcedure;
   FocusNode focusNode;
+  Widget? maximizedThing = null;
 
   var onTick = (Node node, double scale, Offset interactiveViewerOffset) {
-    var renderBoxOfNode =
-        node.presentation.key.currentContext?.findRenderObject() as RenderBox;
+    var renderBoxOfNode = node.presentation.key.currentContext?.findRenderObject() as RenderBox;
     var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
 
     node.offset =
-        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
-            nodeOffset, scale, interactiveViewerOffset);
+        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(nodeOffset, scale, interactiveViewerOffset);
   };
 
   ViewerState({draggingProcedure, required this.focusNode}) {
     draggingProcedure = DraggingProcedure(notifier: notifyListeners);
+  }
+
+  void maximize(Widget widget) {
+    maximizedThing = widget;
+    notifyListeners();
   }
 
   void drag(Node node) {

@@ -89,12 +89,7 @@ class WorkBenchState extends State<WorkBench> {
     final node = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
     final model = context.read<GraphModel>();
 
-    node.actions = [
-      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
-      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
-      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
-      SimpleAction(icon: Icons.delete, callback: () => model.remove(node))
-    ];
+    node.actions = buildNodeActions(model, node);
 
     // TODO: hot to best implement a bidirectional 1-1 relationsship
     node.presentation = ExamplePresentation(node: node);
@@ -144,6 +139,19 @@ class WorkBenchState extends State<WorkBench> {
     });
   }
 
+  // TODO: we are mutating an input here! bad! the node should be decorated to know about action
+  List<SimpleAction> buildNodeActions(model, Node node) {
+    var viewerState = context.read<ViewerState>();
+
+    return [
+      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
+      // SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
+      // SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
+      SimpleAction(icon: Icons.delete, callback: () => model.remove(node)),
+      SimpleAction(icon: Icons.maximize, callback: () => viewerState.maximize(node.presentation))
+    ];
+  }
+
   void addThingFromExisting(Node node) {
     final Offset offset = node.offset;
     final adaptedOffset = computeAdaptedOffset(node, offset);
@@ -151,12 +159,7 @@ class WorkBenchState extends State<WorkBench> {
 
     final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
-    newNode.actions = [
-      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(newNode)),
-      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
-      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
-      SimpleAction(icon: Icons.delete, callback: () => model.remove(newNode))
-    ];
+    newNode.actions = buildNodeActions(model, node);
 
     // TODO: how to best implement a bidirectional 1-1 relationsship
     newNode.presentation = ExamplePresentation(node: newNode);
@@ -176,22 +179,34 @@ class WorkBenchState extends State<WorkBench> {
       autofocus: true,
       onKeyEvent: (event) => handleKeyboardOnKey(context, event, viewerState),
       child: Container(
-        child: Stack(children: [
-          Stack(
-            children: <Widget>[interactiveViewer()],
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FloatingActionButton.extended(
-                  onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
-            ),
-          ),
-          spaceCommands()
-        ]),
+        child: maximizedThing(viewerState),
       ),
     );
+  }
+
+  Widget maximizedThing(viewerState) {
+    if (viewerState.maximizedThing != null) {
+      return viewerState.maximizedThing;
+    } else {
+      return mainCanvas(viewerState);
+    }
+  }
+
+  Stack mainCanvas(viewerState) {
+    return Stack(children: [
+      Stack(
+        children: <Widget>[interactiveViewer()],
+      ),
+      Align(
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton.extended(
+              onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
+        ),
+      ),
+      spaceCommands()
+    ]);
   }
 
   void handleKeyboardOnKey(BuildContext context, KeyEvent event, ViewerState viewerState) {
