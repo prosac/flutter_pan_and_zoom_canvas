@@ -27,8 +27,15 @@ class ViewerState with ChangeNotifier {
     draggingProcedure = DraggingProcedure(notifier: notifyListeners);
   }
 
+  get somethingMaximized => maximizedThing != null;
+
   void maximize(Widget widget) {
     maximizedThing = widget;
+    notifyListeners();
+  }
+
+  void unmaximize() {
+    maximizedThing = null;
     notifyListeners();
   }
 

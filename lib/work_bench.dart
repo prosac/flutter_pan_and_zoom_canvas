@@ -145,10 +145,18 @@ class WorkBenchState extends State<WorkBench> {
 
     return [
       SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
-      // SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
-      // SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
+      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
+      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
       SimpleAction(icon: Icons.delete, callback: () => model.remove(node)),
-      SimpleAction(icon: Icons.maximize, callback: () => viewerState.maximize(node.presentation))
+      SimpleAction(
+          icon: Icons.minimize,
+          callback: () {
+            if (viewerState.somethingMaximized) {
+              viewerState.unmaximize();
+            } else {
+              viewerState.maximize(node.presentation);
+            }
+          })
     ];
   }
 

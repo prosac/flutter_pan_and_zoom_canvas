@@ -19,6 +19,7 @@ class ExamplePresentation extends BasePresentation {
 
     presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
+        var buttons = actionButtons(context);
         return PresentationContainer(
             width: width,
             height: height,
@@ -27,7 +28,8 @@ class ExamplePresentation extends BasePresentation {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text('${node.toString()}', style: Theme.of(context).textTheme.bodyText1),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: actionButtons(context)),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons.getRange(0, 3).toList()),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons.getRange(3, 5).toList()),
               ],
             ));
       } else {
