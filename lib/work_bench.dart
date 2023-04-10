@@ -91,7 +91,7 @@ class WorkBenchState extends State<WorkBench> {
       autofocus: true,
       onKeyEvent: (event) => handleKeyboardOnKey(context, event, viewerState),
       child: Container(
-        child: maximizedThing(viewerState),
+        child: maximizedThing,
       ),
     );
   }
@@ -154,7 +154,7 @@ class WorkBenchState extends State<WorkBench> {
     centerView();
   }
 
-  InteractiveViewer interactiveViewer() {
+  InteractiveViewer get interactiveViewer {
     return InteractiveViewer(
         maxScale: 10.0,
         minScale: 0.01,
@@ -187,10 +187,12 @@ class WorkBenchState extends State<WorkBench> {
         ));
   }
 
-  Stack mainCanvas(viewerState) {
+  Stack get mainCanvas {
+    var viewerState = context.read<ViewerState>();
+
     return Stack(children: [
       Stack(
-        children: <Widget>[interactiveViewer()],
+        children: <Widget>[interactiveViewer],
       ),
       Align(
         alignment: Alignment.bottomLeft,
@@ -200,15 +202,16 @@ class WorkBenchState extends State<WorkBench> {
               onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
         ),
       ),
-      spaceCommands()
+      spaceCommands
     ]);
   }
 
-  Widget maximizedThing(viewerState) {
+  Widget? get maximizedThing {
+    ViewerState viewerState = context.read<ViewerState>();
     if (viewerState.maximizedThing != null) {
       return viewerState.maximizedThing;
     } else {
-      return mainCanvas(viewerState);
+      return mainCanvas;
     }
   }
 
@@ -219,7 +222,7 @@ class WorkBenchState extends State<WorkBench> {
 
   void deleteAllTheThingsPassingContext() => deleteAllTheThings(context);
 
-  Visibility spaceCommands() {
+  Visibility get spaceCommands {
     var viewerState = context.read<ViewerState>();
     var model = context.read<GraphModel>();
 
