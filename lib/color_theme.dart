@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 final ThemeData myTheme = ThemeData(
-  primarySwatch: Colors.blueGrey,
   brightness: Brightness.light,
   primaryColor: Color(0xff607d8b),
   primaryColorLight: Color(0xffcfd8dc),
   primaryColorDark: Color(0xff455a64),
   canvasColor: Color(0xfffafafa),
   scaffoldBackgroundColor: Color(0xfffafafa),
-  bottomAppBarColor: Color(0xffffffff),
   cardColor: Color(0xffffffff),
   dividerColor: Color(0x1f000000),
   highlightColor: Color(0x66bcbcbc),
@@ -16,13 +14,10 @@ final ThemeData myTheme = ThemeData(
   selectedRowColor: Color(0xfff5f5f5),
   unselectedWidgetColor: Color(0x8a000000),
   disabledColor: Color(0x61000000),
-  toggleableActiveColor: Color(0xff546e7a),
   secondaryHeaderColor: Color(0xffeceff1),
-  backgroundColor: Color(0xffb0bec5),
   dialogBackgroundColor: Color(0xffffffff),
   indicatorColor: Color(0xff607d8b),
   hintColor: Color(0x8a000000),
-  errorColor: Color(0xffd32f2f),
   buttonTheme: ButtonThemeData(
     textTheme: ButtonTextTheme.normal,
     minWidth: 88,
@@ -268,4 +263,50 @@ final ThemeData myTheme = ThemeData(
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
   )),
+  bottomAppBarTheme: BottomAppBarTheme(color: Color(0xffffffff)),
+  switchTheme: SwitchThemeData(
+    thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return Color(0xff546e7a);
+      }
+      return null;
+    }),
+    trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return Color(0xff546e7a);
+      }
+      return null;
+    }),
+  ),
+  radioTheme: RadioThemeData(
+    fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return Color(0xff546e7a);
+      }
+      return null;
+    }),
+  ),
+  checkboxTheme: CheckboxThemeData(
+    fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return Color(0xff546e7a);
+      }
+      return null;
+    }),
+  ),
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey)
+      .copyWith(background: Color(0xffb0bec5))
+      .copyWith(error: Color(0xffd32f2f)),
 );

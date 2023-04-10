@@ -15,7 +15,7 @@ class PlainTextFilePresentation extends BasePresentation {
   final VoidCallback onAddPressed;
   final PlainTextFile file;
   final textEditingController = TextEditingController();
-  late OrgDocument orgDoc;
+  late final OrgDocument orgDoc;
 
   PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file}) : super(node: node) {
     if (file.file.existsSync()) {

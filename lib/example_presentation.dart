@@ -27,7 +27,7 @@ class ExamplePresentation extends BasePresentation {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('${node.toString()}', style: Theme.of(context).textTheme.bodyText1),
+                Text('${node.toString()}', style: Theme.of(context).textTheme.bodyLarge),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons.getRange(0, 3).toList()),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons.getRange(3, 5).toList()),
               ],

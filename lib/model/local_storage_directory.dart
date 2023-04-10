@@ -5,7 +5,7 @@ import 'package:file/local.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as pathLib;
 
-class StorageDirectory {
+class LocalStorageDirectory {
   static final String subDirName = 'All-The-Things-Data';
 
   // TODO: extract the local storage dir stuff and use it in PlainTextFile and here

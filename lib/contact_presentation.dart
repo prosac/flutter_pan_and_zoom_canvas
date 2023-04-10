@@ -64,7 +64,7 @@ class ConatactPresentation extends BasePresentation {
   Text text(content, context) {
     return Text(
       content,
-      style: Theme.of(context).textTheme.bodyText1,
+      style: Theme.of(context).textTheme.bodyLarge,
       textAlign: TextAlign.left,
     );
   }
@@ -72,7 +72,7 @@ class ConatactPresentation extends BasePresentation {
   Text label(content, context) {
     return Text(
       content,
-      style: Theme.of(context).textTheme.bodyText2,
+      style: Theme.of(context).textTheme.bodyMedium,
       textAlign: TextAlign.left,
     );
   }

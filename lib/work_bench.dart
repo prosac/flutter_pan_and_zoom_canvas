@@ -1,24 +1,20 @@
-import 'dart:math';
 import 'dart:ui';
 
-import 'package:file/file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pan_and_zoom/contact_presentation.dart';
-import 'package:flutter_pan_and_zoom/example_presentation.dart';
+import 'package:flutter_pan_and_zoom/commands/add_contact.dart';
+import 'package:flutter_pan_and_zoom/commands/add_plain_text_file.dart';
+import 'package:flutter_pan_and_zoom/commands/add_thing.dart';
+import 'package:flutter_pan_and_zoom/commands/delete_all_the_things.dart';
+import 'package:flutter_pan_and_zoom/commands/load_files.dart';
 import 'package:flutter_pan_and_zoom/model/edge.dart';
-import 'package:flutter_pan_and_zoom/model/plain_text_file.dart';
 import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
-import 'package:flutter_pan_and_zoom/plain_text_file_presentation.dart';
 import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
-import 'package:flutter_pan_and_zoom/utils/random.dart';
 import 'package:provider/provider.dart';
 
 import 'draggable_item.dart';
 import 'model/graph_model.dart';
 import 'model/node.dart';
-import 'model/simple_action.dart';
-import 'model/storage_directory.dart';
 import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
@@ -84,98 +80,6 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  // TODO: maybe this should be called something like GraphicalNodeRepresentation and thus graphicalNodeRepresentations
-  void addThing(offset) {
-    final node = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
-    final model = context.read<GraphModel>();
-
-    node.actions = buildNodeActions(model, node);
-
-    // TODO: hot to best implement a bidirectional 1-1 relationsship
-    node.presentation = ExamplePresentation(node: node);
-
-    model.add(node);
-    context.read<ViewerState>().exitSpaceCommandMode();
-  }
-
-  void addPlainTextFile(model, offset) async {
-    final newNode = Node(offset: offset, payload: TestData(text: 'Some other Payload'));
-
-    PlainTextFile file = await PlainTextFile.asyncNew(randomString(10));
-
-    newNode.presentation =
-        PlainTextFilePresentation(node: newNode, file: file, onAddPressed: () => addThingFromExisting(newNode));
-
-    model.add(newNode);
-    context.read<ViewerState>().exitSpaceCommandMode();
-  }
-
-  // TODO: why pass in model???
-  void addContact(model, offset) {
-    final newNode = Node(offset: offset, payload: TestData(text: 'Some human'));
-
-    newNode.presentation = ConatactPresentation(node: newNode, onAddPressed: () => addThingFromExisting(newNode));
-
-    model.add(newNode);
-    context.read<ViewerState>().exitSpaceCommandMode();
-  }
-
-  void loadFiles(model) async {
-    var files = await StorageDirectory().files();
-
-    files.forEach((entity) async {
-      if (entity is File) {
-        PlainTextFile file = await PlainTextFile.asyncFromFile((entity));
-
-        var offset = Offset(Random().nextInt(1000).toDouble(), Random().nextInt(1000).toDouble());
-        final newNode = Node(offset: offset, payload: TestData(text: 'Some file loaded from storage dir'));
-        newNode.presentation =
-            PlainTextFilePresentation(node: newNode, file: file, onAddPressed: () => addThingFromExisting(newNode));
-
-        model.add(newNode);
-      }
-
-      context.read<ViewerState>().exitSpaceCommandMode();
-    });
-  }
-
-  // TODO: we are mutating an input here! bad! the node should be decorated to know about action
-  List<SimpleAction> buildNodeActions(model, Node node) {
-    var viewerState = context.read<ViewerState>();
-
-    return [
-      SimpleAction(icon: Icons.add, callback: () => addThingFromExisting(node)),
-      SimpleAction(icon: Icons.local_drink, callback: () => initiateConnecting(fromNode: node)),
-      SimpleAction(icon: Icons.link, callback: () => connect(otherNode: node)),
-      SimpleAction(icon: Icons.delete, callback: () => model.remove(node)),
-      SimpleAction(
-          icon: Icons.minimize,
-          callback: () {
-            if (viewerState.somethingMaximized) {
-              viewerState.unmaximize();
-            } else {
-              viewerState.maximize(node.presentation);
-            }
-          })
-    ];
-  }
-
-  void addThingFromExisting(Node node) {
-    final Offset offset = node.offset;
-    final adaptedOffset = computeAdaptedOffset(node, offset);
-    final model = context.read<GraphModel>();
-
-    final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
-
-    newNode.actions = buildNodeActions(model, node);
-
-    // TODO: how to best implement a bidirectional 1-1 relationsship
-    newNode.presentation = ExamplePresentation(node: newNode);
-
-    model.add(newNode);
-    model.addEdge(node, newNode);
-  }
-
   @override
   Widget build(BuildContext context) {
     var viewerState = context.read<ViewerState>();
@@ -192,29 +96,10 @@ class WorkBenchState extends State<WorkBench> {
     );
   }
 
-  Widget maximizedThing(viewerState) {
-    if (viewerState.maximizedThing != null) {
-      return viewerState.maximizedThing;
-    } else {
-      return mainCanvas(viewerState);
-    }
-  }
-
-  Stack mainCanvas(viewerState) {
-    return Stack(children: [
-      Stack(
-        children: <Widget>[interactiveViewer()],
-      ),
-      Align(
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FloatingActionButton.extended(
-              onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
-        ),
-      ),
-      spaceCommands()
-    ]);
+  void centerView() {
+    var matrix = Matrix4.identity();
+    matrix.translate(-center.dx, -center.dy);
+    transformationController.value = matrix;
   }
 
   void handleKeyboardOnKey(BuildContext context, KeyEvent event, ViewerState viewerState) {
@@ -232,23 +117,23 @@ class WorkBenchState extends State<WorkBench> {
 
     if (viewerState.spaceCommandModeActive) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        addThing(center);
+        addThing(center, context);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyT) {
-        addPlainTextFile(model, center);
+        addPlainTextFile(center, context);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyX) {
-        deleteAllTheThings();
+        deleteAllTheThings(context);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyD) {
-        deleteAllTheThings();
+        deleteAllTheThings(context);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyH) {
-        addContact(model, center);
+        addContact(model, center, context);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyR) {
@@ -257,38 +142,16 @@ class WorkBenchState extends State<WorkBench> {
       }
 
       if (event.logicalKey == LogicalKeyboardKey.keyL) {
-        loadFiles(model);
+        loadFiles(context);
         return;
       }
     }
-  }
-
-  Offset computeAdaptedOffset(Node node, Offset offset) {
-    var addition = Offset((node.width + 20) / widget.width, (node.height + 20) / widget.height);
-
-    return offset + addition;
-  }
-
-  void deleteAllTheThings() {
-    context.read<ViewerState>().exitSpaceCommandMode();
-    context.read<GraphModel>().removeAll();
   }
 
   @override
   void initState() {
     super.initState();
     centerView();
-  }
-
-  void centerView() {
-    var matrix = Matrix4.identity();
-    matrix.translate(-center.dx, -center.dy);
-    transformationController.value = matrix;
-  }
-
-  void resetViewport() {
-    centerView();
-    context.read<ViewerState>().resetView();
   }
 
   InteractiveViewer interactiveViewer() {
@@ -324,6 +187,38 @@ class WorkBenchState extends State<WorkBench> {
         ));
   }
 
+  Stack mainCanvas(viewerState) {
+    return Stack(children: [
+      Stack(
+        children: <Widget>[interactiveViewer()],
+      ),
+      Align(
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton.extended(
+              onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
+        ),
+      ),
+      spaceCommands()
+    ]);
+  }
+
+  Widget maximizedThing(viewerState) {
+    if (viewerState.maximizedThing != null) {
+      return viewerState.maximizedThing;
+    } else {
+      return mainCanvas(viewerState);
+    }
+  }
+
+  void resetViewport() {
+    centerView();
+    context.read<ViewerState>().resetView();
+  }
+
+  void deleteAllTheThingsPassingContext() => deleteAllTheThings(context);
+
   Visibility spaceCommands() {
     var viewerState = context.read<ViewerState>();
     var model = context.read<GraphModel>();
@@ -341,24 +236,25 @@ class WorkBenchState extends State<WorkBench> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: deleteAllTheThings, child: Text('d → Delete all the things')),
+            child:
+                ElevatedButton(onPressed: deleteAllTheThingsPassingContext, child: Text('d → Delete all the things')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-                onPressed: () => addPlainTextFile(model, center), child: Text('n → Add plain text file')),
+                onPressed: () => addPlainTextFile(center, context), child: Text('n → Add plain text file')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => addThing(center), child: Text('n → Add thing')),
+            child: ElevatedButton(onPressed: () => addThing(center, context), child: Text('n → Add thing')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => addContact(model, center), child: Text('h → Add Human')),
+            child: ElevatedButton(onPressed: () => addContact(model, center, context), child: Text('h → Add Human')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => loadFiles(model), child: Text('l → Load all the files')),
+            child: ElevatedButton(onPressed: () => loadFiles(context), child: Text('l → Load all the files')),
           )
         ]);
 
@@ -386,15 +282,5 @@ class WorkBenchState extends State<WorkBench> {
               color: Colors.black.withOpacity(0.1),
               child: Align(child: innerCommandPallette, alignment: Alignment.bottomCenter),
             )));
-  }
-
-  void initiateConnecting({required Node fromNode}) {
-    final model = context.read<GraphModel>();
-    model.nodeToConnect = fromNode;
-  }
-
-  void connect({required Node otherNode}) {
-    final model = context.read<GraphModel>();
-    model.addEdgeTo(otherNode);
   }
 }
