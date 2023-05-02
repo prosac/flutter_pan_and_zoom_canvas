@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'model/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 
 /// Wrapper for an [Item] that wraps it in a [Positioned] [Draggable] to make
 /// it grabable, draggable, dropable on the workbench. It exposes the
@@ -46,16 +46,24 @@ class DraggableItem extends StatelessWidget {
             Draggable(
               data: node.payload,
               dragAnchorStrategy: (widget, context, offset) {
-                final RenderBox renderObject = context.findRenderObject() as RenderBox;
+                final RenderBox renderObject =
+                    context.findRenderObject() as RenderBox;
                 return renderObject.globalToLocal(offset).scale(scale, scale);
               },
               feedback: SizedBox(
-                  key: GlobalKey(), width: node.width * scale, height: node.height * scale, child: node.presentation),
+                  key: GlobalKey(),
+                  width: node.width * scale,
+                  height: node.height * scale,
+                  child: node.presentation),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               onDragCompleted: onDragCompleted,
-              child: SizedBox(key: GlobalKey(), width: node.width, height: node.height, child: node.presentation),
+              child: SizedBox(
+                  key: GlobalKey(),
+                  width: node.width,
+                  height: node.height,
+                  child: node.presentation),
             ),
           ],
         ));

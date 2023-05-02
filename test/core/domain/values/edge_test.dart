@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:flutter_pan_and_zoom/model/edge.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
-import 'package:flutter_pan_and_zoom/test_data.dart';
+import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:test/test.dart';
 
 void main() {

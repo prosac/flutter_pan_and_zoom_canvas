@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/color_theme.dart';
-import 'package:flutter_pan_and_zoom/model/graph_model.dart';
-import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
-import 'package:flutter_pan_and_zoom/work_bench.dart';
-import 'package:provider/provider.dart';
+import 'core/presentation/work_bench.dart';
+import 'injection_container.dart' as di;
+import 'package:flutter_pan_and_zoom/core/presentation/color_theme.dart';
 
 // TODO this feels like way too much down the tree, but maybe for holding the overall state of the graph it is needed like this. Let's see later what we can optimize.
-void main() => runApp(MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => GraphModel()),
-      ChangeNotifierProvider(create: (context) => ViewerState(focusNode: FocusNode())),
-    ], child: PanAndZoom()));
+//   WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized(); // needed?
+  await di.init();
+  runApp(PanAndZoom());
+}
 
 class PanAndZoom extends StatelessWidget {
   final Widget home = WorkBench(width: 5000, height: 4000);

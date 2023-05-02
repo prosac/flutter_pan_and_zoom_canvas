@@ -1,18 +1,17 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/commands/build_node_actions.dart';
-import 'package:flutter_pan_and_zoom/commands/compute_adapted_offset.dart';
-import 'package:flutter_pan_and_zoom/example_presentation.dart';
-import 'package:flutter_pan_and_zoom/model/graph_model.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
-import 'package:flutter_pan_and_zoom/test_data.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/build_node_actions.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
 
-void addThingFromExisting(Node node, BuildContext context) {
+void addFromExisting(Node node, BuildContext context) {
   final Offset offset = node.offset;
-  final adaptedOffset = computeAdaptedOffset(node, offset, Size(node.presentation.width, node.presentation.height));
+  final adaptedOffset = computeAdaptedOffset(
+      node, offset, Size(node.presentation.width, node.presentation.height));
   final model = context.read<GraphModel>();
 
-  final newNode = Node(offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
+  final newNode = Node(
+      offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
 
   newNode.actions = buildNodeActions(model, node, context);
 

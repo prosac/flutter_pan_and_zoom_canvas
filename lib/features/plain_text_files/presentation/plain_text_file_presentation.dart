@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/base_presentation.dart';
-import 'package:flutter_pan_and_zoom/model/plain_text_file.dart';
-import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/plain_text_file.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/presentation_container.dart';
 import 'package:org_flutter/org_flutter.dart';
-import 'package:provider/provider.dart';
-
-import 'model/node.dart';
-import 'presentation_container.dart';
 
 class PlainTextFilePresentation extends BasePresentation {
   final double width = 300;
@@ -17,7 +14,9 @@ class PlainTextFilePresentation extends BasePresentation {
   final textEditingController = TextEditingController();
   late final OrgDocument orgDoc;
 
-  PlainTextFilePresentation({required this.node, required this.onAddPressed, required this.file}) : super(node: node) {
+  PlainTextFilePresentation(
+      {required this.node, required this.onAddPressed, required this.file})
+      : super(node: node) {
     if (file.file.existsSync()) {
       textEditingController.text = file.file.readAsStringSync();
       this.orgDoc = OrgDocument.parse(this.file.file.readAsStringSync());
@@ -38,9 +37,11 @@ class PlainTextFilePresentation extends BasePresentation {
   Widget build(BuildContext context) {
     Widget presentation;
 
-    if (file.file.existsSync()) textEditingController.text = file.file.readAsStringSync();
+    if (file.file.existsSync())
+      textEditingController.text = file.file.readAsStringSync();
 
-    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation =
+        Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             borderRadius: BorderRadius.all(Radius.zero),

@@ -23,9 +23,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^6.0.0
   path_provider:
   file:
+  get_it:
+  equatable:
+  dartz:
 
 
   # The following adds the Cupertino Icons font to your application.

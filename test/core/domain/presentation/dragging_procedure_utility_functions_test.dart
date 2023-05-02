@@ -1,5 +1,5 @@
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_pan_and_zoom/model/dragging_procedure_utility_functions.dart';
 
 void main() {
   group('.offsetAdaptedToViewParameters()', () {

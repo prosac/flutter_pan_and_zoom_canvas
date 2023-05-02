@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/model/dragging_procedure.dart';
-import 'package:flutter_pan_and_zoom/model/dragging_procedure_utility_functions.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
 
 class ViewerState with ChangeNotifier {
   Offset interactiveViewerOffset = Offset.zero;
@@ -16,11 +16,13 @@ class ViewerState with ChangeNotifier {
   Widget? maximizedThing = null;
 
   var onTick = (Node node, double scale, Offset interactiveViewerOffset) {
-    var renderBoxOfNode = node.presentation.key.currentContext?.findRenderObject() as RenderBox;
+    var renderBoxOfNode =
+        node.presentation.key.currentContext?.findRenderObject() as RenderBox;
     var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
 
     node.offset =
-        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(nodeOffset, scale, interactiveViewerOffset);
+        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
+            nodeOffset, scale, interactiveViewerOffset);
   };
 
   ViewerState({draggingProcedure, required this.focusNode}) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 
 class MockRenderBox extends RenderBox {}
 
@@ -29,7 +29,8 @@ class BasePresentation extends AbstractPresentation {
     return node.offset;
   }
 
-  RenderBox get renderBox => key.currentContext?.findRenderObject() as RenderBox;
+  RenderBox get renderBox =>
+      key.currentContext?.findRenderObject() as RenderBox;
 
   @override
   Widget build(BuildContext context) {

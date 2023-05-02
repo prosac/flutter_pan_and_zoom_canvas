@@ -1,6 +1,6 @@
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 
 class DraggingProcedure {
   late Function notifier;

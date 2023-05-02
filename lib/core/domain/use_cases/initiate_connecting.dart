@@ -1,9 +1,27 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/model/graph_model.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
-import 'package:provider/provider.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
+import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
+import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 
-void initiateConnecting({required Node fromNode, required BuildContext context}) {
-  final model = context.read<GraphModel>();
-  model.nodeToConnect = fromNode;
+class InitiateConnecting implements UseCase<Node, Params> {
+  final GraphComponentsRepository repository;
+  final InteractionState interactionState;
+
+  InitiateConnecting(this.repository, this.interactionState);
+
+  @override
+  Future<Either<Failure, Node>> call(Params params) async {
+    interactionState.nodeToBeConnected = params.nodeToBeConnected;
+  }
+}
+
+class Params {
+  final Node nodeToBeConnected;
+
+  Params({required this.nodeToBeConnected});
+
+  @override
+  List<Object> get props => [nodeToBeConnected];
 }

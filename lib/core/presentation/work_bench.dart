@@ -2,20 +2,17 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pan_and_zoom/commands/add_contact.dart';
-import 'package:flutter_pan_and_zoom/commands/add_plain_text_file.dart';
-import 'package:flutter_pan_and_zoom/commands/add_thing.dart';
-import 'package:flutter_pan_and_zoom/commands/delete_all_the_things.dart';
-import 'package:flutter_pan_and_zoom/commands/load_files.dart';
-import 'package:flutter_pan_and_zoom/model/edge.dart';
-import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
-import 'package:flutter_pan_and_zoom/simple_connection_painter.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/edge.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_the_things.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
+import 'package:flutter_pan_and_zoom/features/files/domain/use_case/load_files.dart';
+import 'package:flutter_pan_and_zoom/features/humans/domain/use_cases/add_contact.dart';
+import 'package:flutter_pan_and_zoom/features/plain_text_files/domain/use_cases/add_plain_text_file.dart';
+import 'package:flutter_pan_and_zoom/features/nodes/domain/use_cases/add_node.dart';
 
 import 'draggable_item.dart';
-import 'model/graph_model.dart';
-import 'model/node.dart';
-import 'test_data.dart';
 
 class WorkBench extends StatefulWidget {
   final double width;
@@ -56,14 +53,17 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  RenderBox get dragTargetRenderBox => dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+  RenderBox get dragTargetRenderBox =>
+      dragTargetKey.currentContext!.findRenderObject() as RenderBox;
 
   List<CustomPaint> get visualConnections {
     var model = context.read<GraphModel>();
 
     return model.edges.map((Edge edge) {
-      Size size1 = Size(edge.node1.presentation.width, edge.node1.presentation.height);
-      Size size2 = Size(edge.node2.presentation.width, edge.node1.presentation.height);
+      Size size1 =
+          Size(edge.node1.presentation.width, edge.node1.presentation.height);
+      Size size2 =
+          Size(edge.node2.presentation.width, edge.node1.presentation.height);
 
       Offset nodeOffset1 = edge.node1.presentation.offset;
       Offset nodeOffset2 = edge.node2.presentation.offset;
@@ -71,12 +71,13 @@ class WorkBenchState extends State<WorkBench> {
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
 
-      Offset offset1 =
-          Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
-      Offset offset2 =
-          Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
+      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
+          offset1AdaptedToBackground.dy + size1.height / 2);
+      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
+          offset2AdaptedToBackground.dy + size2.height / 2);
 
-      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      return CustomPaint(
+          painter: SimpleConnectionPainter(start: offset1, end: offset2));
     }).toList();
   }
 
@@ -102,7 +103,8 @@ class WorkBenchState extends State<WorkBench> {
     transformationController.value = matrix;
   }
 
-  void handleKeyboardOnKey(BuildContext context, KeyEvent event, ViewerState viewerState) {
+  void handleKeyboardOnKey(
+      BuildContext context, KeyEvent event, ViewerState viewerState) {
     var model = context.read<GraphModel>();
 
     if (event.logicalKey == LogicalKeyboardKey.space) {
@@ -164,23 +166,30 @@ class WorkBenchState extends State<WorkBench> {
           // TODO: why the hell this is ok for flutter when called in setState(),
           // but not without plus an internal notifyListeners() (which calls setState())?
           setState(() {
-            context.read<ViewerState>().parametersFromMatrix(transformationController.value);
+            context
+                .read<ViewerState>()
+                .parametersFromMatrix(transformationController.value);
           });
         },
-        constrained: false, // this does the trick to make the "canvas" bigger than the view port
+        constrained:
+            false, // this does the trick to make the "canvas" bigger than the view port
         child: Container(
           width: widget.width,
           height: widget.height,
-          decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1)),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black45, width: 1)),
           child: Consumer<GraphModel>(builder: (context, model, child) {
             return DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
+                Offset offset =
+                    dragTargetRenderBox.globalToLocal(details.offset);
                 model.leaveDraggingItemAtNewOffset(offset);
               },
-              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
-                return Stack(children: [...visualConnections, ...draggableItems]);
+              builder: (BuildContext context, List<TestData?> candidateData,
+                  List rejectedData) {
+                return Stack(
+                    children: [...visualConnections, ...draggableItems]);
               },
             );
           }),
@@ -199,7 +208,8 @@ class WorkBenchState extends State<WorkBench> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: FloatingActionButton.extended(
-              onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
+              onPressed: () => viewerState.enterSpaceCommandMode(),
+              label: Text('Things')),
         ),
       ),
       spaceCommands
@@ -239,25 +249,33 @@ class WorkBenchState extends State<WorkBench> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child:
-                ElevatedButton(onPressed: deleteAllTheThingsPassingContext, child: Text('d → Delete all the things')),
+            child: ElevatedButton(
+                onPressed: deleteAllTheThingsPassingContext,
+                child: Text('d → Delete all the things')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-                onPressed: () => addPlainTextFile(center, context), child: Text('n → Add plain text file')),
+                onPressed: () => addPlainTextFile(center, context),
+                child: Text('n → Add plain text file')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => addThing(center, context), child: Text('n → Add thing')),
+            child: ElevatedButton(
+                onPressed: () => addThing(center, context),
+                child: Text('n → Add thing')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => addContact(model, center, context), child: Text('h → Add Human')),
+            child: ElevatedButton(
+                onPressed: () => addContact(model, center, context),
+                child: Text('h → Add Human')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => loadFiles(context), child: Text('l → Load all the files')),
+            child: ElevatedButton(
+                onPressed: () => loadFiles(context),
+                child: Text('l → Load all the files')),
           )
         ]);
 
@@ -267,7 +285,8 @@ class WorkBenchState extends State<WorkBench> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 400, padding: const EdgeInsets.all(20), child: commands),
+            Container(
+                width: 400, padding: const EdgeInsets.all(20), child: commands),
           ],
         )
       ],
@@ -283,7 +302,9 @@ class WorkBenchState extends State<WorkBench> {
             child: Container(
               width: mediaQueryData.size.width,
               color: Colors.black.withOpacity(0.1),
-              child: Align(child: innerCommandPallette, alignment: Alignment.bottomCenter),
+              child: Align(
+                  child: innerCommandPallette,
+                  alignment: Alignment.bottomCenter),
             )));
   }
 }

@@ -1,12 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/base_presentation.dart';
-import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
-import 'package:provider/provider.dart';
-
-import 'model/node.dart';
-import 'presentation_container.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/presentation_container.dart';
 
 class ConatactPresentation extends BasePresentation {
   final double width = 300;
@@ -14,13 +11,15 @@ class ConatactPresentation extends BasePresentation {
   final Node node;
   final VoidCallback onAddPressed;
 
-  ConatactPresentation({required this.node, required this.onAddPressed}) : super(node: node);
+  ConatactPresentation({required this.node, required this.onAddPressed})
+      : super(node: node);
 
   @override
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation =
+        Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         return PresentationContainer(
             child: Column(
@@ -78,11 +77,15 @@ class ConatactPresentation extends BasePresentation {
   }
 
   FileImage imageFile() {
-    return FileImage(File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'));
+    return FileImage(
+        File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'));
   }
 
   Image image() {
-    return Image.file(File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'),
-        width: width, height: height, fit: BoxFit.fitWidth);
+    return Image.file(
+        File('/home/johannes.vonbargen/Pictures/Rick_Sanchez.webp'),
+        width: width,
+        height: height,
+        fit: BoxFit.fitWidth);
   }
 }

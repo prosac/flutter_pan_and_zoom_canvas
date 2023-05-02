@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/base_presentation.dart';
-import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
-import 'package:provider/provider.dart';
-import 'model/node.dart';
-import 'model/simple_action.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/simple_action.dart';
 import 'presentation_container.dart';
 
 class ExamplePresentation extends BasePresentation {
@@ -17,7 +15,8 @@ class ExamplePresentation extends BasePresentation {
   Widget build(BuildContext context) {
     Widget presentation;
 
-    presentation = Consumer<ViewerState>(builder: (context, viewerState, child) {
+    presentation =
+        Consumer<ViewerState>(builder: (context, viewerState, child) {
       if (viewerState.scale > 0.5) {
         var buttons = actionButtons(context);
         return PresentationContainer(
@@ -27,16 +26,22 @@ class ExamplePresentation extends BasePresentation {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('${node.toString()}', style: Theme.of(context).textTheme.bodyLarge),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons.getRange(0, 3).toList()),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons.getRange(3, 5).toList()),
+                Text('${node.toString()}',
+                    style: Theme.of(context).textTheme.bodyLarge),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: buttons.getRange(0, 3).toList()),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: buttons.getRange(3, 5).toList()),
               ],
             ));
       } else {
         return FittedBox(
           fit: BoxFit.contain,
           child: ElevatedButton(
-            onPressed: node.actions[0], // For now simplyuse the first action as the one being accessible on minimal LOD
+            onPressed: node.actions[
+                0], // For now simplyuse the first action as the one being accessible on minimal LOD
             child: Center(
               child: Icon(Icons.add, color: Colors.grey.shade500),
             ),

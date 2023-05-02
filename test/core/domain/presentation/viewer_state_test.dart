@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/base_presentation.dart';
-import 'package:flutter_pan_and_zoom/model/dragging_procedure.dart';
-import 'package:flutter_pan_and_zoom/model/node.dart';
-import 'package:flutter_pan_and_zoom/model/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
+import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:mockito/annotations.dart';
 
 @GenerateMocks([DraggingProcedure])
@@ -76,7 +75,8 @@ class MyTestWidget extends StatelessWidget {
                 TextButton(
                   child: Text('Start!'),
                   onPressed: (() {
-                    var viewerState = Provider.of<ViewerState>(context, listen: false);
+                    var viewerState =
+                        Provider.of<ViewerState>(context, listen: false);
 
                     viewerState.drag(node);
                   }),
@@ -84,7 +84,8 @@ class MyTestWidget extends StatelessWidget {
                 TextButton(
                     child: Text('Stop!'),
                     onPressed: (() {
-                      var viewerState = Provider.of<ViewerState>(context, listen: false);
+                      var viewerState =
+                          Provider.of<ViewerState>(context, listen: false);
 
                       viewerState.stopDragging();
                     })),
