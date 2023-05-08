@@ -1,10 +1,7 @@
-import 'dart:ui';
-
 import 'package:dartz/dartz.dart';
-import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
-import 'package:flutter_pan_and_zoom/core/domain/repositories/nodes_repository.dart';
+import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
 
 // as it used to be...
@@ -23,24 +20,23 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
 // }
 
 class CreateNode implements UseCase<Node, Params> {
-  final NodesRepository repository;
+  final GraphComponentsRepository repository;
 
   CreateNode(this.repository);
 
   @override
   Future<Either<Failure, Node>> call(Params params) async {
-    final node = Node(
-        offset: params.offset, payload: TestData(text: 'Some other Payload'));
-    return await repository.createNode(params.data);
+    final node = Node(dx: params.dx, dy: params.dy);
+    return await repository.addNode(node);
   }
 }
 
 class Params {
-  final Node data;
-  final Offset offset;
+  final double dx;
+  final double dy;
 
-  Params({required this.data, required this.offset});
+  Params({required this.dx, required this.dy});
 
   @override
-  List<Object> get props => [data];
+  List<Object> get props => [dx, dy];
 }

@@ -14,6 +14,7 @@ class InitiateConnecting implements UseCase<Node, Params> {
   @override
   Future<Either<Failure, Node>> call(Params params) async {
     interactionState.nodeToBeConnected = params.nodeToBeConnected;
+    return Future.value(Right(params.nodeToBeConnected));
   }
 }
 

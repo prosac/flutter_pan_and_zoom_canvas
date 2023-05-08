@@ -1,9 +1,8 @@
 class Node {
-  double dx;
-  double dy;
-  final int id; // a simple and readable identifier for visual debugging
+  double dx, dy, width, height;
+  int id;
 
-  Node({required this.id, required this.dx, required this.dy});
+  Node({this.id = 0, required this.dx, required this.dy, this.height = 200, this.width = 300});
 
   @override
   String toString() {
@@ -27,6 +26,6 @@ class Node {
     // node.presentation = presentation;
     // return node;
 
-    return Node(id: 0, dx: 0, dy: 0);
+    return Node(dx: 0, dy: 0);
   }
 }

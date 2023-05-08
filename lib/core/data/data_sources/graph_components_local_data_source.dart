@@ -1,73 +1,69 @@
 import 'dart:math';
 
-import 'package:dartz/dartz.dart';
 import 'package:flutter_pan_and_zoom/core/data/models/edge_model.dart';
 import 'package:flutter_pan_and_zoom/core/data/models/node_model.dart';
-import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 
+// DataSource notes
+// deals with all details of storing, retrieving, caching
+// It does NOT use Either
+// It DOES return model instances
+// Models extend entities
 abstract class GraphComponentsLocalDataSource {
-  Future<Either<Failure, List<NodeModel>>> nodes();
+  Future<List<NodeModel>> nodes();
 
-  Future<Either<Failure, NodeModel>> createNode(
-      {required int id, required double dx, required double dy});
+  Future<NodeModel> addNode({required int id, required double dx, required double dy});
 
-  Future<Either<Failure, List<EdgeModel>>> edges();
+  Future<List<EdgeModel>> edges();
 
-  Future<Either<Failure, EdgeModel>> createEdge(
-      {required NodeModel node, required NodeModel otherNode});
+  Future<EdgeModel> createEdge({required Node node, required Node otherNode});
 
-  Future<Either<Failure, GraphComponentsLocalDataSource>> deleteAll();
+  Future<GraphComponentsLocalDataSource> deleteAll();
 
-  Future<Either<Failure, GraphComponentsLocalDataSource>> delete(
-      NodeModel node);
+  Future<GraphComponentsLocalDataSource> delete(NodeModel node);
 }
 
-class GraphComponentsLocalDataSourceImplementation
-    implements GraphComponentsLocalDataSource {
+class GraphComponentsLocalDataSourceImplementation implements GraphComponentsLocalDataSource {
   List<NodeModel> _nodes = [];
   List<EdgeModel> _edges = [];
 
   @override
-  Future<Either<Failure, List<NodeModel>>> nodes() async {
-    return Future.value(Right(_nodes));
+  Future<List<NodeModel>> nodes() async {
+    return Future.value(_nodes);
   }
 
   @override
-  Future<Either<Failure, NodeModel>> createNode(
-      {required int id, required double dx, required double dy}) {
-    var node = NodeModel(id: _nextId(), dx: dx, dy: dy);
+  Future<NodeModel> addNode({required int id, required double dx, required double dy}) {
+    var node = NodeModel(id: nextId(), dx: dx, dy: dy);
     _nodes.add(node);
-    return Future.value(Right(node));
+    return Future.value(node);
   }
 
   @override
-  Future<Either<Failure, List<EdgeModel>>> edges() async {
-    return Future.value(Right(_edges));
+  Future<List<EdgeModel>> edges() async {
+    return Future.value(_edges);
   }
 
   @override
-  Future<Either<Failure, EdgeModel>> createEdge(
-      {required NodeModel node, required NodeModel otherNode}) {
+  Future<EdgeModel> createEdge({required Node node, required Node otherNode}) {
     var edge = EdgeModel(node: node, otherNode: otherNode);
     _edges.add(edge);
-    return Future.value(Right(edge));
+    return Future.value(edge);
   }
 
-  Future<Either<Failure, GraphComponentsLocalDataSource>> delete(node) {
+  Future<GraphComponentsLocalDataSource> delete(node) {
     _nodes.remove(node);
     _edges.removeWhere((edge) => edge.isConnectedTo(node));
-    return Future.value(Right(this));
+    return Future.value(this);
   }
 
-  Future<Either<Failure, GraphComponentsLocalDataSource>> deleteAll() {
+  Future<GraphComponentsLocalDataSource> deleteAll() {
     _edges.clear();
     _nodes.clear();
-    return Future.value(Right(this));
+    return Future.value(this);
   }
 
-  //---
-
-  int _nextId() {
+  int nextId() {
     return _nodes.map((node) => node.id).reduce(max) + 1;
   }
 }

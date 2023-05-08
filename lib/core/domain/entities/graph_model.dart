@@ -3,16 +3,19 @@ import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 
 import 'node.dart';
 
+// TODO: transfer everything to the clean arch approach
+// TODO: think about if a graph entity as facade should maybe still exist
 class GraphModel with ChangeNotifier {
   final List<Node> draggingNodes = [];
-  Node? nodeToConnect;
+  // Node? nodeToConnect;
 
-  void addEdgeTo(Node otherNode) {
-    final edge = Edge(nodeToConnect!, otherNode);
-    if (edges.contains(edge)) return;
-    edges.add(edge);
-    nodeToConnect = null;
-  }
+  // void addEdgeTo(Node otherNode) {
+  //   // TODO: what to do when there is no nodeToConnect?
+  //   final edge = Edge(node: nodeToConnect!, otherNode: otherNode);
+  //   if (edges.contains(edge)) return;
+  //   edges.add(edge);
+  //   nodeToConnect = null;
+  // }
 
   void drag(node) {
     nodes.remove(node);

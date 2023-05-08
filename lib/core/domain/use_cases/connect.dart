@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_pan_and_zoom/core/domain/entities/graph_model.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
 import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
@@ -13,7 +12,7 @@ import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 //   model.addEdgeTo(otherNode);
 // }
 
-class Connect implements UseCase<Node, Params> {
+class Connect implements UseCase<Edge, Params> {
   final GraphComponentsRepository graphComponentsRepo;
   final InteractionState interactionState;
 
@@ -21,20 +20,19 @@ class Connect implements UseCase<Node, Params> {
 
   @override
   Future<Either<Failure, Edge>> call(Params params) async {
-    if (interactionState.nodeToBeConnected == null)
-      return Left(NoNodeToBeConnected());
+    if (interactionState.nodeToBeConnected == null) return Left(NoNodeToBeConnected());
 
-    final edge = Edge(
-        node: interactionState.nodeToBeConnected!, otherNode: params.otherNode);
+    final edgesOrFailure = await graphComponentsRepo.edges();
 
-    final List<Edge> edges = await graphComponentsRepo.edges();
-
-    if (edges.contains(edge)) return Left(EdgeAlreadyExists());
-
-    graphComponentsRepo.createEdge();
-
-    interactionState.nodeToBeConnected = null;
-    return Right(edge);
+    return edgesOrFailure.fold((failure) {
+      return Left(failure);
+    }, (edges) async {
+      // TODO: how to get rid of the !?
+      var edge =
+          await graphComponentsRepo.createEdge(node: interactionState.nodeToBeConnected!, otherNode: params.otherNode);
+      interactionState.nodeToBeConnected = null;
+      return edge;
+    });
   }
 }
 

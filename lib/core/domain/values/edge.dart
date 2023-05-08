@@ -1,5 +1,7 @@
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 
+// TODO: use
+
 class Edge {
   Edge({required this.node, required this.otherNode});
 
@@ -10,6 +12,7 @@ class Edge {
     return (node == node || node == otherNode);
   }
 
+  // TODO: use this equality thing from the tutorial
   @override
   bool operator ==(Object other) {
     if (other is Edge) {

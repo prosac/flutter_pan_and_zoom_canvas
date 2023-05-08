@@ -1,37 +1,45 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/connect.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
+import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockEdgesRepository extends Mock implements EdgesRepository {}
+@GenerateNiceMocks([MockSpec<GraphComponentsRepository>()])
+@GenerateNiceMocks([MockSpec<MockInteractionState>()])
+import 'connect_test.mocks.dart';
+
+class MockGraphComponentsRepository extends Mock implements GraphComponentsRepository {}
+
+class MockInteractionState extends Mock implements InteractionState {}
 
 void main() {
-  Connect usecase;
-  MockEdgesRepository mockEdgesRepository;
+  Connect connect;
+  MockGraphComponentsRepository repository;
+  MockInteractionState interactionState;
 
-  setUp(() {
-    mockEdgesRepository = MockEdgesRepository();
-    usecase = Connect(mockEdgesRepository);
-  });
-
-  final node1 = Node.random();
-  final node2 = Node.random();
-  final edge = Edge(node1, node2);
+  final node = Node.random();
+  final otherNode = Node.random();
+  final edge = Edge(node: node, otherNode: otherNode);
 
   test(
     'Adds an edge connecting two nodes',
     () async {
       // arrange
-      when(mockEdgesRepository.create(any))
-          .thenAnswer((_) async => Right(edge));
+      repository = MockGraphComponentsRepository();
+      interactionState = MockInteractionState();
+      interactionState.nodeToBeConnected = node;
+      connect = Connect(repository, interactionState);
+      when(repository.createEdge()).thenAnswer((_) async => Right(edge));
       // act
-      final result = await usecase(Params(node: node1, otherNode: node2));
+      final result = await connect(Params(otherNode: otherNode));
       // assert
       expect(result, Right(edge));
-      verify(mockEdgesRepository.create(node: node1, otherNode: node2));
-      verifyNoMoreInteractions(mockEdgesRepository);
+      verify(repository.createEdge());
+      verifyNoMoreInteractions(repository);
     },
   );
 }

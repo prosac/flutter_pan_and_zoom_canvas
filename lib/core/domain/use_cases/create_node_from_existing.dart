@@ -1,11 +1,12 @@
 import 'dart:ui';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter_pan_and_zoom/core/data/data_sources/graph_components_local_data_source.dart';
 import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
-import 'package:flutter_pan_and_zoom/core/domain/repositories/nodes_repository.dart';
-import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_base.dart';
+import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.dart';
 
 // void addFromExisting(Node node, BuildContext context) {
@@ -27,21 +28,26 @@ import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.da
 // }
 
 class CreateNodeFromExisting implements UseCase<Node, Params> {
-  final NodesRepository repository;
+  final GraphComponentsRepository repository;
 
   CreateNodeFromExisting(this.repository);
 
   @override
   Future<Either<Failure, Node>> call(Params params) async {
-    final Offset offset = params.node.offset;
+    final Offset offset = Offset(params.node.dx, params.node.dy);
 
-    final adaptedOffset = computeAdaptedOffset(params.node, offset,
-        Size(params.node.presentation.width, params.node.presentation.height));
+    final adaptedOffset = computeAdaptedOffset(params.node, offset, Size(params.node.width, params.node.height));
 
-    final newNode = Node(
-        offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));
-
-    return await repository.createNodeFromExisting(newNode);
+    final dx = adaptedOffset.dx;
+    final dy = adaptedOffset.dy;
+    return (await repository.addNode(Node(dx: dx, dy: dy))).fold((failure) {
+      // TODO: how to dealt with passing on errors
+      // isn't all this functional stuff also about not having to deal with errors on the way?
+      return Left(failure);
+    }, (newNode) {
+      repository.createEdge(node: params.node, otherNode: newNode);
+      return Right(newNode);
+    });
   }
 }
 
