@@ -10,28 +10,24 @@ void main() {
   late Node node1;
   late Node node2;
 
-  group('An Edge', () {
-    setUp(() async {
-      node1 = Node(offset: Offset.zero, payload: TestData());
-      node2 = Node(offset: Offset.zero, payload: TestData());
-      edge = Edge(node1, node2);
-    });
+  setUp(() async {
+    node1 = Node();
+    node2 = Node();
+    edge = Edge(node: node1, otherNode: node2);
+  });
 
-    test('is an Edge ;-)', () {
-      expect(edge, isA<Edge>());
-    });
+  test('An Edge knows two nodes', () {
+    expect(edge.node, node1);
+    expect(edge.otherNode, node2);
+  });
 
-    test('knows two nodes', () {
-      expect(edge.node1, node1);
-      expect(edge.node2, node2);
-    });
+  test('An Edge is connected to both of its nodes', () {
+    expect(edge.isConnectedTo(node1), true);
+    expect(edge.isConnectedTo(node2), true);
+  });
 
-    test('isConnectedTo(node1)', () {
-      expect(edge.isConnectedTo(node1), true);
-    });
-
-    test('isConnectedTo(node2)', () {
-      expect(edge.isConnectedTo(node2), true);
-    });
+  test('an edge conntecting two nodes is equal to another edge connecting the same nodes, making it a value', () {
+    var edge2 = Edge(node: node1, otherNode: node2);
+    expect(edge == edge2, true);
   });
 }

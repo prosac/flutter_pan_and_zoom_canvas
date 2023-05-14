@@ -1,62 +1,27 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
 import 'package:test/test.dart';
-
-class MockRenderBox extends RenderBox {}
-
-class MockPresentation extends BasePresentation {
-  final GlobalKey key = GlobalKey();
-  final double width = 50;
-  final double height = 50;
-
-  MockPresentation() : super(node: Node.random());
-
-  RenderBox get renderBox => MockRenderBox();
-  Widget build(BuildContext context) => Container();
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.error}) => '';
-}
 
 void main() {
   late Node node;
 
   group('A Node', () {
     setUp(() async {
-      node = Node(offset: Offset.zero, payload: TestData());
-    });
-
-    test('is a Node ;-)', () {
-      expect(node, isA<Node>());
+      node = Node();
     });
 
     test('toString() includes the serial nr and offset', () {
       expect(node.toString(), '0:\n0.0\n0.0');
     });
-    test('actions', () {
-      expect(node.actions, isA<List>());
-    });
-  });
 
-  group('A Node with presentation', () {
-    late BasePresentation presentation;
+    // TODO: really required?
+    // test('Knows its connected Edges', () {
+    //   var destination = Node();
+    //   var edge = Edge(source: node, destination: destination);
 
-    setUp(() async {
-      node = Node(offset: Offset.zero, payload: TestData());
-      presentation = MockPresentation();
-      node.presentation = presentation;
-    });
+    //   node.addEdge(edge);
 
-    test('delegates width and height to the presentation', () {
-      expect(node.width, presentation.width);
-      expect(node.height, presentation.height);
-    });
-
-    group('.renderBox', () {
-      test('returns the RenderBox of the presentation', () {
-        expect(node.renderBox, isA<RenderBox>());
-      });
-    });
+    //   expect(node.edges, contains(edge));
+    // });
   });
 
   group('factories', () {
@@ -68,8 +33,8 @@ void main() {
         expect(node, isA<Node>());
       });
       test('the nodes offset is in bearable bounds', () {
-        expect(node.offset.dx, lessThanOrEqualTo(1000));
-        expect(node.offset.dy, lessThanOrEqualTo(1000));
+        expect(node.dx, lessThanOrEqualTo(1000));
+        expect(node.dy, lessThanOrEqualTo(1000));
       });
     });
   });

@@ -1,23 +1,16 @@
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:equatable/equatable.dart';
 
-// TODO: use
+class Edge extends Equatable {
+  Edge({required this.source, required this.destination});
 
-class Edge {
-  Edge({required this.node, required this.otherNode});
-
-  final Node node;
-  final Node otherNode;
+  final Node source;
+  final Node destination;
 
   bool isConnectedTo(node) {
-    return (node == node || node == otherNode);
+    return (node == source || node == destination);
   }
 
-  // TODO: use this equality thing from the tutorial
   @override
-  bool operator ==(Object other) {
-    if (other is Edge) {
-      return node == other.node && otherNode == other.otherNode;
-    }
-    return false;
-  }
+  List<Object> get props => [source, destination];
 }

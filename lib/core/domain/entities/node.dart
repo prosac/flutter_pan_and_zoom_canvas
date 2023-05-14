@@ -1,8 +1,16 @@
-class Node {
-  double dx, dy, width, height;
-  int id;
+import 'package:equatable/equatable.dart';
 
-  Node({this.id = 0, required this.dx, required this.dy, this.height = 200, this.width = 300});
+class Node extends Equatable {
+  int id;
+  // List<Edge> edges = [];
+  double dx, dy, width, height;
+
+  Node({this.id = 0, this.dx = 0, this.dy = 0, this.height = 200, this.width = 300});
+
+  // TODO: is it really required that a Node knows its edges?
+  // void addEdge(Edge edge) {
+  //   edges.add(edge);
+  // }
 
   @override
   String toString() {
@@ -10,12 +18,7 @@ class Node {
   }
 
   @override
-  bool operator ==(Object other) {
-    if (other is Node) {
-      return id == other.id;
-    }
-    return false;
-  }
+  List<Object> get props => [id];
 
   factory Node.random() {
     // var offset = Offset(
