@@ -1,15 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:file/file.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/plain_text_file.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
+import 'package:flutter_pan_and_zoom/core/domain/repositories/files_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
-import 'package:flutter_pan_and_zoom/features/filesystem/domain/repositories/files_repository.dart';
-import 'package:flutter_pan_and_zoom/features/plain_text_files/domain/entities/plain_text_file.dart';
 
 import '../../../../core/domain/use_cases/use_case.dart';
 
 // void loadFiles(BuildContext context) async {
-//   final model = context.read<GraphModel>();
+//   final model = context.read<Graph>();
 //   var files = await LocalStorageDirectory().files();
 
 //   files.forEach((entity) async {
@@ -42,7 +42,7 @@ class LoadFiles implements UseCase<List<PlainTextFile>, NoParams> {
 
   @override
   Future<Either<Failure, List<PlainTextFile>>> call(NoParams params) async {
-    var files = await filesRepository.entities();
+    var files = await filesRepository.fsEntities();
 
     return files
         .where((entity) => (entity is File), () => MyFailure())

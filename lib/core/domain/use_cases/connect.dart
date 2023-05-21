@@ -8,7 +8,7 @@ import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 
 // as it was before
 // void connect({required Node otherNode, required BuildContext context}) {
-//   final model = context.read<GraphModel>();
+//   final model = context.read<Graph>();
 //   model.addEdgeTo(otherNode);
 // }
 

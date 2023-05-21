@@ -33,7 +33,7 @@ class WorkBenchState extends State<WorkBench> {
 
   List get draggableItems {
     var viewerState = context.watch<ViewerState>();
-    var model = context.watch<GraphModel>();
+    var model = context.watch<Graph>();
 
     return model.nodes.map((Node node) {
       Offset offset = node.offset;
@@ -57,7 +57,7 @@ class WorkBenchState extends State<WorkBench> {
       dragTargetKey.currentContext!.findRenderObject() as RenderBox;
 
   List<CustomPaint> get visualConnections {
-    var model = context.read<GraphModel>();
+    var model = context.read<Graph>();
 
     return model.edges.map((Edge edge) {
       Size size1 =
@@ -105,7 +105,7 @@ class WorkBenchState extends State<WorkBench> {
 
   void handleKeyboardOnKey(
       BuildContext context, KeyEvent event, ViewerState viewerState) {
-    var model = context.read<GraphModel>();
+    var model = context.read<Graph>();
 
     if (event.logicalKey == LogicalKeyboardKey.space) {
       viewerState.enterSpaceCommandMode();
@@ -178,7 +178,7 @@ class WorkBenchState extends State<WorkBench> {
           height: widget.height,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black45, width: 1)),
-          child: Consumer<GraphModel>(builder: (context, model, child) {
+          child: Consumer<Graph>(builder: (context, model, child) {
             return DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
@@ -234,7 +234,7 @@ class WorkBenchState extends State<WorkBench> {
 
   Visibility get spaceCommands {
     var viewerState = context.read<ViewerState>();
-    var model = context.read<GraphModel>();
+    var model = context.read<Graph>();
 
     var commands = Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

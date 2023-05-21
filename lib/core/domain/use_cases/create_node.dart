@@ -8,7 +8,7 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
 // void addThing(offset, BuildContext context) {
 //   final node =
 //       Node(offset: offset, payload: TestData(text: 'Some other Payload'));
-//   final model = context.read<GraphModel>();
+//   final model = context.read<Graph>();
 
 //   node.actions = buildNodeActions(model, node, context);
 

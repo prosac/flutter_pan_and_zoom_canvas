@@ -115,7 +115,7 @@ class MockPresentation extends BasePresentation {
     test('can notifyListeners()', () => expect(graph.notifyListeners, isA<Function>()));
 // Graph entity test end
 
-// GraphModel
+// Graph
 
 
   void drag(node) {

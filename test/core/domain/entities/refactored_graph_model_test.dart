@@ -1,15 +1,15 @@
 import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
-import 'package:flutter_pan_and_zoom/core/domain/entities/graph_model.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  late GraphModel model;
+  late Graph model;
 
-  group('GraphModel', () {
+  group('Graph', () {
     setUp(() async {
-      model = GraphModel();
+      model = Graph();
     });
 
     group('nodes', () {

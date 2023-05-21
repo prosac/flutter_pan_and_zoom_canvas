@@ -1,8 +1,6 @@
 import 'dart:ui';
 
 import 'package:dartz/dartz.dart';
-import 'package:flutter_pan_and_zoom/core/data/data_sources/graph_components_local_data_source.dart';
-import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
 import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
@@ -13,7 +11,7 @@ import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.da
 //   final Offset offset = node.offset;
 //   final adaptedOffset = computeAdaptedOffset(
 //       node, offset, Size(node.presentation.width, node.presentation.height));
-//   final model = context.read<GraphModel>();
+//   final model = context.read<Graph>();
 
 //   final newNode = Node(
 //       offset: adaptedOffset, payload: TestData(text: 'Some other Payload'));

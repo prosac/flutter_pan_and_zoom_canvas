@@ -23,7 +23,7 @@ void main() {
 
   final node = Node.random();
   final otherNode = Node.random();
-  final edge = Edge(node: node, otherNode: otherNode);
+  final edge = Edge(source: node, destination: otherNode);
 
   test(
     'Adds an edge connecting two nodes',
