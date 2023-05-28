@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
+import 'package:get_it_mixin/get_it_mixin.dart';
 
 @GenerateMocks([DraggingProcedure])
 import 'viewer_state_test.mocks.dart';
 
 void main() {
   DraggingProcedure draggingProcedure = MockDraggingProcedure();
-  late ViewerState state =
-      ViewerState(draggingProcedure: draggingProcedure, focusNode: FocusNode());
+  late ViewerState state = ViewerState(draggingProcedure: draggingProcedure, focusNode: FocusNode());
 
   group('DraggingProcedure instance', () {
     group('interactiveViewerOffset', () {
@@ -59,37 +60,30 @@ void main() {
   });
 }
 
-class MyTestWidget extends StatelessWidget {
+class MyTestWidget extends StatelessWidget with GetItMixin {
   @override
   Widget build(BuildContext context) {
-    Node node = Node.random();
+    var node = NodeWithPresentation(node: Node.random());
     node.presentation = BasePresentation(node: node);
 
     return MaterialApp(
         title: 'Test App',
-        home: ChangeNotifierProvider<ViewerState>(
-            create: (_) => ViewerState(focusNode: FocusNode()),
-            builder: (context, child) {
-              return Column(children: [
-                node.presentation,
-                TextButton(
-                  child: Text('Start!'),
-                  onPressed: (() {
-                    var viewerState =
-                        Provider.of<ViewerState>(context, listen: false);
+        home: Column(children: [
+          node.presentation,
+          TextButton(
+            child: Text('Start!'),
+            onPressed: (() {
+              var viewerState = get<ViewerState>();
+              viewerState.drag(node);
+            }),
+          ),
+          TextButton(
+              child: Text('Stop!'),
+              onPressed: (() {
+                var viewerState = get<ViewerState>();
 
-                    viewerState.drag(node);
-                  }),
-                ),
-                TextButton(
-                    child: Text('Stop!'),
-                    onPressed: (() {
-                      var viewerState =
-                          Provider.of<ViewerState>(context, listen: false);
-
-                      viewerState.stopDragging();
-                    })),
-              ]);
-            }));
+                viewerState.stopDragging();
+              })),
+        ]));
   }
 }

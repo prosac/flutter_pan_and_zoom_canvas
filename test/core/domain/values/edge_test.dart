@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:test/test.dart';
@@ -13,12 +10,12 @@ void main() {
   setUp(() async {
     node1 = Node();
     node2 = Node();
-    edge = Edge(node: node1, otherNode: node2);
+    edge = Edge(source: node1, destination: node2);
   });
 
   test('An Edge knows two nodes', () {
-    expect(edge.node, node1);
-    expect(edge.otherNode, node2);
+    expect(edge.source, node1);
+    expect(edge.destination, node2);
   });
 
   test('An Edge is connected to both of its nodes', () {
@@ -27,7 +24,7 @@ void main() {
   });
 
   test('an edge conntecting two nodes is equal to another edge connecting the same nodes, making it a value', () {
-    var edge2 = Edge(node: node1, otherNode: node2);
+    var edge2 = Edge(source: node1, destination: node2);
     expect(edge == edge2, true);
   });
 }

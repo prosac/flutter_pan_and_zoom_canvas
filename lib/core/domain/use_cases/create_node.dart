@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
 import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
@@ -31,7 +32,7 @@ class CreateNode implements UseCase<Node, Params> {
   }
 }
 
-class Params {
+class Params extends Equatable {
   final double dx;
   final double dy;
 

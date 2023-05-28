@@ -9,12 +9,9 @@ import 'package:mockito/annotations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 @GenerateNiceMocks([MockSpec<GraphComponentsRepository>()])
-@GenerateNiceMocks([MockSpec<MockInteractionState>()])
+@GenerateNiceMocks([MockSpec<InteractionState>()])
+// import 'connect_test.mocks.dart';
 import 'connect_test.mocks.dart';
-
-class MockGraphComponentsRepository extends Mock implements GraphComponentsRepository {}
-
-class MockInteractionState extends Mock implements InteractionState {}
 
 void main() {
   Connect connect;
@@ -33,12 +30,12 @@ void main() {
       interactionState = MockInteractionState();
       interactionState.nodeToBeConnected = node;
       connect = Connect(repository, interactionState);
-      when(repository.createEdge()).thenAnswer((_) async => Right(edge));
+      when(repository.createEdge(edge: edge)).thenAnswer((_) async => Right(edge));
       // act
       final result = await connect(Params(otherNode: otherNode));
       // assert
       expect(result, Right(edge));
-      verify(repository.createEdge());
+      verify(repository.createEdge(edge: edge));
       verifyNoMoreInteractions(repository);
     },
   );

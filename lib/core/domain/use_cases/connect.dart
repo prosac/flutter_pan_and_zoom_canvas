@@ -28,10 +28,10 @@ class Connect implements UseCase<Edge, Params> {
       return Left(failure);
     }, (edges) async {
       // TODO: how to get rid of the !?
-      var edge =
-          await graphComponentsRepo.createEdge(node: interactionState.nodeToBeConnected!, otherNode: params.otherNode);
+      var edge = Edge(source: interactionState.nodeToBeConnected!, destination: params.otherNode);
+      await graphComponentsRepo.createEdge(edge: edge);
       interactionState.nodeToBeConnected = null;
-      return edge;
+      return Future.value(Right(edge));
     });
   }
 }

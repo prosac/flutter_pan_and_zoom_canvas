@@ -5,6 +5,7 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
 import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.dart';
 
 // void addFromExisting(Node node, BuildContext context) {
@@ -38,12 +39,13 @@ class CreateNodeFromExisting implements UseCase<Node, Params> {
 
     final dx = adaptedOffset.dx;
     final dy = adaptedOffset.dy;
-    return (await repository.addNode(Node(dx: dx, dy: dy))).fold((failure) {
+    final node = Node(dx: dx, dy: dy);
+    return (await repository.addNode(node)).fold((failure) {
       // TODO: how to dealt with passing on errors
       // isn't all this functional stuff also about not having to deal with errors on the way?
       return Left(failure);
     }, (newNode) {
-      repository.createEdge(node: params.node, otherNode: newNode);
+      repository.createEdge(edge: Edge(source: node, destination: params.node));
       return Right(newNode);
     });
   }

@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('id', () {
-    final node = NodeModel(id: 1);
+    final node = NodeModel(id: 1, dx: 0, dy: 0);
 
     test(
       'has an interger id',

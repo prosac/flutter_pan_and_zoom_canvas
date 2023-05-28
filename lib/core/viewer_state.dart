@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 
 class ViewerState with ChangeNotifier {
   Offset interactiveViewerOffset = Offset.zero;
@@ -15,14 +15,12 @@ class ViewerState with ChangeNotifier {
   FocusNode focusNode;
   Widget? maximizedThing = null;
 
-  var onTick = (Node node, double scale, Offset interactiveViewerOffset) {
-    var renderBoxOfNode =
-        node.presentation.key.currentContext?.findRenderObject() as RenderBox;
+  var onTick = (NodeWithPresentation node, double scale, Offset interactiveViewerOffset) {
+    var renderBoxOfNode = node.presentation.key.currentContext?.findRenderObject() as RenderBox;
     var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
 
     node.offset =
-        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
-            nodeOffset, scale, interactiveViewerOffset);
+        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(nodeOffset, scale, interactiveViewerOffset);
   };
 
   ViewerState({draggingProcedure, required this.focusNode}) {
@@ -41,7 +39,7 @@ class ViewerState with ChangeNotifier {
     notifyListeners();
   }
 
-  void drag(Node node) {
+  void drag(NodeWithPresentation node) {
     elacs = pow(scale, -1).toDouble();
     draggingProcedure = DraggingProcedure(notifier: notifyListeners);
     draggingProcedure.start(node, elacs, interactiveViewerOffset, onTick);

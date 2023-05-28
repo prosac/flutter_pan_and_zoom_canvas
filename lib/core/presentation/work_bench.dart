@@ -2,19 +2,21 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pan_and_zoom/core/data/test_data.dart';
-import 'package:flutter_pan_and_zoom/core/domain/entities/edge.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
-import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_the_things.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/reset_viewport.dart';
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
+import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
-import 'package:flutter_pan_and_zoom/features/files/domain/use_case/load_files.dart';
-import 'package:flutter_pan_and_zoom/features/humans/domain/use_cases/add_contact.dart';
-import 'package:flutter_pan_and_zoom/features/plain_text_files/domain/use_cases/add_plain_text_file.dart';
-import 'package:flutter_pan_and_zoom/features/nodes/domain/use_cases/add_node.dart';
+import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
+import 'package:get_it_mixin/get_it_mixin.dart';
 
 import 'draggable_item.dart';
 
-class WorkBench extends StatefulWidget {
+class WorkBench extends StatefulWidget with GetItStatefulWidgetMixin {
   final double width;
   final double height;
 
@@ -24,27 +26,27 @@ class WorkBench extends StatefulWidget {
   WorkBenchState createState() => WorkBenchState();
 }
 
-class WorkBenchState extends State<WorkBench> {
+class WorkBenchState extends State<WorkBench> with GetItStateMixin {
   final transformationController = TransformationController();
   final dragTargetKey = GlobalKey();
   late MediaQueryData mediaQueryData;
+  // TODO: let's see if it is ok to have them as instance vaes
+  late ViewerState viewerState;
+  late Graph graph;
+  late InteractionState interactionState;
 
   Offset get center => Offset(widget.width / 2, widget.height / 2);
 
   List get draggableItems {
-    var viewerState = context.watch<ViewerState>();
-    var model = context.watch<Graph>();
-
-    return model.nodes.map((Node node) {
-      Offset offset = node.offset;
-
+    return graph.nodes.map((Node rawNode) {
+      var node = NodeWithPresentation(node: rawNode);
       return DraggableItem(
           key: UniqueKey(),
-          offset: offset,
+          offset: node.offset,
           scale: viewerState.scale,
           node: node,
           onDragStarted: () {
-            model.drag(node);
+            graph.drag(node);
             viewerState.drag(node); // should be implicit!
           },
           onDragCompleted: () {
@@ -53,46 +55,41 @@ class WorkBenchState extends State<WorkBench> {
     }).toList();
   }
 
-  RenderBox get dragTargetRenderBox =>
-      dragTargetKey.currentContext!.findRenderObject() as RenderBox;
+  RenderBox get dragTargetRenderBox => dragTargetKey.currentContext!.findRenderObject() as RenderBox;
 
   List<CustomPaint> get visualConnections {
-    var model = context.read<Graph>();
+    return graph.edges.map((Edge edge) {
+      Size size1 = Size(edge.source.width, edge.destination.height);
+      Size size2 = Size(edge.source.width, edge.destination.height);
 
-    return model.edges.map((Edge edge) {
-      Size size1 =
-          Size(edge.node1.presentation.width, edge.node1.presentation.height);
-      Size size2 =
-          Size(edge.node2.presentation.width, edge.node1.presentation.height);
-
-      Offset nodeOffset1 = edge.node1.presentation.offset;
-      Offset nodeOffset2 = edge.node2.presentation.offset;
+      Offset nodeOffset1 = Offset(edge.source.dx, edge.source.dy);
+      Offset nodeOffset2 = Offset(edge.destination.dx, edge.destination.dy);
 
       Offset offset1AdaptedToBackground = nodeOffset1;
       Offset offset2AdaptedToBackground = nodeOffset2;
 
-      Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
-          offset1AdaptedToBackground.dy + size1.height / 2);
-      Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
-          offset2AdaptedToBackground.dy + size2.height / 2);
+      Offset offset1 =
+          Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
+      Offset offset2 =
+          Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
-      return CustomPaint(
-          painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    var viewerState = context.read<ViewerState>();
+    viewerState = get<ViewerState>();
+    graph = get<Graph>();
     viewerState.parametersFromMatrix(transformationController.value);
     mediaQueryData = MediaQuery.of(context);
 
     return KeyboardListener(
       focusNode: viewerState.focusNode,
       autofocus: true,
-      onKeyEvent: (event) => handleKeyboardOnKey(context, event, viewerState),
+      onKeyEvent: (event) => handleKeyboardOnKey(context, event),
       child: Container(
-        child: maximizedThing,
+        child: maximizedThing(viewerState),
       ),
     );
   }
@@ -103,10 +100,8 @@ class WorkBenchState extends State<WorkBench> {
     transformationController.value = matrix;
   }
 
-  void handleKeyboardOnKey(
-      BuildContext context, KeyEvent event, ViewerState viewerState) {
-    var model = context.read<Graph>();
-
+  // TODO: dose get<>ing the use cases here count as "within the build method?"
+  void handleKeyboardOnKey(BuildContext context, KeyEvent event) async {
     if (event.logicalKey == LogicalKeyboardKey.space) {
       viewerState.enterSpaceCommandMode();
       return;
@@ -119,32 +114,23 @@ class WorkBenchState extends State<WorkBench> {
 
     if (viewerState.spaceCommandModeActive) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        addThing(center, context);
-        return;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.keyT) {
-        addPlainTextFile(center, context);
+        var useCase = get<CreateNode>();
+        await useCase(Params(dx: center.dx, dy: center.dy));
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyX) {
-        deleteAllTheThings(context);
+        var useCase = get<DeleteAllNodes>();
+        useCase();
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyD) {
-        deleteAllTheThings(context);
-        return;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.keyH) {
-        addContact(model, center, context);
+        var useCase = get<DeleteAllNodes>();
+        useCase();
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyR) {
-        resetViewport();
-        return;
-      }
-
-      if (event.logicalKey == LogicalKeyboardKey.keyL) {
-        loadFiles(context);
+        var useCase = get<ResetViewport>();
+        useCase();
         return;
       }
     }
@@ -166,39 +152,29 @@ class WorkBenchState extends State<WorkBench> {
           // TODO: why the hell this is ok for flutter when called in setState(),
           // but not without plus an internal notifyListeners() (which calls setState())?
           setState(() {
-            context
-                .read<ViewerState>()
-                .parametersFromMatrix(transformationController.value);
+            viewerState.parametersFromMatrix(transformationController.value);
           });
         },
-        constrained:
-            false, // this does the trick to make the "canvas" bigger than the view port
+        constrained: false, // this does the trick to make the "canvas" bigger than the view port
         child: Container(
-          width: widget.width,
-          height: widget.height,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black45, width: 1)),
-          child: Consumer<Graph>(builder: (context, model, child) {
-            return DragTarget(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1)),
+            child: DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                Offset offset =
-                    dragTargetRenderBox.globalToLocal(details.offset);
-                model.leaveDraggingItemAtNewOffset(offset);
+                Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
+                // TODO: search on main branch how this has been before
+                // https://github.com/search?q=repo%3Aprosac%2Fflutter_pan_and_zoom_canvas+leaveDraggingItemAtNewOffset&type=code
+                graph.leaveDraggingItemAtNewOffset(offset);
               },
-              builder: (BuildContext context, List<TestData?> candidateData,
-                  List rejectedData) {
-                return Stack(
-                    children: [...visualConnections, ...draggableItems]);
+              builder: (BuildContext context, List candidateData, List rejectedData) {
+                return Stack(children: [...visualConnections, ...draggableItems]);
               },
-            );
-          }),
-        ));
+            )));
   }
 
   Stack get mainCanvas {
-    var viewerState = context.read<ViewerState>();
-
     return Stack(children: [
       Stack(
         children: <Widget>[interactiveViewer],
@@ -208,16 +184,15 @@ class WorkBenchState extends State<WorkBench> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: FloatingActionButton.extended(
-              onPressed: () => viewerState.enterSpaceCommandMode(),
-              label: Text('Things')),
+              onPressed: () => viewerState.enterSpaceCommandMode(), label: Text('Things')),
         ),
       ),
       spaceCommands
     ]);
   }
 
-  Widget? get maximizedThing {
-    ViewerState viewerState = context.read<ViewerState>();
+  // TODO: better use some null object
+  Widget? maximizedThing(ViewerState viewerState) {
     if (viewerState.maximizedThing != null) {
       return viewerState.maximizedThing;
     } else {
@@ -227,15 +202,10 @@ class WorkBenchState extends State<WorkBench> {
 
   void resetViewport() {
     centerView();
-    context.read<ViewerState>().resetView();
+    viewerState.resetView();
   }
 
-  void deleteAllTheThingsPassingContext() => deleteAllTheThings(context);
-
   Visibility get spaceCommands {
-    var viewerState = context.read<ViewerState>();
-    var model = context.read<Graph>();
-
     var commands = Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -249,33 +219,12 @@ class WorkBenchState extends State<WorkBench> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                onPressed: deleteAllTheThingsPassingContext,
-                child: Text('d → Delete all the things')),
+            child: ElevatedButton(onPressed: () => get<DeleteAllNodes>()(), child: Text('d → Delete all the things')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-                onPressed: () => addPlainTextFile(center, context),
-                child: Text('n → Add plain text file')),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                onPressed: () => addThing(center, context),
-                child: Text('n → Add thing')),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                onPressed: () => addContact(model, center, context),
-                child: Text('h → Add Human')),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                onPressed: () => loadFiles(context),
-                child: Text('l → Load all the files')),
+                onPressed: () => get<CreateNode>()(Params(dx: center.dx, dy: center.dy)), child: Text('n → Add thing')),
           )
         ]);
 
@@ -285,8 +234,7 @@ class WorkBenchState extends State<WorkBench> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-                width: 400, padding: const EdgeInsets.all(20), child: commands),
+            Container(width: 400, padding: const EdgeInsets.all(20), child: commands),
           ],
         )
       ],
@@ -302,9 +250,7 @@ class WorkBenchState extends State<WorkBench> {
             child: Container(
               width: mediaQueryData.size.width,
               color: Colors.black.withOpacity(0.1),
-              child: Align(
-                  child: innerCommandPallette,
-                  alignment: Alignment.bottomCenter),
+              child: Align(child: innerCommandPallette, alignment: Alignment.bottomCenter),
             )));
   }
 }
