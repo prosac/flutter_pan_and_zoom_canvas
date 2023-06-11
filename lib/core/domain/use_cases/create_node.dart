@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
-import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
+import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 
 // as it used to be...
 // void addThing(offset, BuildContext context) {
@@ -21,14 +22,17 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
 // }
 
 class CreateNode implements UseCase<Node, Params> {
-  final GraphComponentsRepository repository;
+  final Graph graph;
+  final ViewerState viewerState;
 
-  CreateNode(this.repository);
+  CreateNode(this.graph, this.viewerState);
 
   @override
   Future<Either<Failure, Node>> call(Params params) async {
     final node = Node(dx: params.dx, dy: params.dy);
-    return await repository.addNode(node);
+    graph.addNode(node);
+    viewerState.exitSpaceCommandMode();
+    return Future.value(Right(node));
   }
 }
 

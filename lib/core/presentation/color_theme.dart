@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// NOTE: responsible for scaling fuckup: rather no
+// NOTE: responsible for draggable only working once fuckup: rather no
 final ThemeData myTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Color(0xff607d8b),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// NOTE: responsible for scaling fuckup: rather no
+// NOTE: responsible for draggable only working once fuckup: rather no
 /// A [CustomPainter] for drawing connections between points represented by [Offset]s
 class ConnectionPainter extends CustomPainter {
   // https://medium.com/flutter-community/paths-in-flutter-a-visual-guide-6c906464dcd0
@@ -8,10 +10,7 @@ class ConnectionPainter extends CustomPainter {
   late Offset p2;
   Offset? end;
 
-  ConnectionPainter({
-    this.start,
-    this.end
-  });
+  ConnectionPainter({this.start, this.end});
 
   @override
   void paint(Canvas canvas, Size size) async {

@@ -3,16 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
-import 'dart:ui' as _i9;
+import 'dart:ui' as _i5;
 
-import 'package:dartz/dartz.dart' as _i2;
-import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart' as _i6;
-import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart' as _i5;
-import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart'
-    as _i3;
-import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart' as _i7;
-import 'package:flutter_pan_and_zoom/core/interaction_state.dart' as _i8;
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart' as _i2;
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart' as _i3;
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart' as _i4;
+import 'package:flutter_pan_and_zoom/core/interaction_state.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -26,161 +22,154 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
-  _FakeEither_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-/// A class which mocks [GraphComponentsRepository].
+/// A class which mocks [Graph].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGraphComponentsRepository extends _i1.Mock
-    implements _i3.GraphComponentsRepository {
+class MockGraph extends _i1.Mock implements _i2.Graph {
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.Node>>> nodes() =>
-      (super.noSuchMethod(
-        Invocation.method(
+  List<_i3.Node> get nodes => (super.noSuchMethod(
+        Invocation.getter(#nodes),
+        returnValue: <_i3.Node>[],
+        returnValueForMissingStub: <_i3.Node>[],
+      ) as List<_i3.Node>);
+  @override
+  set nodes(List<_i3.Node>? _nodes) => super.noSuchMethod(
+        Invocation.setter(
           #nodes,
-          [],
+          _nodes,
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, List<_i6.Node>>>.value(
-            _FakeEither_0<_i5.Failure, List<_i6.Node>>(
-          this,
-          Invocation.method(
-            #nodes,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.Node>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.Node>>(
-          this,
-          Invocation.method(
-            #nodes,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.Node>>>);
+        returnValueForMissingStub: null,
+      );
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i6.Node>> addNode(_i6.Node? node) =>
-      (super.noSuchMethod(
+  List<_i3.Node> get draggingNodes => (super.noSuchMethod(
+        Invocation.getter(#draggingNodes),
+        returnValue: <_i3.Node>[],
+        returnValueForMissingStub: <_i3.Node>[],
+      ) as List<_i3.Node>);
+  @override
+  set draggingNodes(List<_i3.Node>? _draggingNodes) => super.noSuchMethod(
+        Invocation.setter(
+          #draggingNodes,
+          _draggingNodes,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  List<_i4.Edge> get edges => (super.noSuchMethod(
+        Invocation.getter(#edges),
+        returnValue: <_i4.Edge>[],
+        returnValueForMissingStub: <_i4.Edge>[],
+      ) as List<_i4.Edge>);
+  @override
+  set edges(List<_i4.Edge>? _edges) => super.noSuchMethod(
+        Invocation.setter(
+          #edges,
+          _edges,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  bool get hasListeners => (super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+  @override
+  void addNode(_i3.Node? node) => super.noSuchMethod(
         Invocation.method(
           #addNode,
           [node],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.Node>>.value(
-            _FakeEither_0<_i5.Failure, _i6.Node>(
-          this,
-          Invocation.method(
-            #addNode,
-            [node],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<_i2.Either<_i5.Failure, _i6.Node>>.value(
-                _FakeEither_0<_i5.Failure, _i6.Node>(
-          this,
-          Invocation.method(
-            #addNode,
-            [node],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.Node>>);
+        returnValueForMissingStub: null,
+      );
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i7.Edge>>> edges() =>
-      (super.noSuchMethod(
+  void addEdge(_i4.Edge? edge) => super.noSuchMethod(
         Invocation.method(
-          #edges,
-          [],
+          #addEdge,
+          [edge],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, List<_i7.Edge>>>.value(
-            _FakeEither_0<_i5.Failure, List<_i7.Edge>>(
-          this,
-          Invocation.method(
-            #edges,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i7.Edge>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i7.Edge>>(
-          this,
-          Invocation.method(
-            #edges,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i7.Edge>>>);
+        returnValueForMissingStub: null,
+      );
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i7.Edge>> createEdge(
-          {required _i7.Edge? edge}) =>
-      (super.noSuchMethod(
+  void removeNode(_i3.Node? node) => super.noSuchMethod(
         Invocation.method(
-          #createEdge,
-          [],
-          {#edge: edge},
+          #removeNode,
+          [node],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i7.Edge>>.value(
-            _FakeEither_0<_i5.Failure, _i7.Edge>(
-          this,
-          Invocation.method(
-            #createEdge,
-            [],
-            {#edge: edge},
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<_i2.Either<_i5.Failure, _i7.Edge>>.value(
-                _FakeEither_0<_i5.Failure, _i7.Edge>(
-          this,
-          Invocation.method(
-            #createEdge,
-            [],
-            {#edge: edge},
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i7.Edge>>);
+        returnValueForMissingStub: null,
+      );
   @override
-  _i4.Future<
-      _i2
-          .Either<_i5.Failure, _i3.GraphComponentsRepository>> removeAll() =>
-      (super.noSuchMethod(
+  void removeEdge(_i4.Edge? edge) => super.noSuchMethod(
+        Invocation.method(
+          #removeEdge,
+          [edge],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void removeAll() => super.noSuchMethod(
         Invocation.method(
           #removeAll,
           [],
         ),
-        returnValue: _i4.Future<
-                _i2.Either<_i5.Failure, _i3.GraphComponentsRepository>>.value(
-            _FakeEither_0<_i5.Failure, _i3.GraphComponentsRepository>(
-          this,
-          Invocation.method(
-            #removeAll,
-            [],
-          ),
-        )),
-        returnValueForMissingStub: _i4.Future<
-                _i2.Either<_i5.Failure, _i3.GraphComponentsRepository>>.value(
-            _FakeEither_0<_i5.Failure, _i3.GraphComponentsRepository>(
-          this,
-          Invocation.method(
-            #removeAll,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i3.GraphComponentsRepository>>);
+        returnValueForMissingStub: null,
+      );
+  @override
+  void drag(dynamic node) => super.noSuchMethod(
+        Invocation.method(
+          #drag,
+          [node],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void leaveDraggingItemAtNewOffset(_i5.Offset? offset) => super.noSuchMethod(
+        Invocation.method(
+          #leaveDraggingItemAtNewOffset,
+          [offset],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void addListener(_i5.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void removeListener(_i5.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [InteractionState].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockInteractionState extends _i1.Mock implements _i8.InteractionState {
+class MockInteractionState extends _i1.Mock implements _i6.InteractionState {
   @override
-  set nodeToBeConnected(_i6.Node? _nodeToBeConnected) => super.noSuchMethod(
+  set nodeToBeConnected(_i3.Node? _nodeToBeConnected) => super.noSuchMethod(
         Invocation.setter(
           #nodeToBeConnected,
           _nodeToBeConnected,
@@ -194,7 +183,7 @@ class MockInteractionState extends _i1.Mock implements _i8.InteractionState {
         returnValueForMissingStub: false,
       ) as bool);
   @override
-  void addListener(_i9.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i5.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -202,7 +191,7 @@ class MockInteractionState extends _i1.Mock implements _i8.InteractionState {
         returnValueForMissingStub: null,
       );
   @override
-  void removeListener(_i9.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i5.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],

@@ -10,6 +10,7 @@ class NodeWithPresentation {
   late List<SimpleAction> actions;
   Node node;
 
+  // TODO: actions should be commands in the form of use cases (interactors)
   NodeWithPresentation({required this.node, this.actions = const []}) {}
 
   get dx => node.dx;

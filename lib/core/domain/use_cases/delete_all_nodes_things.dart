@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
-import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/void_use_case.dart';
 
 // as it was before...
@@ -10,12 +10,12 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/void_use_case.dart';
 // }
 
 class DeleteAllNodes implements VoidUseCase<void> {
-  final GraphComponentsRepository repository;
+  final Graph graph;
 
-  DeleteAllNodes(this.repository);
+  DeleteAllNodes(this.graph);
 
   @override
   Future<Either<Failure, void>> call() async {
-    return await repository.removeAll();
+    return Future.value(Right(graph.removeAll()));
   }
 }

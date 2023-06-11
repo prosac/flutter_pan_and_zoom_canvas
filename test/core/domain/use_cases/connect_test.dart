@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
-import 'package:flutter_pan_and_zoom/core/domain/repositories/graph_components_repository.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/connect.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
@@ -8,14 +8,14 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-@GenerateNiceMocks([MockSpec<GraphComponentsRepository>()])
+@GenerateNiceMocks([MockSpec<Graph>()])
 @GenerateNiceMocks([MockSpec<InteractionState>()])
 // import 'connect_test.mocks.dart';
 import 'connect_test.mocks.dart';
 
 void main() {
   Connect connect;
-  MockGraphComponentsRepository repository;
+  MockGraph graph;
   MockInteractionState interactionState;
 
   final node = Node.random();
@@ -26,17 +26,17 @@ void main() {
     'Adds an edge connecting two nodes',
     () async {
       // arrange
-      repository = MockGraphComponentsRepository();
+      graph = MockGraph();
       interactionState = MockInteractionState();
       interactionState.nodeToBeConnected = node;
-      connect = Connect(repository, interactionState);
-      when(repository.createEdge(edge: edge)).thenAnswer((_) async => Right(edge));
+      connect = Connect(graph, interactionState);
+      when(graph.addEdge(edge)).thenAnswer((_) async => Right(edge));
       // act
       final result = await connect(Params(otherNode: otherNode));
       // assert
       expect(result, Right(edge));
-      verify(repository.createEdge(edge: edge));
-      verifyNoMoreInteractions(repository);
+      verify(graph.addEdge(edge));
+      verifyNoMoreInteractions(graph);
     },
   );
 }

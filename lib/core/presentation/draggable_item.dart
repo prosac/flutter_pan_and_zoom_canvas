@@ -49,12 +49,26 @@ class DraggableItem extends StatelessWidget {
                 return renderObject.globalToLocal(offset).scale(scale, scale);
               },
               feedback: SizedBox(
-                  key: GlobalKey(), width: node.width * scale, height: node.height * scale, child: node.presentation),
+                  key: UniqueKey(), width: node.width * scale, height: node.height * scale, child: node.presentation),
+              // feedback: SizedBox(
+              //   width: 100,
+              //   height: 100,
+              //   child: Container(
+              //     decoration: BoxDecoration(color: Colors.cyan),
+              //   ),
+              // ),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               onDragCompleted: onDragCompleted,
-              child: SizedBox(key: GlobalKey(), width: node.width, height: node.height, child: node.presentation),
+              child: SizedBox(key: UniqueKey(), width: node.width, height: node.height, child: node.presentation),
+              // child: SizedBox(
+              //   width: 100,
+              //   height: 100,
+              //   child: Container(
+              //     decoration: BoxDecoration(color: Colors.redAccent),
+              //   ),
+              // ),
             ),
           ],
         ));
