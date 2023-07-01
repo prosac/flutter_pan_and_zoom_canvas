@@ -4,7 +4,7 @@ import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 
 class Graph extends ChangeNotifier {
   List<Node> nodes = [];
-  List<Node> draggingNodes = [];
+  // List<Node> draggingNodes = [];
   List<Edge> edges = [];
 
   Graph();
@@ -20,7 +20,8 @@ class Graph extends ChangeNotifier {
   }
 
   void removeNode(Node node) {
-    edges.removeWhere((edge) => edge.source == node || edge.destination == node);
+    edges
+        .removeWhere((edge) => edge.source == node || edge.destination == node);
 
     nodes.remove(node);
     notifyListeners();
@@ -37,18 +38,21 @@ class Graph extends ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: test!
-  void drag(node) {
-    nodes.remove(node);
-    draggingNodes.add(node);
-    notifyListeners();
-  }
+  // NOTE: bad. the graph must not know about dragging at all
+  // void drag(node) {
+  //   nodes.remove(node);
+  //   draggingNodes.add(node);
+  //   // node.drag(); // mark as being dragged
+  //   notifyListeners();
+  // }
 
-  void leaveDraggingItemAtNewOffset(Offset offset) {
-    Node node = draggingNodes.removeLast();
-    node.dx = offset.dx;
-    node.dy = offset.dy;
-    nodes.add(node);
-    notifyListeners();
-  }
+  // TODO: not fitting concept anymore
+  // TODO: remove test
+  // void leaveDraggingItemAtNewOffset(Offset offset) {
+  //   Node node = draggingNodes.removeLast();
+  //   node.dx = offset.dx;
+  //   node.dy = offset.dy;
+  //   nodes.add(node);
+  //   notifyListeners();
+  // }
 }

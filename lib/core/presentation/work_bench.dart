@@ -16,30 +16,22 @@ import 'package:get_it_mixin/get_it_mixin.dart';
 
 import '../domain/entities/node.dart';
 
-class WorkBench extends StatefulWidget with GetItStatefulWidgetMixin {
+class WorkBench extends StatelessWidget with GetItMixin {
   final double width;
   final double height;
-
-  WorkBench({super.key, required this.width, required this.height});
-
-  @override
-  WorkBenchState createState() => WorkBenchState();
-}
-
-class WorkBenchState extends State<WorkBench> with GetItStateMixin {
   final transformationController = TransformationController();
   final dragTargetKey = GlobalKey();
-  late MediaQueryData mediaQueryData;
 
-  Offset get center => Offset(widget.width / 2, widget.height / 2);
+  WorkBench({required this.width, required this.height});
 
-  @override
+  Offset get center => Offset(width / 2, height / 2);
+
   Widget build(BuildContext context) {
     final viewerState = get<ViewerState>();
-    final graph = get<Graph>();
-    viewerState.parametersFromMatrix(transformationController.value);
-    mediaQueryData = MediaQuery.of(context);
+    final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
+
+    viewerState.parametersFromMatrix(transformationController.value);
 
     if (viewerState.maximizedThing != null) {
       maximizedThing = viewerState.maximizedThing;
@@ -48,8 +40,9 @@ class WorkBenchState extends State<WorkBench> with GetItStateMixin {
       var edges = watchOnly((Graph g) => g.edges);
 
       var draggableItems = nodes.map((Node rawNode) {
-        var node = NodeWithPresentation(node: rawNode);
+        var node = NodeWithPresentation(node: rawNode); // TODO: make final?
         node.presentation = ExamplePresentation(node: node);
+
         return DraggableItem(
             // key: UniqueKey(),
             offset: node.offset,
@@ -57,16 +50,25 @@ class WorkBenchState extends State<WorkBench> with GetItStateMixin {
             node: node,
             onDragStarted: () {
               print('onDragStarted');
-              graph.drag(node.node);
-              viewerState.drag(node); // should be implicit!
+              viewerState.drag(node);
+            },
+            onDragEnd: (details) {
+              // simply dropped
+              print('onDragEnd');
+              viewerState.stopDragging();
+              print('graph.nodes');
+              for (Node n in nodes) {
+                print(Offset(n.dx, n.dy));
+              }
             },
             onDragCompleted: () {
+              // NOTE: dropped and accepted by target
+              // which is not the case in the current state of things
               print('onDragCompleted');
-              final viewerState = get<ViewerState>();
-              viewerState.stopDragging();
             });
       }).toList();
 
+      // TODO: unused atm
       var visualConnections = edges.map((Edge edge) {
         Size size1 = Size(edge.source.width, edge.destination.height);
         Size size2 = Size(edge.source.width, edge.destination.height);
@@ -77,12 +79,13 @@ class WorkBenchState extends State<WorkBench> with GetItStateMixin {
         Offset offset1AdaptedToBackground = nodeOffset1;
         Offset offset2AdaptedToBackground = nodeOffset2;
 
-        Offset offset1 =
-            Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
-        Offset offset2 =
-            Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
+        Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
+            offset1AdaptedToBackground.dy + size1.height / 2);
+        Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
+            offset2AdaptedToBackground.dy + size2.height / 2);
 
-        return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+        return CustomPaint(
+            painter: SimpleConnectionPainter(start: offset1, end: offset2));
       }).toList();
 
       // TODO: why again two nested Stacks???
@@ -91,8 +94,8 @@ class WorkBenchState extends State<WorkBench> with GetItStateMixin {
           children: [
             Desktop(
               dragTargetKey: dragTargetKey,
-              width: widget.width,
-              height: widget.height,
+              width: width,
+              height: height,
               transformationController: transformationController,
               children: [...draggableItems], // ...visualConnections,
             )
@@ -124,6 +127,7 @@ class WorkBenchState extends State<WorkBench> with GetItStateMixin {
     );
   }
 
+  // TODO: unused...
   void centerView() {
     var matrix = Matrix4.identity();
     matrix.translate(-center.dx, -center.dy);
@@ -165,11 +169,5 @@ class WorkBenchState extends State<WorkBench> with GetItStateMixin {
         return;
       }
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    centerView();
   }
 }

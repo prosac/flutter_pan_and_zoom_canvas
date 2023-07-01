@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'core/presentation/work_bench.dart';
-import 'injection_container.dart' as di;
+import 'injection_container.dart' as injectionContainer;
 import 'package:flutter_pan_and_zoom/core/presentation/color_theme.dart';
 
 // TODO this feels like way too much down the tree, but maybe for holding the overall state of the graph it is needed like this. Let's see later what we can optimize.
 //   WidgetsFlutterBinding.ensureInitialized();
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized(); // needed?
-  await di.init();
+  await injectionContainer.init();
   runApp(PanAndZoom());
 }
 

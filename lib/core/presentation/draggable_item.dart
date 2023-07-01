@@ -45,23 +45,31 @@ class DraggableItem extends StatelessWidget {
           children: [
             Draggable(
               dragAnchorStrategy: (widget, context, offset) {
-                final RenderBox renderObject = context.findRenderObject() as RenderBox;
+                final RenderBox renderObject =
+                    context.findRenderObject() as RenderBox;
                 return renderObject.globalToLocal(offset).scale(scale, scale);
               },
-              feedback: SizedBox(
-                  key: UniqueKey(), width: node.width * scale, height: node.height * scale, child: node.presentation),
               // feedback: SizedBox(
-              //   width: 100,
-              //   height: 100,
-              //   child: Container(
-              //     decoration: BoxDecoration(color: Colors.cyan),
-              //   ),
-              // ),
+              //     width: node.width * scale,
+              //     height: node.height * scale,
+              //     child: node .presentation), // NOTE: ATTENTION! this causes the global key error!!!
+              //     // child: Container()),
+              feedback: SizedBox(
+                width: 100,
+                height: 100,
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.cyan),
+                ),
+              ),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               onDragCompleted: onDragCompleted,
-              child: SizedBox(key: UniqueKey(), width: node.width, height: node.height, child: node.presentation),
+              child: SizedBox(
+                  key: UniqueKey(),
+                  width: node.width,
+                  height: node.height,
+                  child: node.presentation),
               // child: SizedBox(
               //   width: 100,
               //   height: 100,

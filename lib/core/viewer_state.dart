@@ -23,21 +23,28 @@ class ViewerState with ChangeNotifier {
   Widget? maximizedThing = null;
   late Ticker ticker;
 
-  var onTick = (NodeWithPresentation node, double scale, Offset interactiveViewerOffset) {
-    var renderBoxOfNode = node.presentation.key.currentContext?.findRenderObject() as RenderBox;
-    var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
+  // TODO: make stricter
+  var onTick = (double scale, Offset interactiveViewerOffset) {};
 
-    print(scale);
-
-    node.offset =
-        DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(nodeOffset, scale, interactiveViewerOffset);
-  };
+  NodeWithPresentation? nodeBeingDragged;
 
   // ViewerState({draggingProcedure, required this.focusNode}) {
   //   draggingProcedure = DraggingProcedure(notifier: notifyListeners);
   // }
 
-  ViewerState({required this.focusNode});
+  ViewerState({required this.focusNode}) {
+    onTick = (double scale, Offset interactiveViewerOffset) {
+      var renderBoxOfNode = nodeBeingDragged?.presentation.key.currentContext
+          ?.findRenderObject() as RenderBox;
+      var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
+
+      print(scale);
+
+      nodeBeingDragged?.offset =
+          DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
+              nodeOffset, scale, interactiveViewerOffset);
+    };
+  }
 
   get somethingMaximized => maximizedThing != null;
 
@@ -52,17 +59,22 @@ class ViewerState with ChangeNotifier {
   }
 
   void drag(NodeWithPresentation node) {
+    nodeBeingDragged = node;
+
+    if (nodeBeingDragged == null)
+      return; // TODO: how to handle potential null elegantly?
+
     elacs = pow(scale, -1).toDouble();
     // draggingProcedure = DraggingProcedure(notifier: notifyListeners);
     // draggingProcedure.start(node, elacs, interactiveViewerOffset, onTick);
     ticker = Ticker((_) {
-      onTick(node, scale, interactiveViewerOffset);
+      onTick(scale, interactiveViewerOffset);
       notifyListeners();
     });
 
     ticker.start();
     print('drag');
-    // notifyListeners();
+    notifyListeners();
   }
 
   void parametersFromMatrix(Matrix4 matrix) {
@@ -76,6 +88,9 @@ class ViewerState with ChangeNotifier {
     // draggingProcedure.stop();
     ticker.stop();
     ticker = Ticker((_) => {});
+    print('nodeBeingDragged.offset');
+    print(nodeBeingDragged?.offset);
+    nodeBeingDragged = null;
     notifyListeners();
   }
 
