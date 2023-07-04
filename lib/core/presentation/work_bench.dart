@@ -27,18 +27,18 @@ class WorkBench extends StatelessWidget with GetItMixin {
   Offset get center => Offset(width / 2, height / 2);
 
   Widget build(BuildContext context) {
+    print('workbench build');
     final viewerState = get<ViewerState>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
 
     viewerState.parametersFromMatrix(transformationController.value);
+    final nodes = watchOnly((Graph g) => g.nodes);
+    final edges = watchOnly((Graph g) => g.edges);
 
     if (viewerState.maximizedThing != null) {
       maximizedThing = viewerState.maximizedThing;
     } else {
-      var nodes = watchOnly((Graph g) => g.nodes);
-      var edges = watchOnly((Graph g) => g.edges);
-
       var draggableItems = nodes.map((Node rawNode) {
         var node = NodeWithPresentation(node: rawNode); // TODO: make final?
         node.presentation = ExamplePresentation(node: node);
@@ -79,13 +79,12 @@ class WorkBench extends StatelessWidget with GetItMixin {
         Offset offset1AdaptedToBackground = nodeOffset1;
         Offset offset2AdaptedToBackground = nodeOffset2;
 
-        Offset offset1 = Offset(offset1AdaptedToBackground.dx + size1.width / 2,
-            offset1AdaptedToBackground.dy + size1.height / 2);
-        Offset offset2 = Offset(offset2AdaptedToBackground.dx + size2.width / 2,
-            offset2AdaptedToBackground.dy + size2.height / 2);
+        Offset offset1 =
+            Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
+        Offset offset2 =
+            Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
-        return CustomPaint(
-            painter: SimpleConnectionPainter(start: offset1, end: offset2));
+        return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
       }).toList();
 
       // TODO: why again two nested Stacks???

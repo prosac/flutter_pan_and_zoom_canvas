@@ -34,15 +34,13 @@ class ViewerState with ChangeNotifier {
 
   ViewerState({required this.focusNode}) {
     onTick = (double scale, Offset interactiveViewerOffset) {
-      var renderBoxOfNode = nodeBeingDragged?.presentation.key.currentContext
-          ?.findRenderObject() as RenderBox;
+      var renderBoxOfNode = nodeBeingDragged?.presentation.key.currentContext?.findRenderObject() as RenderBox;
       var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
 
-      print(scale);
+      // print(scale);
 
       nodeBeingDragged?.offset =
-          DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
-              nodeOffset, scale, interactiveViewerOffset);
+          DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(nodeOffset, scale, interactiveViewerOffset);
     };
   }
 
@@ -61,8 +59,7 @@ class ViewerState with ChangeNotifier {
   void drag(NodeWithPresentation node) {
     nodeBeingDragged = node;
 
-    if (nodeBeingDragged == null)
-      return; // TODO: how to handle potential null elegantly?
+    if (nodeBeingDragged == null) return; // TODO: how to handle potential null elegantly?
 
     elacs = pow(scale, -1).toDouble();
     // draggingProcedure = DraggingProcedure(notifier: notifyListeners);
@@ -73,7 +70,7 @@ class ViewerState with ChangeNotifier {
     });
 
     ticker.start();
-    print('drag');
+    // print('drag');
     notifyListeners();
   }
 
@@ -84,12 +81,12 @@ class ViewerState with ChangeNotifier {
   }
 
   void stopDragging() {
-    print('stopDragging');
+    // print('stopDragging');
     // draggingProcedure.stop();
     ticker.stop();
     ticker = Ticker((_) => {});
-    print('nodeBeingDragged.offset');
-    print(nodeBeingDragged?.offset);
+    // print('nodeBeingDragged.offset');
+    // print(nodeBeingDragged?.offset);
     nodeBeingDragged = null;
     notifyListeners();
   }
