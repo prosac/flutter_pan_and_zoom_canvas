@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/test_data.dart';
+import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
@@ -37,6 +40,35 @@ class Desktop extends StatelessWidget with GetItMixin {
             width: width,
             height: height,
             decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1)),
-            child: Stack(children: children)));
+            // TODO: here used to be a DragTarget that set the new offset via GraphModel model.leaveDraggingItemAtNewOffset(offset); of the onAcceptWithDetails
+            // see https://github.com/prosac/flutter_pan_and_zoom_canvas/blob/main/lib/work_bench.dart#L176-L185
+            child: DragTarget(
+              key: dragTargetKey,
+              onAcceptWithDetails: (DragTargetDetails details) {
+                print('onAcceptWithDetails');
+                Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
+                var graph = get<Graph>();
+                // var interactionState = get<InteractionState>();
+                // it used to be
+                // model.leaveDraggingItemAtNewOffset(offset);
+                // ... but the graph must not know about drawing
+
+                var viewerState = get<ViewerState>();
+
+                // TODO: how in the world get rid of all nulls?
+                if (viewerState.nodeBeingDragged == null) {
+                  return;
+                }
+
+                Node node = viewerState.nodeBeingDragged!.node;
+
+                node.dx = offset.dx;
+                node.dy = offset.dy;
+                graph.addNode(node);
+              },
+              builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
+                return Stack(children: children);
+              },
+            )));
   }
 }

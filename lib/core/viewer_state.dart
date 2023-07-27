@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' show pow;
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +10,7 @@ import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.da
 // NOTE: responsible for draggable only working once fuckup: maybe
 // ... the ticker is not stopped somehow!
 // the more items are on the destop and dragged, the more timers run!
+// still true?
 class ViewerState with ChangeNotifier {
   Offset interactiveViewerOffset = Offset.zero;
   double scale = 1.0;
@@ -21,7 +22,7 @@ class ViewerState with ChangeNotifier {
   // late DraggingProcedure draggingProcedure;
   FocusNode focusNode;
   Widget? maximizedThing = null;
-  late Ticker ticker;
+  Ticker ticker = Ticker((_) => {});
 
   // TODO: make stricter
   var onTick = (double scale, Offset interactiveViewerOffset) {};
@@ -34,6 +35,10 @@ class ViewerState with ChangeNotifier {
 
   ViewerState({required this.focusNode}) {
     onTick = (double scale, Offset interactiveViewerOffset) {
+      if (nodeBeingDragged?.presentation.key.currentContext == null) {
+        return;
+      }
+
       var renderBoxOfNode = nodeBeingDragged?.presentation.key.currentContext?.findRenderObject() as RenderBox;
       var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
 

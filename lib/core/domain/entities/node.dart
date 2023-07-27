@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/test_data.dart';
 
 class Node extends Equatable {
   int id;
   // List<Edge> edges = [];
   double dx, dy, width, height;
-
+  final TestData payload = TestData();
   Node({this.id = 0, this.dx = 0, this.dy = 0, this.height = 200, this.width = 300});
 
   // TODO: is it really required that a Node knows its edges?
