@@ -4,13 +4,11 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/reset_viewport.dart';
-import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/command_pallete.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/desktop.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/draggable_item.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
@@ -31,7 +29,8 @@ class WorkBench extends StatelessWidget with GetItMixin {
     final viewerState = get<ViewerState>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
-
+    // using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
+    final scale = watchOnly((ViewerState m) => m.scale);
     viewerState.parametersFromMatrix(transformationController.value);
     final nodes = watchOnly((Graph g) => g.nodes);
     // final edges = watchOnly((Graph g) => g.edges);
@@ -44,13 +43,11 @@ class WorkBench extends StatelessWidget with GetItMixin {
         node.presentation = ExamplePresentation(node: node);
 
         return DraggableItem(
-            // key: UniqueKey(),
             offset: node.offset,
-            scale: viewerState.scale,
+            scale: scale,
             node: node,
             onDragStarted: () {
               print('onDragStarted');
-              print('node count: ${nodes.length}');
               var graph = get<Graph>();
               graph.removeNode(node.node);
               viewerState.drag(node);

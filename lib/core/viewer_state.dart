@@ -2,7 +2,6 @@ import 'dart:math' show pow;
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 

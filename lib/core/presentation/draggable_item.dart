@@ -53,26 +53,11 @@ class DraggableItem extends StatelessWidget {
                   width: node.width * scale,
                   height: node.height * scale,
                   child: node.presentation), // NOTE: ATTENTION! this causes the global key error!!!
-              // child: Container()),
-              // feedback: SizedBox(
-              //   width: 100,
-              //   height: 100,
-              //   child: Container(
-              //     decoration: BoxDecoration(color: Colors.cyan),
-              //   ),
-              // ),
               onDragStarted: onDragStarted,
               onDragEnd: onDragEnd,
               onDragUpdate: onDragUpdate,
               onDragCompleted: onDragCompleted,
-              child: SizedBox(key: UniqueKey(), width: node.width, height: node.height, child: node.presentation),
-              // child: SizedBox(
-              //   width: 100,
-              //   height: 100,
-              //   child: Container(
-              //     decoration: BoxDecoration(color: Colors.redAccent),
-              //   ),
-              // ),
+              child: SizedBox(width: node.width, height: node.height, child: node.presentation),
             ),
           ],
         ));
