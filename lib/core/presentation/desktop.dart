@@ -40,8 +40,6 @@ class Desktop extends StatelessWidget with GetItMixin {
             width: width,
             height: height,
             decoration: BoxDecoration(border: Border.all(color: Colors.black45, width: 1)),
-            // TODO: here used to be a DragTarget that set the new offset via GraphModel model.leaveDraggingItemAtNewOffset(offset); of the onAcceptWithDetails
-            // see https://github.com/prosac/flutter_pan_and_zoom_canvas/blob/main/lib/work_bench.dart#L176-L185
             child: DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
@@ -64,7 +62,9 @@ class Desktop extends StatelessWidget with GetItMixin {
 
                 node.dx = offset.dx;
                 node.dy = offset.dy;
+                // this naturally leads to more nodes of the same id in the graph when not removed on dragging and thus to double use of GlobalIds in the render tree
                 graph.addNode(node);
+                //... so when starting to drag we remove the node from the graph and keep it in viewerState. does not feel right, but behaves correctly. make it better later.
               },
               builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
                 return Stack(children: children);

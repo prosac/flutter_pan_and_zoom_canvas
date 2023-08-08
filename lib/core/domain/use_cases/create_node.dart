@@ -29,7 +29,8 @@ class CreateNode implements UseCase<Node, Params> {
 
   @override
   Future<Either<Failure, Node>> call(Params params) async {
-    final node = Node(dx: params.dx, dy: params.dy);
+    // final node = Node(dx: params.dx, dy: params.dy);
+    final node = Node.random();
     graph.addNode(node);
     viewerState.exitSpaceCommandMode();
     return Future.value(Right(node));

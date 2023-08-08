@@ -27,12 +27,13 @@ class Graph extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeNode(Node node) {
+  Node removeNode(Node node) {
     edges.removeWhere((edge) => edge.source == node || edge.destination == node);
     nodes.remove(node);
     edges = List.from(edges);
     nodes = List.from(nodes);
     notifyListeners();
+    return node;
   }
 
   void removeEdge(Edge edge) {

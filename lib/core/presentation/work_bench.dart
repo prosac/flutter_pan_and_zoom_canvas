@@ -34,7 +34,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
 
     viewerState.parametersFromMatrix(transformationController.value);
     final nodes = watchOnly((Graph g) => g.nodes);
-    final edges = watchOnly((Graph g) => g.edges);
+    // final edges = watchOnly((Graph g) => g.edges);
 
     if (viewerState.maximizedThing != null) {
       maximizedThing = viewerState.maximizedThing;
@@ -50,6 +50,9 @@ class WorkBench extends StatelessWidget with GetItMixin {
             node: node,
             onDragStarted: () {
               print('onDragStarted');
+              print('node count: ${nodes.length}');
+              var graph = get<Graph>();
+              graph.removeNode(node.node);
               viewerState.drag(node);
             },
             onDragEnd: (details) {
@@ -60,10 +63,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
               // var nnn = nodes.where((element) => element.id == node.node.id).first;
               // nnn.dx = details.offset.dx;
               // nnn.dy = details.offset.dy;
-              print('graph.nodes');
-              for (Node n in nodes) {
-                print(Offset(n.dx, n.dy));
-              }
+              print('node count: ${nodes.length}');
             },
             onDragCompleted: () {
               // NOTE: dropped and accepted by target
@@ -71,6 +71,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
               print('onDragCompleted');
               // used to be viewerState.stopDragging();
               viewerState.stopDragging();
+              print('node count: ${nodes.length}');
             });
       }).toList();
 

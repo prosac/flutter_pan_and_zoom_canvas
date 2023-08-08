@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/test_data.dart';
+import 'dart:math';
 
 class Node extends Equatable {
   int id;
@@ -29,7 +30,9 @@ class Node extends Equatable {
     // var presentation = ExamplePresentation(node: node, onAddPressed: () {});
     // node.presentation = presentation;
     // return node;
+    //
+    var id = Random().nextInt(1000);
 
-    return Node(dx: 0, dy: 0);
+    return Node(id: id, dx: 0, dy: 0);
   }
 }
