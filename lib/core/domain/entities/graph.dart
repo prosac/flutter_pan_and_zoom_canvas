@@ -10,6 +10,9 @@ class Graph extends ChangeNotifier {
   int aaa = 0;
 
   void addNode(Node node) {
+    print('addNode called');
+    assert(!nodes.contains(node));
+
     nodes.add(node);
     // The following enables rebuilding when the list is changed.
     // TODO: this feels like a hack. Maybe ValueNotifiers per attribute are a better approach.
