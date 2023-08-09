@@ -6,8 +6,6 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_thin
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
-// NOTE: responsible for scaling fuckup: rather no
-// NOTE: responsible for draggable only working once fuckup: rather no
 class CommandPallette extends StatelessWidget with GetItMixin {
   final MediaQueryData mediaQueryData;
   final Offset center;

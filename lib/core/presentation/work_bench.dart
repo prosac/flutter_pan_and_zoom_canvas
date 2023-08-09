@@ -4,11 +4,13 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/reset_viewport.dart';
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/command_pallete.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/desktop.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/draggable_item.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
@@ -26,19 +28,21 @@ class WorkBench extends StatelessWidget with GetItMixin {
 
   Widget build(BuildContext context) {
     final viewerState = get<ViewerState>();
+    var graph = get<Graph>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
     // NOTE: using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
     final scale = watchOnly((ViewerState m) => m.scale);
-    viewerState.parametersFromMatrix(transformationController.value);
     final nodes = watchOnly((Graph g) => g.nodes);
-    // final edges = watchOnly((Graph g) => g.edges);
+    final edges = watchOnly((Graph g) => g.edges);
+
+    viewerState.parametersFromMatrix(transformationController.value);
 
     if (viewerState.maximizedThing != null) {
       maximizedThing = viewerState.maximizedThing;
     } else {
       var draggableItems = nodes.map((Node rawNode) {
-        var node = NodeWithPresentation(node: rawNode); // TODO: make final?
+        final node = NodeWithPresentation(node: rawNode); // TODO: make final?
         node.presentation = ExamplePresentation(node: node);
 
         return DraggableItem(
@@ -46,30 +50,14 @@ class WorkBench extends StatelessWidget with GetItMixin {
             scale: scale,
             node: node,
             onDragStarted: () {
-              // print('onDragStarted');
-              var graph = get<Graph>();
+              // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
               graph.removeNode(node.node);
               viewerState.drag(node);
-            },
-            onDragEnd: (details) {
-              // simply dropped
-              // print('onDragEnd');
-              viewerState.stopDragging();
-              // node.offset = details.offset;
-              // var nnn = nodes.where((element) => element.id == node.node.id).first;
-              // nnn.dx = details.offset.dx;
-              // nnn.dy = details.offset.dy;
-              // print('node count: ${nodes.length}');
-            },
-            onDragCompleted: () {
-              // NOTE: dropped and accepted by target
-              // which is not the case in the current state of things
-              // print('onDragCompleted');
-              // used to be viewerState.stopDragging();
-              viewerState.stopDragging();
-              // print('node count: ${nodes.length}');
             });
       }).toList();
+
+      print('edges:');
+      print(edges.length);
 
       var visualConnections = edges.map((Edge edge) {
         Size size1 = Size(edge.source.width, edge.destination.height);
@@ -89,7 +77,6 @@ class WorkBench extends StatelessWidget with GetItMixin {
         return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
       }).toList();
 
-      // TODO: why again two nested Stacks???
       maximizedThing = Stack(children: [
         Stack(
           children: [
@@ -98,7 +85,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
               width: width,
               height: height,
               transformationController: transformationController,
-              children: [...draggableItems], // ...visualConnections,
+              children: [...draggableItems, ...visualConnections],
             )
           ],
         ),

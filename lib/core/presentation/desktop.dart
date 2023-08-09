@@ -43,14 +43,9 @@ class Desktop extends StatelessWidget with GetItMixin {
             child: DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                // print('onAcceptWithDetails');
+                // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
                 Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
                 var graph = get<Graph>();
-                // var interactionState = get<InteractionState>();
-                // it used to be
-                // model.leaveDraggingItemAtNewOffset(offset);
-                // ... but the graph must not know about drawing
-
                 var viewerState = get<ViewerState>();
 
                 // TODO: how in the world get rid of all nulls?
@@ -64,6 +59,7 @@ class Desktop extends StatelessWidget with GetItMixin {
                 node.dy = offset.dy;
                 // this naturally leads to more nodes of the same id in the graph when not removed on dragging and thus to double use of GlobalIds in the render tree
                 graph.addNode(node);
+                viewerState.stopDragging();
                 //... so when starting to drag we remove the node from the graph and keep it in viewerState. does not feel right, but behaves correctly. make it better later.
               },
               builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
