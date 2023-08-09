@@ -25,11 +25,10 @@ class WorkBench extends StatelessWidget with GetItMixin {
   Offset get center => Offset(width / 2, height / 2);
 
   Widget build(BuildContext context) {
-    print('workbench build');
     final viewerState = get<ViewerState>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
-    // using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
+    // NOTE: using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
     final scale = watchOnly((ViewerState m) => m.scale);
     viewerState.parametersFromMatrix(transformationController.value);
     final nodes = watchOnly((Graph g) => g.nodes);
@@ -47,49 +46,48 @@ class WorkBench extends StatelessWidget with GetItMixin {
             scale: scale,
             node: node,
             onDragStarted: () {
-              print('onDragStarted');
+              // print('onDragStarted');
               var graph = get<Graph>();
               graph.removeNode(node.node);
               viewerState.drag(node);
             },
             onDragEnd: (details) {
               // simply dropped
-              print('onDragEnd');
+              // print('onDragEnd');
               viewerState.stopDragging();
               // node.offset = details.offset;
               // var nnn = nodes.where((element) => element.id == node.node.id).first;
               // nnn.dx = details.offset.dx;
               // nnn.dy = details.offset.dy;
-              print('node count: ${nodes.length}');
+              // print('node count: ${nodes.length}');
             },
             onDragCompleted: () {
               // NOTE: dropped and accepted by target
               // which is not the case in the current state of things
-              print('onDragCompleted');
+              // print('onDragCompleted');
               // used to be viewerState.stopDragging();
               viewerState.stopDragging();
-              print('node count: ${nodes.length}');
+              // print('node count: ${nodes.length}');
             });
       }).toList();
 
-      // TODO: unused atm
-      // var visualConnections = edges.map((Edge edge) {
-      //   Size size1 = Size(edge.source.width, edge.destination.height);
-      //   Size size2 = Size(edge.source.width, edge.destination.height);
+      var visualConnections = edges.map((Edge edge) {
+        Size size1 = Size(edge.source.width, edge.destination.height);
+        Size size2 = Size(edge.source.width, edge.destination.height);
 
-      //   Offset nodeOffset1 = Offset(edge.source.dx, edge.source.dy);
-      //   Offset nodeOffset2 = Offset(edge.destination.dx, edge.destination.dy);
+        Offset nodeOffset1 = Offset(edge.source.dx, edge.source.dy);
+        Offset nodeOffset2 = Offset(edge.destination.dx, edge.destination.dy);
 
-      //   Offset offset1AdaptedToBackground = nodeOffset1;
-      //   Offset offset2AdaptedToBackground = nodeOffset2;
+        Offset offset1AdaptedToBackground = nodeOffset1;
+        Offset offset2AdaptedToBackground = nodeOffset2;
 
-      //   Offset offset1 =
-      //       Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
-      //   Offset offset2 =
-      //       Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
+        Offset offset1 =
+            Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
+        Offset offset2 =
+            Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
-      //   return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
-      // }).toList();
+        return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      }).toList();
 
       // TODO: why again two nested Stacks???
       maximizedThing = Stack(children: [
@@ -130,14 +128,6 @@ class WorkBench extends StatelessWidget with GetItMixin {
     );
   }
 
-  // TODO: unused...
-  void centerView() {
-    var matrix = Matrix4.identity();
-    matrix.translate(-center.dx, -center.dy);
-    transformationController.value = matrix;
-  }
-
-  // TODO: dose get<>ing the use cases here count as "within the build method?"
   void handleKeyboardOnKey(KeyEvent event) async {
     var viewerState = get<ViewerState>();
     if (event.logicalKey == LogicalKeyboardKey.space) {
