@@ -10,7 +10,7 @@ class Graph extends ChangeNotifier {
   int aaa = 0;
 
   void addNode(Node node) {
-    print('addNode called');
+    // print('addNode called');
     assert(!nodes.contains(node));
 
     nodes.add(node);

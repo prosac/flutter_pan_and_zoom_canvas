@@ -43,7 +43,7 @@ class Desktop extends StatelessWidget with GetItMixin {
             child: DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                print('onAcceptWithDetails');
+                // print('onAcceptWithDetails');
                 Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
                 var graph = get<Graph>();
                 // var interactionState = get<InteractionState>();
