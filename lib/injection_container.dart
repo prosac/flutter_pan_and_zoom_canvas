@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_pan_and_zoom/core/data/data_sources/local_filesystem_data_source.dart';
+import 'package:flutter_pan_and_zoom/core/domain/decorators/graph_with_draggable_nodes.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/connect.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
@@ -16,6 +17,7 @@ Future<void> init() async {
   // state
   sl.registerSingleton<InteractionState>(InteractionState());
   sl.registerSingleton<Graph>(Graph());
+  sl.registerSingleton<GraphWithDraggableNodes>(GraphWithDraggableNodes(sl()));
   sl.registerSingleton<ViewerState>(ViewerState(focusNode: FocusNode()));
   // Maybe see the dragging procedure of a kind of state?
   // sl.registerSingleton<DraggingProcedure>(DraggingProcedure(notifier: notifier));
@@ -27,6 +29,5 @@ Future<void> init() async {
   sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes(sl()));
   sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
 
-  sl.registerLazySingleton<LocalFilesystemDataSource>(
-      () => LocalFilesystemDataSourceImplementation());
+  sl.registerLazySingleton<LocalFilesystemDataSource>(() => LocalFilesystemDataSourceImplementation());
 }

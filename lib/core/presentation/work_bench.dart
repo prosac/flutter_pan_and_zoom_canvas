@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pan_and_zoom/core/domain/decorators/graph_with_draggable_nodes.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
@@ -28,13 +29,13 @@ class WorkBench extends StatelessWidget with GetItMixin {
 
   Widget build(BuildContext context) {
     final viewerState = get<ViewerState>();
-    var graph = get<Graph>();
+    var graph = get<GraphWithDraggableNodes>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
     // NOTE: using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
     final scale = watchOnly((ViewerState m) => m.scale);
-    final nodes = watchOnly((Graph g) => g.nodes);
-    final edges = watchOnly((Graph g) => g.edges);
+    final nodes = watchOnly((GraphWithDraggableNodes g) => g.nodes);
+    final edges = watchOnly((GraphWithDraggableNodes g) => g.edges);
 
     viewerState.parametersFromMatrix(transformationController.value);
 
@@ -51,15 +52,14 @@ class WorkBench extends StatelessWidget with GetItMixin {
             node: node,
             onDragStarted: () {
               // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
-              graph.removeNode(node.node);
+              graph.drag(node.node);
               viewerState.drag(node);
             });
       }).toList();
 
-      print('edges:');
-      print(edges.length);
-
       var visualConnections = edges.map((Edge edge) {
+        print('edges');
+        print(edges.length);
         Size size1 = Size(edge.source.width, edge.destination.height);
         Size size2 = Size(edge.source.width, edge.destination.height);
 

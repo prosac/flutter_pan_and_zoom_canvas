@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pan_and_zoom/core/domain/decorators/graph_with_draggable_nodes.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/test_data.dart';
@@ -45,7 +46,7 @@ class Desktop extends StatelessWidget with GetItMixin {
               onAcceptWithDetails: (DragTargetDetails details) {
                 // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
                 Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
-                var graph = get<Graph>();
+                var graph = get<GraphWithDraggableNodes>();
                 var viewerState = get<ViewerState>();
 
                 // TODO: how in the world get rid of all nulls?
@@ -58,7 +59,9 @@ class Desktop extends StatelessWidget with GetItMixin {
                 node.dx = offset.dx;
                 node.dy = offset.dy;
                 // this naturally leads to more nodes of the same id in the graph when not removed on dragging and thus to double use of GlobalIds in the render tree
-                graph.addNode(node);
+                // graph.addNode(node);
+
+                graph.stopDragging(node);
                 viewerState.stopDragging();
                 //... so when starting to drag we remove the node from the graph and keep it in viewerState. does not feel right, but behaves correctly. make it better later.
               },
