@@ -9,6 +9,12 @@ class Graph extends ChangeNotifier {
   void addNode(Node node) {
     assert(!nodes.contains(node));
 
+    if (nodes.length >= 1) {
+      // Node source = nodes.where((element) => element.id == node.id - 1).last;
+      addEdge(Edge(source: nodes[nodes.length - 1], destination: node));
+      edges = List.from(edges);
+    }
+
     nodes.add(node);
     // NOTE: The following enables rebuilding when the list is changed.
     // TODO: this feels like a hack. Maybe ValueNotifiers per attribute are a better approach.

@@ -85,7 +85,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
               width: width,
               height: height,
               transformationController: transformationController,
-              children: [...draggableItems, ...visualConnections],
+              children: [...visualConnections, ...draggableItems],
             )
           ],
         ),
