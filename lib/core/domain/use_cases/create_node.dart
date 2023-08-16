@@ -20,11 +20,11 @@ class CreateNode implements UseCase<Node, Params> {
 
     graph.addNode(node);
 
-    // if (graph.nodes.length > 0) {
-    final source = graph.nodes.last;
-    final edge = Edge(source: source, destination: node);
-    graph.addEdge(edge);
-    // }
+    if (graph.nodes.length > 0) {
+      final source = graph.nodes.last;
+      final edge = Edge(source: source, destination: node);
+      graph.addEdge(edge);
+    }
 
     viewerState.exitSpaceCommandMode();
     return Future.value(Right(node));
