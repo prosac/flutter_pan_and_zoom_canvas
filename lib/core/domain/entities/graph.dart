@@ -48,4 +48,8 @@ class Graph extends ChangeNotifier {
     nodes.clear();
     notifyListeners();
   }
+
+  void notify() {
+    notifyListeners();
+  }
 }

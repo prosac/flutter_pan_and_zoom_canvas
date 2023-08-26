@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/test_data.dart';
-import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
@@ -53,7 +52,7 @@ class Desktop extends StatelessWidget with GetItMixin {
                   return;
                 }
 
-                Node node = viewerState.nodeBeingDragged!.node;
+                Node node = viewerState.nodeBeingDragged!;
 
                 node.dx = offset.dx;
                 node.dy = offset.dy;

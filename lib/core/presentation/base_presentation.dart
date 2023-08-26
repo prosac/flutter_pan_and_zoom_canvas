@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 
 class MockRenderBox extends RenderBox {}
 
@@ -8,7 +7,7 @@ abstract class AbstractPresentation extends StatelessWidget {
   final double width = 0;
   final double height = 0;
   final GlobalKey key = GlobalKey();
-  final NodeWithPresentation node = NodeWithPresentation(node: Node());
+  final Node node = Node();
   final VoidCallback onAddPressed = () {};
 
   Offset get offset => Offset.zero;
@@ -22,7 +21,7 @@ class BasePresentation extends AbstractPresentation {
   final double width = 50;
   final double height = 50;
   final GlobalKey key = GlobalKey();
-  final NodeWithPresentation node;
+  final Node node;
 
   BasePresentation({required this.node});
 

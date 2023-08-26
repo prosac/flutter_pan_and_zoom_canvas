@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
@@ -8,8 +11,6 @@ import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/command_pallete.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/desktop.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/draggable_item.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
@@ -41,17 +42,14 @@ class WorkBench extends StatelessWidget with GetItMixin {
     if (viewerState.maximizedThing != null) {
       maximizedThing = viewerState.maximizedThing;
     } else {
-      var draggableItems = nodes.map((Node rawNode) {
-        final node = NodeWithPresentation(node: rawNode); // TODO: make final?
-        node.presentation = ExamplePresentation(node: node);
-
+      var draggableItems = nodes.map((Node node) {
         return DraggableItem(
             offset: node.offset,
             scale: scale,
             node: node,
             onDragStarted: () {
               // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
-              graph.removeNode(node.node);
+              graph.removeNode(node);
               viewerState.drag(node);
             });
       }).toList();
