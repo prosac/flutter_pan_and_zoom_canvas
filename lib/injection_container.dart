@@ -10,23 +10,22 @@ import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it/get_it.dart';
 
-final sl = GetIt.instance;
+final getIt = GetIt.instance;
 
 Future<void> init() async {
   // state
-  sl.registerSingleton<InteractionState>(InteractionState());
-  sl.registerSingleton<Graph>(Graph());
-  sl.registerSingleton<ViewerState>(ViewerState(focusNode: FocusNode()));
+  getIt.registerSingleton<InteractionState>(InteractionState());
+  getIt.registerSingleton<Graph>(Graph());
+  getIt.registerSingleton<ViewerState>(ViewerState(focusNode: FocusNode()));
   // Maybe see the dragging procedure of a kind of state?
-  // sl.registerSingleton<DraggingProcedure>(DraggingProcedure(notifier: notifier));
+  // getIt.registerSingleton<DraggingProcedure>(DraggingProcedure(notifier: notifier));
 
   // Use cases
-  sl.registerSingleton<CreateNode>(CreateNode(sl(), sl()));
-  sl.registerSingleton<Connect>(Connect(sl(), sl()));
-  sl.registerSingleton<CreateNodeFromExisting>(CreateNodeFromExisting(sl()));
-  sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes(sl()));
-  sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
+  getIt.registerSingleton<CreateNode>(CreateNode(getIt(), getIt()));
+  getIt.registerSingleton<Connect>(Connect(getIt(), getIt()));
+  getIt.registerSingleton<CreateNodeFromExisting>(CreateNodeFromExisting(getIt()));
+  getIt.registerSingleton<DeleteAllNodes>(DeleteAllNodes(getIt()));
+  getIt.registerSingleton<InitiateConnecting>(InitiateConnecting(getIt(), getIt()));
 
-  sl.registerLazySingleton<LocalFilesystemDataSource>(
-      () => LocalFilesystemDataSourceImplementation());
+  getIt.registerLazySingleton<LocalFilesystemDataSource>(() => LocalFilesystemDataSourceImplementation());
 }

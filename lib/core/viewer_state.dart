@@ -2,8 +2,9 @@ import 'dart:math' show pow;
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 
 class ViewerState with ChangeNotifier {
   Offset interactiveViewerOffset = Offset.zero;
@@ -13,25 +14,10 @@ class ViewerState with ChangeNotifier {
   bool spaceCommandModeDisabled = false;
   FocusNode focusNode;
   Widget? maximizedThing = null;
-  Ticker ticker = Ticker((_) => {});
 
-  var onTick = (double scale, Offset interactiveViewerOffset) {};
+  Node? nodeBeingDragged;
 
-  NodeWithPresentation? nodeBeingDragged;
-
-  ViewerState({required this.focusNode}) {
-    onTick = (double scale, Offset interactiveViewerOffset) {
-      if (nodeBeingDragged?.presentation.key.currentContext == null) {
-        return;
-      }
-
-      var renderBoxOfNode = nodeBeingDragged?.presentation.key.currentContext?.findRenderObject() as RenderBox;
-      var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
-
-      nodeBeingDragged?.offset =
-          DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(nodeOffset, scale, interactiveViewerOffset);
-    };
-  }
+  ViewerState({required this.focusNode}) {}
 
   get somethingMaximized => maximizedThing != null;
 
@@ -45,20 +31,7 @@ class ViewerState with ChangeNotifier {
     notifyListeners();
   }
 
-  void drag(NodeWithPresentation node) {
-    nodeBeingDragged = node;
-
-    if (nodeBeingDragged == null) return; // TODO: how to handle potential null elegantly?
-
-    elacs = pow(scale, -1).toDouble();
-    ticker = Ticker((_) {
-      onTick(scale, interactiveViewerOffset);
-      notifyListeners();
-    });
-
-    ticker.start();
-    notifyListeners();
-  }
+  // void drag(Node node) {}
 
   void parametersFromMatrix(Matrix4 matrix) {
     interactiveViewerOffset = Offset(matrix.row0[3], matrix.row1[3]);
@@ -66,12 +39,10 @@ class ViewerState with ChangeNotifier {
     notifyListeners();
   }
 
-  void stopDragging() {
-    ticker.stop();
-    ticker = Ticker((_) => {});
-    nodeBeingDragged = null;
-    notifyListeners();
-  }
+  // void stopDragging() {
+  //   nodeBeingDragged = null;
+  //   notifyListeners();
+  // }
 
   void enterSpaceCommandMode() {
     if (spaceCommandModeDisabled == true) return;
