@@ -13,16 +13,6 @@ class Node extends Equatable {
   // void addEdge(Edge edge) {
   //   edges.add(edge);
   // }
-  //
-
-  set offset(offset) {
-    dx = offset.dx;
-    dy = offset.dy;
-  }
-
-  // get offset {
-  //   return Offset(dx, dy);
-  // }
 
   @override
   String toString() {

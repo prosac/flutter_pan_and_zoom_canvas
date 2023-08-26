@@ -4,7 +4,6 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/test_data.dart';
 import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
-import 'package:flutter_pan_and_zoom/injection_container.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
 class Desktop extends StatelessWidget with GetItMixin {
@@ -33,7 +32,7 @@ class Desktop extends StatelessWidget with GetItMixin {
         boundaryMargin: EdgeInsets.all(1000.0),
         transformationController: transformationController,
         onInteractionEnd: (details) {
-          var viewerState = getIt<ViewerState>();
+          var viewerState = get<ViewerState>();
           viewerState.parametersFromMatrix(transformationController.value);
         },
         constrained: false, // this does the trick to make the "canvas" bigger than the view port
@@ -44,26 +43,24 @@ class Desktop extends StatelessWidget with GetItMixin {
             child: DragTarget(
               key: dragTargetKey,
               onAcceptWithDetails: (DragTargetDetails details) {
-                // // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
-                // Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
-                var graph = getIt<Graph>();
-                // var viewerState = getIt<ViewerState>();
-
-                // // TODO: how in the world get rid of all nulls?
-                // if (viewerState.nodeBeingDragged == null) {
-                //   return;
-                // }
-
-                // Node node = viewerState.nodeBeingDragged!;
-
-                // node.dx = offset.dx;
-                // node.dy = offset.dy;
-                // // this naturally leads to more nodes of the same id in the graph when not removed on dragging and thus to double use of GlobalIds in the render tree
-                // graph.addNode(node);
-                // viewerState.stopDragging();
-                // //... so when starting to drag we remove the node from the graph and keep it in viewerState. does not feel right, but behaves correctly. make it better later.
+                // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
                 Offset offset = dragTargetRenderBox.globalToLocal(details.offset);
-                graph.leaveDraggingItemAtNewOffset(offset);
+                var graph = get<Graph>();
+                var viewerState = get<ViewerState>();
+
+                // TODO: how in the world get rid of all nulls?
+                if (viewerState.nodeBeingDragged == null) {
+                  return;
+                }
+
+                Node node = viewerState.nodeBeingDragged!.node;
+
+                node.dx = offset.dx;
+                node.dy = offset.dy;
+                // this naturally leads to more nodes of the same id in the graph when not removed on dragging and thus to double use of GlobalIds in the render tree
+                graph.addNode(node);
+                viewerState.stopDragging();
+                //... so when starting to drag we remove the node from the graph and keep it in viewerState. does not feel right, but behaves correctly. make it better later.
               },
               builder: (BuildContext context, List<TestData?> candidateData, List rejectedData) {
                 return Stack(children: children);

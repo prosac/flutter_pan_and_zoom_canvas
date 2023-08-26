@@ -8,7 +8,7 @@ abstract class AbstractPresentation extends StatelessWidget {
   final double width = 0;
   final double height = 0;
   final GlobalKey key = GlobalKey();
-  final Node node = Node();
+  final NodeWithPresentation node = NodeWithPresentation(node: Node());
   final VoidCallback onAddPressed = () {};
 
   Offset get offset => Offset.zero;
@@ -22,7 +22,7 @@ class BasePresentation extends AbstractPresentation {
   final double width = 50;
   final double height = 50;
   final GlobalKey key = GlobalKey();
-  final Node node;
+  final NodeWithPresentation node;
 
   BasePresentation({required this.node});
 

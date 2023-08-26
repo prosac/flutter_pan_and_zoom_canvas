@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
@@ -10,9 +9,9 @@ import 'package:flutter_pan_and_zoom/core/presentation/command_pallete.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/desktop.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/draggable_item.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/node_with_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
-import 'package:flutter_pan_and_zoom/injection_container.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
 import '../domain/entities/node.dart';
@@ -28,7 +27,8 @@ class WorkBench extends StatelessWidget with GetItMixin {
   Offset get center => Offset(width / 2, height / 2);
 
   Widget build(BuildContext context) {
-    final viewerState = getIt<ViewerState>();
+    final viewerState = get<ViewerState>();
+    var graph = get<Graph>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
     // NOTE: using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
@@ -38,68 +38,74 @@ class WorkBench extends StatelessWidget with GetItMixin {
 
     viewerState.parametersFromMatrix(transformationController.value);
 
-    var draggableItems = nodes.map((Node node) {
-      return DraggableItem(
-          offset: Offset(node.dx, node.dy),
-          scale: scale,
-          node: node,
-          onDragStarted: () {
-            var graph = getIt<Graph>();
-            // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
-            graph.drag(node);
-            // viewerState.drag(node);
-          });
-    }).toList();
+    if (viewerState.maximizedThing != null) {
+      maximizedThing = viewerState.maximizedThing;
+    } else {
+      var draggableItems = nodes.map((Node rawNode) {
+        final node = NodeWithPresentation(node: rawNode); // TODO: make final?
+        node.presentation = ExamplePresentation(node: node);
 
-    print('edges:');
-    print(edges.length);
+        return DraggableItem(
+            offset: node.offset,
+            scale: scale,
+            node: node,
+            onDragStarted: () {
+              // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
+              graph.removeNode(node.node);
+              viewerState.drag(node);
+            });
+      }).toList();
 
-    var visualConnections = edges.map((Edge edge) {
-      Size size1 = Size(edge.source.width, edge.destination.height);
-      Size size2 = Size(edge.source.width, edge.destination.height);
+      print('edges:');
+      print(edges.length);
 
-      Offset nodeOffset1 = Offset(edge.source.dx, edge.source.dy);
-      Offset nodeOffset2 = Offset(edge.destination.dx, edge.destination.dy);
+      var visualConnections = edges.map((Edge edge) {
+        Size size1 = Size(edge.source.width, edge.destination.height);
+        Size size2 = Size(edge.source.width, edge.destination.height);
 
-      Offset offset1AdaptedToBackground = nodeOffset1;
-      Offset offset2AdaptedToBackground = nodeOffset2;
+        Offset nodeOffset1 = Offset(edge.source.dx, edge.source.dy);
+        Offset nodeOffset2 = Offset(edge.destination.dx, edge.destination.dy);
 
-      Offset offset1 =
-          Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
-      Offset offset2 =
-          Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
+        Offset offset1AdaptedToBackground = nodeOffset1;
+        Offset offset2AdaptedToBackground = nodeOffset2;
 
-      return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
-    }).toList();
+        Offset offset1 =
+            Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
+        Offset offset2 =
+            Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
-    maximizedThing = Stack(children: [
-      Stack(
-        children: [
-          Desktop(
-            dragTargetKey: dragTargetKey,
-            width: width,
-            height: height,
-            transformationController: transformationController,
-            children: [...visualConnections, ...draggableItems],
-          )
-        ],
-      ),
-      Align(
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FloatingActionButton.extended(
-            onPressed: () => viewerState.enterSpaceCommandMode(),
-            label: Text('Things'),
+        return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
+      }).toList();
+
+      maximizedThing = Stack(children: [
+        Stack(
+          children: [
+            Desktop(
+              dragTargetKey: dragTargetKey,
+              width: width,
+              height: height,
+              transformationController: transformationController,
+              children: [...visualConnections, ...draggableItems],
+            )
+          ],
+        ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FloatingActionButton.extended(
+              onPressed: () => viewerState.enterSpaceCommandMode(),
+              label: Text('Things'),
+            ),
           ),
         ),
-      ),
-      CommandPallette(
-        mediaQueryData: mediaQueryData,
-        center: center,
-        transformationController: transformationController,
-      )
-    ]);
+        CommandPallette(
+          mediaQueryData: mediaQueryData,
+          center: center,
+          transformationController: transformationController,
+        )
+      ]);
+    }
 
     return KeyboardListener(
       focusNode: viewerState.focusNode,

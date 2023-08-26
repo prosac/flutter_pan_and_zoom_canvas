@@ -1,11 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 
 class Graph extends ChangeNotifier {
   List<Node> nodes = [];
-  List<Node> draggingNodes = [];
   List<Edge> edges = [];
 
   void addNode(Node node) {
@@ -48,19 +46,6 @@ class Graph extends ChangeNotifier {
   void removeAll() {
     edges.clear();
     nodes.clear();
-    notifyListeners();
-  }
-
-  void drag(Node node) {
-    nodes.remove(node);
-    draggingNodes.add(node);
-    notifyListeners();
-  }
-
-  void leaveDraggingItemAtNewOffset(Offset offset) {
-    Node node = draggingNodes.removeLast();
-    node.offset = offset;
-    nodes.add(node);
     notifyListeners();
   }
 }
