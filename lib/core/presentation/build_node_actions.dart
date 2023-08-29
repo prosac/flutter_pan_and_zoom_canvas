@@ -1,8 +1,4 @@
 // TODO: we are mutating an input here! bad! the node should be decorated to know about action
-import 'package:flutter/material.dart';
-import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/simple_action.dart';
-import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 
 // NOTE: responsible for scaling fuckup: rather no
 // NOTE: responsible for draggable only working once fuckup: rather no

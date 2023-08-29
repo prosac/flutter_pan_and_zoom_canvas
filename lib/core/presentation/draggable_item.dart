@@ -6,10 +6,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:flutter_pan_and_zoom/injection_container.dart';
+import 'package:get_it_mixin/get_it_mixin.dart';
 
 /// Wrapper for an [Item] that wraps it in a [Positioned] [Draggable] to make
 /// it grabable, draggable, dropable on the workbench. It exposes the
@@ -19,33 +19,28 @@ import 'package:flutter_pan_and_zoom/injection_container.dart';
 // Alternative name ideas:
 // DraggingWrapper, DragHandle, DragContainer, Positioner, ItemDragger, Dragger
 // What to choose? not decided...
-class DraggableItem extends StatelessWidget {
+class DraggableItem extends StatelessWidget with GetItMixin {
   DraggableItem({
     super.key,
-    required this.scale,
     required this.node,
-    required this.offset,
   });
 
-  final double scale;
   final Node node;
-  final Offset offset;
+
+  get offset => node.offset;
 
   var draggingProcedure;
   var onTick = (Node node, double scale, Offset interactiveViewerOffset) {};
   Ticker ticker = Ticker((_) => {});
 
-  Offset currentOffset() {
-    return offset;
-  }
-
   @override
   Widget build(BuildContext context) {
     var feedback = ExamplePresentation(node: node);
     var child = ExamplePresentation(node: node);
-    var draggingProcedure = DraggingProcedure();
+    var draggingProcedure = sl<DraggingProcedure>();
     var graph = sl<Graph>();
     var viewerState = sl<ViewerState>();
+    final scale = watchOnly((ViewerState m) => m.scale);
 
     return Positioned(
         left: offset.dx,
@@ -62,23 +57,7 @@ class DraggableItem extends StatelessWidget {
                 onDragStarted: () {
                   graph.drag(node);
                   viewerState.drag(node);
-
-                  onTick = (Node node, double scale, Offset interactiveViewerOffset) {
-                    if (feedback.key.currentContext == null) {
-                      return;
-                    }
-
-                    var renderBoxOfNode = feedback.key.currentContext?.findRenderObject() as RenderBox;
-                    var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
-
-                    var offset = DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
-                        nodeOffset, scale, interactiveViewerOffset);
-
-                    node.offset = offset;
-                  };
-
-                  var elacs = pow(scale, -1).toDouble();
-                  draggingProcedure.start(node, elacs, onTick);
+                  draggingProcedure.start(feedback, node);
                 },
                 onDragEnd: (_) {
                   draggingProcedure.stop();

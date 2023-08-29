@@ -74,7 +74,6 @@ class Graph extends ChangeNotifier {
   }
 
   void notify() {
-    print('graph notified');
     edges = List.from(edges);
     _nodes = List.from(nodes);
     notifyListeners();

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
@@ -28,11 +26,10 @@ class WorkBench extends StatelessWidget with GetItMixin {
 
   Widget build(BuildContext context) {
     final viewerState = get<ViewerState>();
-    var graph = get<Graph>();
     final mediaQueryData = MediaQuery.of(context);
     Widget? maximizedThing;
     // NOTE: using watchOnly solves the problem that the scale is not up to date for the draggable after zoom
-    final scale = watchOnly((ViewerState m) => m.scale);
+    // final scale = watchOnly((ViewerState m) => m.scale);
     final nodes = watchOnly((Graph g) => g.nodes);
     final edges = watchOnly((Graph g) => g.edges);
 
@@ -42,11 +39,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
       maximizedThing = viewerState.maximizedThing;
     } else {
       var draggableItems = nodes.map((Node node) {
-        return DraggableItem(
-          offset: node.offset,
-          scale: scale,
-          node: node,
-        );
+        return DraggableItem(node: node);
       }).toList();
 
       var visualConnections = edges.map((Edge edge) {

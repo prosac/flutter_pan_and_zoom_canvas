@@ -27,16 +27,9 @@ class Node extends Equatable {
   List<Object> get props => [id];
 
   factory Node.random() {
-    // var offset = Offset(
-    //     Random().nextInt(1000).toDouble(), Random().nextInt(1000).toDouble());
-    // var payload = TestData();
-    // var node = Node(offset: offset, payload: payload);
-    // var presentation = ExamplePresentation(node: node, onAddPressed: () {});
-    // node.presentation = presentation;
-    // return node;
-    //
+    var offset = Offset(Random().nextInt(4000).toDouble(), Random().nextInt(4000).toDouble());
     var id = Random().nextInt(1000);
 
-    return Node(id: id, dx: 0, dy: 0);
+    return Node(id: id, dx: offset.dx, dy: offset.dy);
   }
 }

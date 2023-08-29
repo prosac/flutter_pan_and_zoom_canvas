@@ -7,6 +7,7 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node_from_exis
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/initiate_connecting.dart';
 import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,8 +18,7 @@ Future<void> init() async {
   sl.registerSingleton<InteractionState>(InteractionState());
   sl.registerSingleton<Graph>(Graph());
   sl.registerSingleton<ViewerState>(ViewerState(focusNode: FocusNode()));
-  // Maybe see the dragging procedure of a kind of state?
-  // sl.registerSingleton<DraggingProcedure>(DraggingProcedure(notifier: notifier));
+  sl.registerSingleton<DraggingProcedure>(DraggingProcedure(graph: sl(), viewerState: sl()));
 
   // Use cases
   sl.registerSingleton<CreateNode>(CreateNode(sl(), sl()));
@@ -27,6 +27,5 @@ Future<void> init() async {
   sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes(sl()));
   sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
 
-  sl.registerLazySingleton<LocalFilesystemDataSource>(
-      () => LocalFilesystemDataSourceImplementation());
+  sl.registerLazySingleton<LocalFilesystemDataSource>(() => LocalFilesystemDataSourceImplementation());
 }

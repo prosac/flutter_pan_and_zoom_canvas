@@ -1,21 +1,41 @@
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
-import 'package:flutter_pan_and_zoom/injection_container.dart';
 
-class DraggingProcedure {
+class DraggingProcedure with ChangeNotifier {
   late Function onTick;
-  late Ticker ticker;
+  Ticker ticker = Ticker((_) => {});
   late final Node node;
-  late final double scale;
 
-  final Graph graph = sl<Graph>();
-  final ViewerState viewerState = sl<ViewerState>();
+  final Graph graph;
+  final ViewerState viewerState;
 
-  void start(Node node, double scale, Function onTick) {
+  DraggingProcedure({required this.graph, required this.viewerState});
+
+  void start(BasePresentation presentation, Node node) {
+    onTick = (Node node) {
+      if (presentation.key.currentContext == null) {
+        return;
+      }
+
+      var renderBoxOfNode = presentation.key.currentContext?.findRenderObject() as RenderBox;
+      var nodeOffset = renderBoxOfNode.localToGlobal(Offset.zero);
+
+      var offset = DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
+        nodeOffset,
+        viewerState.scale,
+        viewerState.interactiveViewerOffset,
+      );
+
+      node.offset = offset;
+    };
+
     ticker = Ticker((_) {
-      onTick(node, scale, viewerState.interactiveViewerOffset);
+      onTick(node);
       graph.notify();
     });
 

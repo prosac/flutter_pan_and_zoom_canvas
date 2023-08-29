@@ -77,7 +77,6 @@ void main() {
       });
       test('moves the node being dragged from dragging to normal and notifies', () {
         model.drag(node1);
-        model.leaveDraggingItemAtNewOffset(Offset(100, 100));
         expect(Offset(node1.dx, node1.dy), Offset(100, 100));
       });
     });

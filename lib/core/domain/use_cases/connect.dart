@@ -22,8 +22,6 @@ class Connect implements UseCase<Edge, Params> {
   Future<Either<Failure, Edge>> call(Params params) async {
     if (interactionState.nodeToBeConnected == null) return Left(NoNodeToBeConnected());
 
-    final edgesOrFailure = graph.edges;
-
     var edge = Edge(source: interactionState.nodeToBeConnected!, destination: params.otherNode);
     graph.addEdge(edge);
 
