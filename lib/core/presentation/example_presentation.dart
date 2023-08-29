@@ -14,35 +14,36 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
 
   @override
   Widget build(BuildContext context) {
+    final scale = watchOnly((ViewerState m) => m.scale);
     Widget presentation;
-    // if (scale > 0.5) {
-    presentation = PresentationContainer(
-        width: width,
-        height: height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('${node.toString()}', style: Theme.of(context).textTheme.bodyLarge),
-            // Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: buttons.getRange(0, buttons.length ~/ 2).toList()),
-            // Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: buttons.getRange(buttons.length ~/ 2 + 1, buttons.length).toList()),
-          ],
-        ));
-    // } else {
-    //   presentation = FittedBox(
-    //     fit: BoxFit.contain,
-    //     child: ElevatedButton(
-    //       onPressed: node.actions[0], // For now simplyuse the first action as the one being accessible on minimal LOD
-    //       child: Center(
-    //         child: Icon(Icons.add, color: Colors.grey.shade500),
-    //       ),
-    //     ),
-    //   );
-    // }
+    if (scale > 0.5) {
+      presentation = PresentationContainer(
+          width: width,
+          height: height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('${node.toString()}', style: Theme.of(context).textTheme.bodyLarge),
+              // Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: buttons.getRange(0, buttons.length ~/ 2).toList()),
+              // Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: buttons.getRange(buttons.length ~/ 2 + 1, buttons.length).toList()),
+            ],
+          ));
+    } else {
+      presentation = FittedBox(
+        fit: BoxFit.contain,
+        child: ElevatedButton(
+          onPressed: () {},
+          child: Center(
+            child: Icon(Icons.add, color: Colors.grey.shade500),
+          ),
+        ),
+      );
+    }
 
     return presentation;
   }
