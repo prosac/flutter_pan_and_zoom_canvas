@@ -3,8 +3,11 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 
 class Graph extends ChangeNotifier {
-  List<Node> nodes = [];
+  List<Node> _nodes = [];
+  List<Node> draggingNodes = [];
   List<Edge> edges = [];
+
+  List<Node> get nodes => _nodes..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
   void addNode(Node node) {
     assert(!nodes.contains(node));
@@ -18,11 +21,13 @@ class Graph extends ChangeNotifier {
     nodes.add(node);
     // NOTE: The following enables rebuilding when the list is changed.
     // TODO: this feels like a hack. Maybe ValueNotifiers per attribute are a better approach.
-    nodes = List.from(nodes);
+    _nodes = List.from(nodes);
     notifyListeners();
   }
 
   void addEdge(Edge edge) {
+    assert(!edges.contains(edge));
+
     edges.add(edge);
     edges = List.from(edges);
     notifyListeners();
@@ -32,7 +37,7 @@ class Graph extends ChangeNotifier {
     edges.removeWhere((edge) => edge.source == node || edge.destination == node);
     nodes.remove(node);
     edges = List.from(edges);
-    nodes = List.from(nodes);
+    _nodes = List.from(nodes);
     notifyListeners();
     return node;
   }
@@ -49,7 +54,29 @@ class Graph extends ChangeNotifier {
     notifyListeners();
   }
 
+  void drag(Node node) {
+    _nodes.remove(node);
+    draggingNodes.add(node);
+    edges = List.from(edges);
+    _nodes = List.from(nodes);
+    draggingNodes = List.from(draggingNodes);
+    notifyListeners();
+  }
+
+  void stopDragging() {
+    var node = draggingNodes.last;
+    draggingNodes.remove(node);
+    _nodes.add(node);
+    edges = List.from(edges);
+    _nodes = List.from(nodes);
+    draggingNodes = List.from(draggingNodes);
+    notifyListeners();
+  }
+
   void notify() {
+    print('graph notified');
+    edges = List.from(edges);
+    _nodes = List.from(nodes);
     notifyListeners();
   }
 }

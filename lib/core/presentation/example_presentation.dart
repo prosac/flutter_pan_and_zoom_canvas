@@ -5,8 +5,6 @@ import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 import 'presentation_container.dart';
 
-// NOTE: responsible for scaling fuckup: rather no
-// NOTE: responsible for draggable only working once fuckup: rather no
 class ExamplePresentation extends BasePresentation with GetItMixin {
   final double width = 300;
   final double height = 200;
@@ -17,8 +15,6 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
   @override
   Widget build(BuildContext context) {
     Widget presentation;
-    var scale = watchOnly((ViewerState v) => v.scale);
-
     // if (scale > 0.5) {
     presentation = PresentationContainer(
         width: width,

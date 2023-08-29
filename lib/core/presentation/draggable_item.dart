@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure_utility_functions.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/example_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
@@ -40,7 +41,8 @@ class DraggableItem extends StatelessWidget {
   final VoidCallback? onDragCompleted;
   final Offset offset;
 
-  var onTick = (double scale, Offset interactiveViewerOffset) {};
+  var draggingProcedure;
+  var onTick = (Node node, double scale, Offset interactiveViewerOffset) {};
   Ticker ticker = Ticker((_) => {});
 
   Offset currentOffset() {
@@ -51,6 +53,7 @@ class DraggableItem extends StatelessWidget {
   Widget build(BuildContext context) {
     var feedback = ExamplePresentation(node: node);
     var child = ExamplePresentation(node: node);
+    var draggingProcedure = DraggingProcedure();
 
     return Positioned(
         left: offset.dx,
@@ -63,14 +66,11 @@ class DraggableItem extends StatelessWidget {
                   final RenderBox renderObject = context.findRenderObject() as RenderBox;
                   return renderObject.globalToLocal(offset).scale(scale, scale);
                 },
-                feedback: SizedBox(
-                    width: node.width * scale,
-                    height: node.height * scale,
-                    child: feedback), // NOTE: ATTENTION! this causes the global key error!!!
+                feedback: SizedBox(width: node.width * scale, height: node.height * scale, child: feedback),
                 onDragStarted: () {
                   onDragStarted();
 
-                  onTick = (double scale, Offset interactiveViewerOffset) {
+                  onTick = (Node node, double scale, Offset interactiveViewerOffset) {
                     if (feedback.key.currentContext == null) {
                       return;
                     }
@@ -81,32 +81,18 @@ class DraggableItem extends StatelessWidget {
                     var offset = DraggingProcedureUtilityFunctions.offsetAdaptedToViewParameters(
                         nodeOffset, scale, interactiveViewerOffset);
 
-                    var viewerState = sl<ViewerState>();
-                    viewerState.interactiveViewerOffset = offset;
+                    node.offset = offset;
                   };
 
-                  // TODO: ?
                   var elacs = pow(scale, -1).toDouble();
-
-                  ticker = Ticker((_) {
-                    var viewerState = sl<ViewerState>();
-                    onTick(scale, viewerState.interactiveViewerOffset);
-                    var graph = sl<Graph>();
-                    graph.notify();
-                  });
-
-                  ticker.start();
+                  draggingProcedure.start(node, elacs, onTick);
                 },
                 onDragEnd: (DraggableDetails details) {
-                  // onDragEnd();
-                  ticker.stop();
-                  ticker = Ticker((_) => {});
+                  draggingProcedure.stop();
                 },
                 onDragUpdate: onDragUpdate,
                 onDragCompleted: () {
-                  //onDragCompleted()
-                  ticker.stop();
-                  ticker = Ticker((_) => {});
+                  draggingProcedure.stop();
                 },
                 child: SizedBox(width: node.width, height: node.height, child: child)),
           ],

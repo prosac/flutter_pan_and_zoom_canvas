@@ -6,6 +6,7 @@ import 'dart:math';
 
 class Node extends Equatable {
   final int id;
+  final int createdAt = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toInt(); // ~/ is more efficient says dart...
   double dx, dy, width, height;
   final TestData payload = TestData();
   Node({this.id = 0, this.dx = 0, this.dy = 0, this.height = 200, this.width = 300});
@@ -19,7 +20,7 @@ class Node extends Equatable {
 
   @override
   String toString() {
-    return '${this.id}:\n${this.dx}\n${this.dy}';
+    return '${this.id}:${this.dx}\n${this.dy}\n${this.createdAt}';
   }
 
   @override

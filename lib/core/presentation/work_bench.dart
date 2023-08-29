@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
@@ -44,20 +43,18 @@ class WorkBench extends StatelessWidget with GetItMixin {
     } else {
       var draggableItems = nodes.map((Node node) {
         return DraggableItem(
+            key: UniqueKey(),
             offset: node.offset,
             scale: scale,
             node: node,
             onDragStarted: () {
-              // NOTE: The Draggable initiates the dragging, but the DragTarget ends it
-              graph.removeNode(node);
+              graph.drag(node);
               viewerState.drag(node);
             });
       }).toList();
 
-      print('edges:');
-      print(edges.length);
-
       var visualConnections = edges.map((Edge edge) {
+        print('edge drawn');
         Size size1 = Size(edge.source.width, edge.destination.height);
         Size size2 = Size(edge.source.width, edge.destination.height);
 
@@ -72,6 +69,7 @@ class WorkBench extends StatelessWidget with GetItMixin {
         Offset offset2 =
             Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
 
+        print('$offset1 x $offset2');
         return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
       }).toList();
 

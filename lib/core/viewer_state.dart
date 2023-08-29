@@ -29,6 +29,7 @@ class ViewerState with ChangeNotifier {
     notifyListeners();
   }
 
+  // TODO maybe hold the node being dragged here?
   void drag(Node node) {
     nodeBeingDragged = node;
 
