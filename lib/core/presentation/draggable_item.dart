@@ -23,22 +23,12 @@ class DraggableItem extends StatelessWidget {
   DraggableItem({
     super.key,
     required this.scale,
-    this.isDragging = false,
-    required this.onDragStarted,
-    this.onDragEnd,
-    this.onDragUpdate,
-    this.onDragCompleted,
     required this.node,
     required this.offset,
   });
 
   final double scale;
   final Node node;
-  final bool isDragging;
-  final VoidCallback onDragStarted;
-  final DragEndCallback? onDragEnd;
-  final DragUpdateCallback? onDragUpdate;
-  final VoidCallback? onDragCompleted;
   final Offset offset;
 
   var draggingProcedure;
@@ -54,6 +44,8 @@ class DraggableItem extends StatelessWidget {
     var feedback = ExamplePresentation(node: node);
     var child = ExamplePresentation(node: node);
     var draggingProcedure = DraggingProcedure();
+    var graph = sl<Graph>();
+    var viewerState = sl<ViewerState>();
 
     return Positioned(
         left: offset.dx,
@@ -68,7 +60,8 @@ class DraggableItem extends StatelessWidget {
                 },
                 feedback: SizedBox(width: node.width * scale, height: node.height * scale, child: feedback),
                 onDragStarted: () {
-                  onDragStarted();
+                  graph.drag(node);
+                  viewerState.drag(node);
 
                   onTick = (Node node, double scale, Offset interactiveViewerOffset) {
                     if (feedback.key.currentContext == null) {
@@ -87,10 +80,9 @@ class DraggableItem extends StatelessWidget {
                   var elacs = pow(scale, -1).toDouble();
                   draggingProcedure.start(node, elacs, onTick);
                 },
-                onDragEnd: (DraggableDetails details) {
+                onDragEnd: (_) {
                   draggingProcedure.stop();
                 },
-                onDragUpdate: onDragUpdate,
                 onDragCompleted: () {
                   draggingProcedure.stop();
                 },
