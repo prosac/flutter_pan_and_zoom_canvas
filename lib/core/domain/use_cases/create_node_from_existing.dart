@@ -6,6 +6,7 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.dart';
 import 'package:flutter_pan_and_zoom/injection_container.dart';
 
@@ -22,6 +23,7 @@ class CreateNodeFromExisting implements UseCase<Node, Params> {
     final node = Node(dx: dx, dy: dy, id: nextId);
 
     graph.addNode(node);
+    graph.addEdge(Edge(source: params.node, destination: node));
 
     return Future.value(Right(node));
   }

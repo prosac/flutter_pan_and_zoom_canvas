@@ -16,8 +16,8 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
   @override
   Widget build(BuildContext context) {
     final scale = watchOnly((ViewerState m) => m.scale);
-    var buttons = buildButtons(context);
     Widget presentation;
+
     if (scale > 0.5) {
       presentation = PresentationContainer(
           width: width,
@@ -42,7 +42,9 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
       presentation = FittedBox(
         fit: BoxFit.contain,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            createNodeFromExisting(node);
+          },
           child: Center(
             child: Icon(Icons.add, color: Colors.grey.shade500),
           ),
