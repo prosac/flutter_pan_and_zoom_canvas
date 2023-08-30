@@ -20,10 +20,7 @@ import 'package:get_it_mixin/get_it_mixin.dart';
 // DraggingWrapper, DragHandle, DragContainer, Positioner, ItemDragger, Dragger
 // What to choose? not decided...
 class DraggableItem extends StatelessWidget with GetItMixin {
-  DraggableItem({
-    super.key,
-    required this.node,
-  });
+  DraggableItem(Node this.node);
 
   final Node node;
 

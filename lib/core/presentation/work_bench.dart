@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
-import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
-import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
-import 'package:flutter_pan_and_zoom/core/domain/use_cases/reset_viewport.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/command_pallete.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/desktop.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/draggable_item.dart';
-import 'package:flutter_pan_and_zoom/core/presentation/simple_connection_painter.dart';
+import 'package:flutter_pan_and_zoom/core/presentation/visual_connection.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/keyboard_events.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
 
 import '../domain/entities/node.dart';
@@ -38,27 +35,8 @@ class WorkBench extends StatelessWidget with GetItMixin {
     if (viewerState.maximizedThing != null) {
       maximizedThing = viewerState.maximizedThing;
     } else {
-      var draggableItems = nodes.map((Node node) {
-        return DraggableItem(node: node);
-      }).toList();
-
-      var visualConnections = edges.map((Edge edge) {
-        Size size1 = Size(edge.source.width, edge.destination.height);
-        Size size2 = Size(edge.source.width, edge.destination.height);
-
-        Offset nodeOffset1 = Offset(edge.source.dx, edge.source.dy);
-        Offset nodeOffset2 = Offset(edge.destination.dx, edge.destination.dy);
-
-        Offset offset1AdaptedToBackground = nodeOffset1;
-        Offset offset2AdaptedToBackground = nodeOffset2;
-
-        Offset offset1 =
-            Offset(offset1AdaptedToBackground.dx + size1.width / 2, offset1AdaptedToBackground.dy + size1.height / 2);
-        Offset offset2 =
-            Offset(offset2AdaptedToBackground.dx + size2.width / 2, offset2AdaptedToBackground.dy + size2.height / 2);
-
-        return CustomPaint(painter: SimpleConnectionPainter(start: offset1, end: offset2));
-      }).toList();
+      var draggableItems = nodes.map((Node node) => DraggableItem(node)).toList();
+      var visualConnections = edges.map((Edge edge) => VisualConnection(edge)).toList();
 
       maximizedThing = Stack(children: [
         Stack(
@@ -93,44 +71,9 @@ class WorkBench extends StatelessWidget with GetItMixin {
     return KeyboardListener(
       focusNode: viewerState.focusNode,
       autofocus: true,
-      onKeyEvent: (event) => handleKeyboardOnKey(event),
+      onKeyEvent: (event) => get<KeyboardEvents>().handle(
+          event, center), // TODO: pure laziness. params needed by commands should get in there somehow differently
       child: Container(child: maximizedThing),
     );
-  }
-
-  void handleKeyboardOnKey(KeyEvent event) async {
-    var viewerState = get<ViewerState>();
-    if (event.logicalKey == LogicalKeyboardKey.space) {
-      viewerState.enterSpaceCommandMode();
-      return;
-    }
-
-    if (event.logicalKey == LogicalKeyboardKey.escape) {
-      viewerState.exitSpaceCommandMode();
-      return;
-    }
-
-    if (viewerState.spaceCommandModeActive) {
-      if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        var useCase = get<CreateNode>();
-        await useCase(Params(dx: center.dx, dy: center.dy));
-        return;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.keyX) {
-        var useCase = get<DeleteAllNodes>();
-        useCase();
-        return;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.keyD) {
-        var useCase = get<DeleteAllNodes>();
-        useCase();
-        return;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.keyR) {
-        var useCase = get<ResetViewport>();
-        useCase();
-        return;
-      }
-    }
   }
 }

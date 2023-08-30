@@ -9,6 +9,7 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/initiate_connecting.d
 import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/keyboard_events.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -19,6 +20,7 @@ Future<void> init() async {
   sl.registerSingleton<Graph>(Graph());
   sl.registerSingleton<ViewerState>(ViewerState(focusNode: FocusNode()));
   sl.registerSingleton<DraggingProcedure>(DraggingProcedure(graph: sl(), viewerState: sl()));
+  sl.registerSingleton<KeyboardEvents>(KeyboardEvents());
 
   // Use cases
   sl.registerSingleton<CreateNode>(CreateNode(sl(), sl()));
