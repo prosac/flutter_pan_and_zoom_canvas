@@ -6,6 +6,7 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node_from_existing.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/delete_all_nodes_things.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/initiate_connecting.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/reset_viewport.dart';
 import 'package:flutter_pan_and_zoom/core/interaction_state.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/dragging_procedure.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
@@ -27,6 +28,7 @@ Future<void> init() async {
   sl.registerSingleton<Connect>(Connect(sl(), sl()));
   sl.registerSingleton<CreateNodeFromExisting>(CreateNodeFromExisting(sl()));
   sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes());
+  sl.registerSingleton<ResetViewport>(ResetViewport());
   sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
 
   sl.registerLazySingleton<LocalFilesystemDataSource>(() => LocalFilesystemDataSourceImplementation());

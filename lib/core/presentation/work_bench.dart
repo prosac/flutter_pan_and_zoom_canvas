@@ -71,8 +71,8 @@ class WorkBench extends StatelessWidget with GetItMixin {
     return KeyboardListener(
       focusNode: viewerState.focusNode,
       autofocus: true,
-      onKeyEvent: (event) => get<KeyboardEvents>().handle(
-          event, center), // TODO: pure laziness. params needed by commands should get in there somehow differently
+      onKeyEvent: (event) => get<KeyboardEvents>().handle(event, center,
+          transformationController), // TODO: pure laziness. params needed by commands should get in there somehow differently
       child: Container(child: maximizedThing),
     );
   }
