@@ -26,7 +26,7 @@ Future<void> init() async {
   // Use cases
   sl.registerSingleton<CreateNode>(CreateNode(sl(), sl()));
   sl.registerSingleton<Connect>(Connect(sl(), sl()));
-  sl.registerSingleton<CreateNodeFromExisting>(CreateNodeFromExisting(sl()));
+  sl.registerSingleton<CreateNodeFromExisting>(CreateNodeFromExisting());
   sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes());
   sl.registerSingleton<ResetViewport>(ResetViewport());
   sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
