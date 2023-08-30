@@ -51,6 +51,8 @@ class Graph extends ChangeNotifier {
   void removeAll() {
     edges.clear();
     nodes.clear();
+    edges = List.from(edges);
+    _nodes = List.from(nodes);
     notifyListeners();
   }
 

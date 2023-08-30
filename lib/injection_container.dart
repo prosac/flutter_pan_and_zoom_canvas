@@ -26,7 +26,7 @@ Future<void> init() async {
   sl.registerSingleton<CreateNode>(CreateNode(sl(), sl()));
   sl.registerSingleton<Connect>(Connect(sl(), sl()));
   sl.registerSingleton<CreateNodeFromExisting>(CreateNodeFromExisting(sl()));
-  sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes(sl()));
+  sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes());
   sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
 
   sl.registerLazySingleton<LocalFilesystemDataSource>(() => LocalFilesystemDataSourceImplementation());
