@@ -10,3 +10,5 @@ class ResetViewport implements VoidUseCase<void> {
     return Future.value(Right(sl<ViewerState>().resetView()));
   }
 }
+
+resetViewport() => sl<ResetViewport>().call();

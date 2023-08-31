@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/connect.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node_from_existing.dart';
+import 'package:flutter_pan_and_zoom/core/domain/use_cases/initiate_connecting.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
@@ -54,25 +56,22 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
     return presentation;
   }
 
-  Future<void> createNodeFromExisting(node) async =>
-      get<CreateNodeFromExisting>()(CreateNodeFromExistingParams(node: node));
-
-  Future<void> removeNode(node) async => get<RemoveNode>()(RemoveNodeParams(node));
-
   List<Widget> buildButtons(BuildContext context) {
     return [
-      buildButton(() => createNodeFromExisting(node), context),
-      buildButton(() => removeNode(node), context),
+      buildButton(Icons.plus_one, () => createNodeFromExisting(node), context),
+      buildButton(Icons.exposure_minus_1, () => removeNode(node), context),
+      buildButton(Icons.add, () => initiateConnecting(node), context),
+      buildButton(Icons.link, () => connectNode(node), context),
     ];
   }
 
-  Padding buildButton(onPressed, BuildContext context) {
+  Padding buildButton(icon, onPressed, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(4),
       child: ElevatedButton(
         onPressed: onPressed,
         // child: Icon(useCase.icon, color: Theme.of(context).cardColor),
-        child: Icon(Icons.plus_one, color: Theme.of(context).cardColor),
+        child: Icon(icon, color: Theme.of(context).cardColor),
       ),
     );
   }

@@ -34,3 +34,5 @@ class CreateNodeFromExistingParams {
 
   CreateNodeFromExistingParams({required this.node});
 }
+
+createNodeFromExisting(node) => sl<CreateNodeFromExisting>().call(CreateNodeFromExistingParams(node: node));

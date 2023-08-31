@@ -21,23 +21,19 @@ class KeyboardEvents {
 
     if (viewerState.spaceCommandModeActive) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        var useCase = sl<CreateNode>();
-        await useCase(CreateNodeParams(dx: center.dx, dy: center.dy));
+        await createNode(dx: center.dx, dy: center.dy);
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyX) {
-        var useCase = sl<DeleteAllNodes>();
-        useCase();
+        deleteAllNodes();
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyD) {
-        var useCase = sl<DeleteAllNodes>();
-        useCase();
+        deleteAllNodes();
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyR) {
-        var useCase = sl<ResetViewport>();
-        useCase();
+        resetViewport();
         var matrix = Matrix4.identity();
         matrix.translate(-center.dx, -center.dy);
         transformationController.value = matrix;

@@ -10,3 +10,5 @@ class DeleteAllNodes implements VoidUseCase<void> {
     return Future.value(Right(sl<Graph>().removeAll()));
   }
 }
+
+deleteAllNodes() => sl<DeleteAllNodes>().call();

@@ -4,8 +4,8 @@ import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart';
 import 'package:flutter_pan_and_zoom/core/domain/use_cases/use_case.dart';
-import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
+import 'package:flutter_pan_and_zoom/injection_container.dart';
 
 class CreateNode implements UseCase<Node, CreateNodeParams> {
   final Graph graph;
@@ -33,3 +33,5 @@ class CreateNodeParams extends Equatable {
   @override
   List<Object> get props => [dx, dy];
 }
+
+createNode({dx, dy}) async => sl<CreateNode>().call(CreateNodeParams(dx: dx, dy: dy));

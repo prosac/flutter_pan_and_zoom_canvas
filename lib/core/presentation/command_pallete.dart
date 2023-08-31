@@ -33,13 +33,12 @@ class CommandPallette extends StatelessWidget with GetItMixin {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(onPressed: () => get<DeleteAllNodes>()(), child: Text('d → Delete all the things')),
+            child: ElevatedButton(onPressed: () => deleteAllNodes(), child: Text('d → Delete all the things')),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                onPressed: () => get<CreateNode>()(CreateNodeParams(dx: center.dx, dy: center.dy)),
-                child: Text('n → Add thing')),
+            child:
+                ElevatedButton(onPressed: () => createNode(dx: center.dx, dy: center.dy), child: Text('n → Add thing')),
           )
         ]);
 
