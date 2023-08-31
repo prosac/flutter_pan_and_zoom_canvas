@@ -10,9 +10,9 @@ import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
 import 'package:flutter_pan_and_zoom/core/presentation/compute_adapted_offset.dart';
 import 'package:flutter_pan_and_zoom/injection_container.dart';
 
-class CreateNodeFromExisting implements UseCase<Node, Params> {
+class CreateNodeFromExisting implements UseCase<Node, CreateNodeFromExistingParams> {
   @override
-  Future<Either<Failure, Node>> call(Params params) async {
+  Future<Either<Failure, Node>> call(CreateNodeFromExistingParams params) async {
     final Offset offset = Offset(params.node.dx, params.node.dy);
     final adaptedOffset = computeAdaptedOffset(params.node, offset, Size(params.node.width, params.node.height));
     final dx = adaptedOffset.dx + 20;
@@ -29,8 +29,8 @@ class CreateNodeFromExisting implements UseCase<Node, Params> {
   }
 }
 
-class Params {
+class CreateNodeFromExistingParams {
   final Node node;
 
-  Params({required this.node});
+  CreateNodeFromExistingParams({required this.node});
 }

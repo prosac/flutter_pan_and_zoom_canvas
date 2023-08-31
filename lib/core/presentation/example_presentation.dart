@@ -4,6 +4,7 @@ import 'package:flutter_pan_and_zoom/core/domain/use_cases/create_node_from_exis
 import 'package:flutter_pan_and_zoom/core/presentation/base_presentation.dart';
 import 'package:flutter_pan_and_zoom/core/viewer_state.dart';
 import 'package:get_it_mixin/get_it_mixin.dart';
+import '../domain/use_cases/remove_node.dart';
 import 'presentation_container.dart';
 
 class ExamplePresentation extends BasePresentation with GetItMixin {
@@ -33,9 +34,7 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
               // Row(
               //     mainAxisAlignment: MainAxisAlignment.center,
               //     children: buttons.getRange(buttons.length ~/ 2 + 1, buttons.length).toList()),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [buildButton(() => createNodeFromExisting(node), context)])
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: buildButtons(context))
             ],
           ));
     } else {
@@ -55,10 +54,16 @@ class ExamplePresentation extends BasePresentation with GetItMixin {
     return presentation;
   }
 
-  Future<void> createNodeFromExisting(node) async => get<CreateNodeFromExisting>()(Params(node: node));
+  Future<void> createNodeFromExisting(node) async =>
+      get<CreateNodeFromExisting>()(CreateNodeFromExistingParams(node: node));
+
+  Future<void> removeNode(node) async => get<RemoveNode>()(RemoveNodeParams(node));
 
   List<Widget> buildButtons(BuildContext context) {
-    return [buildButton(() => createNodeFromExisting(node), context)];
+    return [
+      buildButton(() => createNodeFromExisting(node), context),
+      buildButton(() => removeNode(node), context),
+    ];
   }
 
   Padding buildButton(onPressed, BuildContext context) {

@@ -22,7 +22,7 @@ class KeyboardEvents {
     if (viewerState.spaceCommandModeActive) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
         var useCase = sl<CreateNode>();
-        await useCase(Params(dx: center.dx, dy: center.dy));
+        await useCase(CreateNodeParams(dx: center.dx, dy: center.dy));
         return;
       }
       if (event.logicalKey == LogicalKeyboardKey.keyX) {
