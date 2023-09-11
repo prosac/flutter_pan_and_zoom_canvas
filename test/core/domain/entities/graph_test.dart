@@ -10,6 +10,13 @@ void main() {
     graph = Graph();
   });
 
+  group('nextId', () {
+    test('returns the next id to use to create a node', () {
+      graph.addNode(Node(id: graph.nextId));
+      expect(graph.nextId, equals(2));
+    });
+  });
+
   group('nodes', () {
     test('initially is an empty list', () {
       expect(graph.nodes, isA<List>());

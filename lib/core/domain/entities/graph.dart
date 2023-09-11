@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart';
 import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart';
@@ -9,6 +10,15 @@ class Graph extends ChangeNotifier {
 
   List<Node> get nodes => _nodes..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
+  get nextId {
+    if (_nodes.length == 0) {
+      return 1;
+    } else {
+      return _nodes.map((e) => e.id).toList().reduce(max) + 1;
+    }
+  }
+
+  // TODO: addNode should create Node internally and only get paramteters for it from the outside
   void addNode(Node node) {
     assert(!nodes.contains(node));
 
