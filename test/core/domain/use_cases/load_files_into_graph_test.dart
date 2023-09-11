@@ -13,14 +13,13 @@ void main() {
   late MockFilesRepository mockFilesRepository;
   late UseCase loadFilesIntoGraph;
   late Graph graph;
-  late Node node;
 
   setUp(() {
     mockFilesRepository = MockFilesRepository();
+    // Sandi Metz rule for command: assert direct public side effect
+    // Therefore not mocking the Graph here
     graph = Graph();
-    node = Node();
-    graph.addNode(node);
-    loadFilesIntoGraph = LoadFilesIntoGraph(mockFilesRepository);
+    loadFilesIntoGraph = LoadFilesIntoGraph(mockFilesRepository, graph);
   });
 
   const contents = 'some blabla';
@@ -37,6 +36,7 @@ void main() {
 
       expect(result, Right<Failure, Graph>(graph));
       expect(resultGraph.nodes.length, 1);
+      expect(resultGraph.nodes[0].data!.contents, 'some blabla'); // for now naively using PlainTextFile
       verify(mockFilesRepository.allFiles());
       verifyNoMoreInteractions(mockFilesRepository);
     },

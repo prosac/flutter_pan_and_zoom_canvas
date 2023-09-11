@@ -18,6 +18,7 @@ class CreateNodeFromExisting implements UseCase<Node, CreateNodeFromExistingPara
     final dx = adaptedOffset.dx + 20;
     final dy = adaptedOffset.dy + 20;
     final graph = sl<Graph>();
+    // TODO remove in favor of implementation in Graph
     final nextId = graph.nodes.map((e) => e.id).toList().reduce(max) + 1;
 
     final node = Node(dx: dx, dy: dy, id: nextId);

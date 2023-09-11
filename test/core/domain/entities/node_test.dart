@@ -10,18 +10,8 @@ void main() {
     });
 
     test('toString() includes the serial nr and offset', () {
-      expect(node.toString(), '0:\n0.0\n0.0');
+      expect(node.toString(), matches('id: \d+\ndx: \d+\.\d+\ndy: \d+\.\d+\n\d+'));
     });
-
-    // TODO: really required?
-    // test('Knows its connected Edges', () {
-    //   var destination = Node();
-    //   var edge = Edge(source: node, destination: destination);
-
-    //   node.addEdge(edge);
-
-    //   expect(node.edges, contains(edge));
-    // });
   });
 
   group('factories', () {

@@ -8,8 +8,9 @@ class Node extends Equatable {
   final int id;
   final int createdAt = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toInt(); // ~/ is more efficient says dart...
   double dx, dy, width, height;
-  final TestData payload = TestData();
-  Node({this.id = 0, this.dx = 0, this.dy = 0, this.height = 200, this.width = 300});
+  dynamic data = TestData(); // TODO introduce interface to attach data to nodes?
+
+  Node({this.id = 0, this.dx = 0, this.dy = 0, this.height = 200, this.width = 300, this.data});
 
   Offset get offset => Offset(dx, dy);
 
@@ -20,7 +21,7 @@ class Node extends Equatable {
 
   @override
   String toString() {
-    return '${this.id}:${this.dx}\n${this.dy}\n${this.createdAt}';
+    return 'id: ${this.id}\ndx: ${this.dx}\ndy: ${this.dy}\n${this.createdAt}';
   }
 
   @override
@@ -30,6 +31,6 @@ class Node extends Equatable {
     var offset = Offset(Random().nextInt(4000).toDouble(), Random().nextInt(4000).toDouble());
     var id = Random().nextInt(1000);
 
-    return Node(id: id, dx: offset.dx, dy: offset.dy);
+    return Node(id: id, dx: offset.dx, dy: offset.dy, data: TestData());
   }
 }

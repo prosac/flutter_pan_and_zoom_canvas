@@ -3,14 +3,18 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
+import 'dart:ui' as _i10;
 
 import 'package:dartz/dartz.dart' as _i2;
+import 'package:flutter_pan_and_zoom/core/domain/entities/graph.dart' as _i8;
+import 'package:flutter_pan_and_zoom/core/domain/entities/node.dart' as _i3;
 import 'package:flutter_pan_and_zoom/core/domain/entities/plain_text_file.dart'
-    as _i6;
-import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart' as _i5;
+    as _i7;
+import 'package:flutter_pan_and_zoom/core/domain/errors/failure.dart' as _i6;
 import 'package:flutter_pan_and_zoom/core/domain/repositories/files_repository.dart'
-    as _i3;
+    as _i4;
+import 'package:flutter_pan_and_zoom/core/domain/values/edge.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -34,38 +38,215 @@ class _FakeEither_0<L, R> extends _i1.SmartFake implements _i2.Either<L, R> {
         );
 }
 
+class _FakeNode_1 extends _i1.SmartFake implements _i3.Node {
+  _FakeNode_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [FilesRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFilesRepository extends _i1.Mock implements _i3.FilesRepository {
+class MockFilesRepository extends _i1.Mock implements _i4.FilesRepository {
   MockFilesRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.PlainTextFile>>> allFiles() =>
+  _i5.Future<_i2.Either<_i6.Failure, List<_i7.PlainTextFile>>> allFiles() =>
       (super.noSuchMethod(
         Invocation.method(
           #allFiles,
           [],
         ),
         returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.PlainTextFile>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.PlainTextFile>>(
+            _i5.Future<_i2.Either<_i6.Failure, List<_i7.PlainTextFile>>>.value(
+                _FakeEither_0<_i6.Failure, List<_i7.PlainTextFile>>(
           this,
           Invocation.method(
             #allFiles,
             [],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.PlainTextFile>>>);
+      ) as _i5.Future<_i2.Either<_i6.Failure, List<_i7.PlainTextFile>>>);
 }
 
 /// A class which mocks [PlainTextFile].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlainTextFile extends _i1.Mock implements _i6.PlainTextFile {
+class MockPlainTextFile extends _i1.Mock implements _i7.PlainTextFile {
   MockPlainTextFile() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  String get contents => (super.noSuchMethod(
+        Invocation.getter(#contents),
+        returnValue: '',
+      ) as String);
+  @override
+  set contents(String? _contents) => super.noSuchMethod(
+        Invocation.setter(
+          #contents,
+          _contents,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  List<Object?> get props => (super.noSuchMethod(
+        Invocation.getter(#props),
+        returnValue: <Object?>[],
+      ) as List<Object?>);
+}
+
+/// A class which mocks [Graph].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGraph extends _i1.Mock implements _i8.Graph {
+  MockGraph() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  List<_i3.Node> get draggingNodes => (super.noSuchMethod(
+        Invocation.getter(#draggingNodes),
+        returnValue: <_i3.Node>[],
+      ) as List<_i3.Node>);
+  @override
+  set draggingNodes(List<_i3.Node>? _draggingNodes) => super.noSuchMethod(
+        Invocation.setter(
+          #draggingNodes,
+          _draggingNodes,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  List<_i9.Edge> get edges => (super.noSuchMethod(
+        Invocation.getter(#edges),
+        returnValue: <_i9.Edge>[],
+      ) as List<_i9.Edge>);
+  @override
+  set edges(List<_i9.Edge>? _edges) => super.noSuchMethod(
+        Invocation.setter(
+          #edges,
+          _edges,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  List<_i3.Node> get nodes => (super.noSuchMethod(
+        Invocation.getter(#nodes),
+        returnValue: <_i3.Node>[],
+      ) as List<_i3.Node>);
+  @override
+  bool get hasListeners => (super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+      ) as bool);
+  @override
+  void addNode(_i3.Node? node) => super.noSuchMethod(
+        Invocation.method(
+          #addNode,
+          [node],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void addEdge(_i9.Edge? edge) => super.noSuchMethod(
+        Invocation.method(
+          #addEdge,
+          [edge],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i3.Node removeNode(_i3.Node? node) => (super.noSuchMethod(
+        Invocation.method(
+          #removeNode,
+          [node],
+        ),
+        returnValue: _FakeNode_1(
+          this,
+          Invocation.method(
+            #removeNode,
+            [node],
+          ),
+        ),
+      ) as _i3.Node);
+  @override
+  void removeEdge(_i9.Edge? edge) => super.noSuchMethod(
+        Invocation.method(
+          #removeEdge,
+          [edge],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void removeAll() => super.noSuchMethod(
+        Invocation.method(
+          #removeAll,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void drag(_i3.Node? node) => super.noSuchMethod(
+        Invocation.method(
+          #drag,
+          [node],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void stopDragging() => super.noSuchMethod(
+        Invocation.method(
+          #stopDragging,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void notify() => super.noSuchMethod(
+        Invocation.method(
+          #notify,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void addListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void removeListener(_i10.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
 }

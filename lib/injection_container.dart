@@ -41,5 +41,5 @@ Future<void> init() async {
   sl.registerSingleton<DeleteAllNodes>(DeleteAllNodes());
   sl.registerSingleton<ResetViewport>(ResetViewport());
   sl.registerSingleton<InitiateConnecting>(InitiateConnecting(sl(), sl()));
-  sl.registerSingleton<LoadFilesIntoGraph>(LoadFilesIntoGraph(sl()));
+  sl.registerSingleton<LoadFilesIntoGraph>(LoadFilesIntoGraph(sl(), sl()));
 }

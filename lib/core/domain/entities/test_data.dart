@@ -1,1 +1,3 @@
-class TestData {}
+class TestData {
+  get contents => 'test data';
+}

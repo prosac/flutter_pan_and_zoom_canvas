@@ -10,9 +10,10 @@ import 'package:flutter_pan_and_zoom/injection_container.dart';
 class FileLoadingFailure extends Failure {}
 
 class LoadFilesIntoGraph implements UseCase<Graph, NoParams> {
-  final filesRepository;
+  final FilesRepository filesRepository;
+  final Graph graph;
 
-  LoadFilesIntoGraph(FilesRepository this.filesRepository);
+  LoadFilesIntoGraph(FilesRepository this.filesRepository, Graph this.graph);
 
   @override
   Future<Either<Failure, Graph>> call(NoParams params) async {
@@ -21,11 +22,8 @@ class LoadFilesIntoGraph implements UseCase<Graph, NoParams> {
 
     maybeFiles.fold((l) => FileLoadingFailure(), (r) => files = r);
 
-    var graph = sl<Graph>();
-
     for (final PlainTextFile file in files) {
-      print(file.toString());
-      graph.addNode(Node());
+      graph.addNode(Node(id: graph.nextId, data: PlainTextFile(file.contents)));
     }
 
     return Right(graph);
